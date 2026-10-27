@@ -54,17 +54,31 @@ body {
 
 /* Desktop preview: show the app inside an iPhone 16 Pro sized frame */
 @media (min-width: 600px) {
+  html,
   body {
+    height: auto;
+  }
+  body {
+    min-height: 100vh;
     display: grid;
     place-items: center;
-    background: #e5e5e5;
+    padding: var(--space-5) 0;
+    background: var(--preview-bg);
   }
+  /* Screen at the real 402 × 874 size; bezel and rim sit outside it */
   #app {
+    box-sizing: content-box;
+    flex-shrink: 0;
     width: var(--frame-w);
     height: var(--frame-h);
+    padding: 0;
     background: var(--color-bg);
-    border-radius: 48px;
-    box-shadow: 0 20px 60px rgb(0 0 0 / 0.15);
+    border: var(--bezel) solid #000;
+    border-radius: calc(var(--screen-radius) + var(--bezel));
+    box-shadow:
+      0 0 0 1.5px #9a9a9f,              /* titanium rim */
+      0 0 0 3px #48484c,                 /* rim edge */
+      0 24px 48px -12px rgb(0 0 0 / 0.18); /* light drop shadow */
   }
 }
 

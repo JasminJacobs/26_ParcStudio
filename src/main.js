@@ -8,6 +8,13 @@ import { createCarouselSlider } from './carousel-slider.js'
 
 const app = document.querySelector('#app')
 
+// Desktop preview: scale the phone to its real height (--device-h in tokens.css)
+if (matchMedia('(min-width: 600px)').matches) {
+  const css = getComputedStyle(document.documentElement)
+  const px = (name) => parseFloat(css.getPropertyValue(name))
+  app.style.zoom = px('--device-h') / (px('--frame-h') + 2 * px('--bezel'))
+}
+
 // Shared state for all interactions
 const state = {
   articles,

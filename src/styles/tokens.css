@@ -6,6 +6,14 @@
   /* Frame: iPhone 16 Pro (402 × 874 pt) */
   --frame-w: 402px;
   --frame-h: 874px;
+  --screen-radius: 55px;
+  --bezel: 12px;
+  /* Real iPhone 16 Pro height: 149.6 mm.
+     MacBook Pro Retina (default scaling) shows ~127 px per inch:
+     149.6 mm / 25.4 × 127 = 748 px.
+     The 402 × 874 screen is scaled down so the whole phone is this tall. */
+  --device-h: 748px;
+  --preview-bg: #d9d9d9;
 
   /* Colors */
   --color-bg: #ffffff;
