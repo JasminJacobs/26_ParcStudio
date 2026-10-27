@@ -59,6 +59,20 @@ biasButtons.forEach((button) =>
 // Article scrolls freely, the gallery locks to the screen
 createScrollLock(app.querySelector('.scroller'), app.querySelector('.gallery'))
 
+// Sticky title: mark it once it is stuck 36px below the header.
+// It sticks when the meta above it has scrolled to within 36px of the top.
+const scroller = app.querySelector('.scroller')
+const title = app.querySelector('.article__title')
+const meta = app.querySelector('.meta')
+scroller.addEventListener(
+  'scroll',
+  () => {
+    const titleSlot = meta.offsetTop + meta.offsetHeight + 16 + 8 - scroller.offsetTop // gap + margin
+    title.classList.toggle('is-stuck', scroller.scrollTop >= titleSlot - 36)
+  },
+  { passive: true },
+)
+
 // Shared state for all interactions
 const state = {
   articles,

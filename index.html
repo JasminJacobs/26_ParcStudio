@@ -40,6 +40,7 @@
             </div>
           </div>
 
+          <!-- Sticky: under the meta at first, then fixed 36px below the header -->
           <h1 class="article__title">
             Hundreds of thousands march across France in protests over schools and policing
           </h1>
@@ -73,17 +74,15 @@
               <li>Businesses, museums, and other cultural institutions closed or increased security after about 3,000 shops were damaged or looted the previous weekend.</li>
             </ul>
           </div>
+
+          <!-- Figma: Gallery-1 (22:1636) — cards and slider; the sticky title sits on top -->
+          <section class="gallery" aria-label="Gallery">
+            <section class="cards" aria-label="Stories"></section>
+            <section class="iframes" aria-label="Articles"></section>
+            <div class="slider-container"></div>
+          </section>
         </main>
 
-        <!-- Figma: Gallery-1 (22:1636) — minimal title, cards and slider -->
-        <section class="gallery" aria-label="Gallery">
-          <h2 class="gallery__title">
-            Hundreds of thousands march across France in protests over schools and policing
-          </h2>
-          <section class="cards" aria-label="Stories"></section>
-          <section class="iframes" aria-label="Articles"></section>
-          <div class="slider-container"></div>
-        </section>
       </div>
     </div>
     <script type="module" src="/src/main.js"></script>

@@ -57,18 +57,19 @@ button {
   flex-direction: column;
   gap: var(--space-3);
   min-height: 100%;
-  padding: 10px var(--space-3);
+  padding: 10px var(--space-3) 0;
   overflow-x: clip; /* clips the sliding summaries at the screen edge */
 }
 .article > * {
   flex-shrink: 0;
 }
 
-/* Gallery (Figma Gallery-1, 22:1636) — fills exactly one screen */
+/* Gallery (Figma Gallery-1, 22:1636) — fills exactly one screen,
+   full width (cancels the article's side padding) */
 .gallery {
   position: relative;
-  height: 100%;
-  padding: 36px var(--space-3) 10px;
+  height: calc(var(--frame-h) - 54px);
+  margin: 0 calc(-1 * var(--space-3));
   overflow: hidden;
 }
 
@@ -109,17 +110,35 @@ button {
   height: 23px;
 }
 
-/* Title (22:1533 / 22:1675) — text style "Headline Title" */
-.article__title,
-.gallery__title {
+/* Title (22:1533 / 22:1675) — text style "Headline Title"
+   One title for both screens: it scrolls with the article until it is
+   36px below the header (Figma Gallery-1), then stays there.
+   .is-stuck (set in main.js) fills the 36px above it, so text scrolling
+   underneath stays hidden. */
+.article__title {
+  position: sticky;
+  top: 36px;
+  z-index: 10;
+  min-height: 123px; /* Figma text box */
+  /* 16px bottom padding keeps scrolled text away from the title; the
+     negative margin cancels it, so the layout below doesn't move */
+  margin: 8px calc(-1 * var(--space-3)) -16px;
+  padding: 0 var(--space-3) 16px;
+  box-sizing: content-box;
+  background: var(--color-bg);
   font-weight: var(--weight-medium);
   font-size: 30px;
   line-height: 30px;
   letter-spacing: -0.3px;
-  min-height: 123px; /* Figma text box */
 }
-.article__title {
-  margin-top: 8px;
+.article__title.is-stuck::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 36px;
+  background: var(--color-bg);
 }
 
 /* BiasComparison (22:1535) */
