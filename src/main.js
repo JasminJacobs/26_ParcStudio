@@ -1,8 +1,10 @@
 import './styles/main.css'
 import articles from './data/articles.json'
 import { createSlider } from './interactions/slider.js'
-import { createOverview } from './interactions/overview.js'
+// import { createOverview } from './interactions/overview.js'
 import { createMic } from './interactions/mic.js'
+import { createCards } from './cards.js'
+import { createCarouselSlider } from './carousel-slider.js'
 
 const app = document.querySelector('#app')
 
@@ -14,12 +16,19 @@ const state = {
 }
 
 const slider = createSlider(app, state)
-const overview = createOverview(app, state)
+// const overview = createOverview(app, state)
 const mic = createMic()
+const cards = createCards(app, state)
+const carouselSlider = createCarouselSlider(app, () => cards.getTrack())
 
 function render() {
   slider.update(state)
-  overview.update(state)
+  // overview.update(state)
+  cards.update(state)
+  requestAnimationFrame(() => {
+    carouselSlider.refresh()
+    cards.updateCardScales?.()
+  })
 }
 
 // Switch between the gallery and the zoomed-out overview

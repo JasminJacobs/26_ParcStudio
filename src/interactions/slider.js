@@ -9,15 +9,15 @@ export function createSlider(root, state) {
 
   function update(state) {
     el.hidden = state.view !== 'slider'
-    el.innerHTML = visibleArticles(state)
-      .map(
-        (a) => `
-        <article class="slide" data-id="${a.id}">
-          <p>${a.source}</p>
-          <h2>${a.title}</h2>
-        </article>`,
-      )
-      .join('')
+    // el.innerHTML = visibleArticles(state)
+    //   .map(
+    //     (a) => `
+    //     <article class="slide" data-id="${a.id}">
+    //       <p>${a.source}</p>
+    //       <h2>${a.title}</h2>
+    //     </article>`,
+    //   )
+    //   .join('')
   }
 
   return { el, update }

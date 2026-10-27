@@ -1,0 +1,12 @@
+{
+  "L'Humanité": ["#E30613", "#9B0410"],
+  "Libération": ["#ED1B2E", "#000000"],
+  "Le Temps": ["#930025", "#E3B7C1"],
+  "Mediapart": ["#FC392B", "#08030E"],
+  "Reuters": ["#D64000", "#212223"],
+  "Associated Press": ["#FF322E", "#333333"],
+  "Les Echos": ["#15029F", "#C2A17A", "#FAEC70"],
+  "Le Figaro": ["#286FB7", "#10649E"],
+  "CNews": ["#E2071B", "#010202"],
+  "La Croix": ["#EF7C12", "#088BBE"]
+}
