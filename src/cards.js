@@ -11,6 +11,10 @@ const BIAS_ORDER = [
   'farright',
 ]
 
+const DEFAULT_IFRAME = 'img/screenshot01.png'
+
+const CLOSE_ICON = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Close</title><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
+
 function articlesByBias(articles) {
   const rank = (bias) => {
     const index = BIAS_ORDER.indexOf(bias)
@@ -53,78 +57,153 @@ function cardMarkup(article) {
     </article>`
 }
 
-export function createCards(root, state) {
-  const section = root.querySelector('.cards')
-  if (!section) return { update() {} }
+function overlayMarkup(article) {
+  const src = import.meta.env.BASE_URL + (article.iframe ?? DEFAULT_IFRAME)
+  return `
+    <section class="iframe-overlay" data-id="${article.id}">
+      <div class="iframe-scroll">
+        <img src="${src}" alt="${article.source}" draggable="false" />
+      </div>
+      <button class="iframe-close" type="button" aria-label="Close">${CLOSE_ICON}</button>
+    </section>`
+}
 
-  let track = section.querySelector('.cards-track')
+function ensureTrack(section, className) {
+  let track = section.querySelector(`.${className}`)
   if (!track) {
     track = document.createElement('div')
-    track.className = 'cards-track'
+    track.className = className
     section.append(track)
   }
+  return track
+}
 
-  track.addEventListener('click', (event) => {
+function maxScroll(track) {
+  return Math.max(0, track.scrollWidth - track.clientWidth)
+}
+
+function scrollRatio(track) {
+  const max = maxScroll(track)
+  return max === 0 ? 0 : track.scrollLeft / max
+}
+
+function centerOffset(track, item) {
+  return item.offsetLeft - (track.clientWidth - item.offsetWidth) / 2
+}
+
+// Centre item at full size, neighbours down to 0.9
+function scaleItems(track) {
+  const items = track.children
+  if (!items.length) return
+
+  const bounds = track.getBoundingClientRect()
+  const center = bounds.left + bounds.width / 2
+  const itemWidth = items[0].offsetWidth
+
+  let active = items[0]
+  let activeDist = Infinity
+
+  for (const item of items) {
+    const rect = item.getBoundingClientRect()
+    const dist = Math.abs(rect.left + rect.width / 2 - center)
+    const t = Math.min(dist / Math.max(itemWidth, 1), 1)
+    item.style.transform = `scale(${1 - t * 0.1})`
+    item.style.zIndex = String(Math.max(1, 1000 - Math.round(dist)))
+    if (dist < activeDist) {
+      activeDist = dist
+      active = item
+    }
+  }
+
+  for (const item of items) {
+    item.classList.toggle('is-center', item === active)
+  }
+}
+
+export function createCards(root, state, { onOpenChange } = {}) {
+  const cardsSection = root.querySelector('.cards')
+  const iframesSection = root.querySelector('.iframes')
+  if (!cardsSection || !iframesSection) return { update() {} }
+
+  const cardTrack = ensureTrack(cardsSection, 'cards-track')
+  const iframeTrack = ensureTrack(iframesSection, 'iframes-track')
+
+  let open = false
+
+  // The visible track leads; the hidden one follows at the same scroll ratio,
+  // so card N and overlay N are always at the same carousel position.
+  const leader = () => (open ? iframeTrack : cardTrack)
+  const follower = () => (open ? cardTrack : iframeTrack)
+
+  let frame = 0
+
+  function syncAndScale() {
+    frame = 0
+    const lead = leader()
+    const follow = follower()
+    follow.scrollLeft = scrollRatio(lead) * maxScroll(follow)
+    scaleItems(cardTrack)
+    scaleItems(iframeTrack)
+  }
+
+  function requestSync(event) {
+    if (event && event.currentTarget !== leader()) return
+    if (frame) return
+    frame = requestAnimationFrame(syncAndScale)
+  }
+
+  cardTrack.addEventListener('scroll', requestSync, { passive: true })
+  iframeTrack.addEventListener('scroll', requestSync, { passive: true })
+  new ResizeObserver(() => requestSync()).observe(cardTrack)
+
+  function setOpen(next) {
+    open = next
+    iframesSection.classList.toggle('is-open', open)
+    cardsSection.classList.toggle('is-covered', open)
+    cardTrack.classList.toggle('is-following', open)
+    iframeTrack.classList.toggle('is-following', !open)
+    onOpenChange?.(open)
+  }
+
+  cardTrack.addEventListener('click', (event) => {
     const card = event.target.closest('.card')
     if (!card) return
-    console.log('card clicked', card.dataset.id)
+    const index = [...cardTrack.children].indexOf(card)
+    const overlay = iframeTrack.children[index]
+    if (!overlay) return
+
+    cardTrack.scrollLeft = centerOffset(cardTrack, card)
+    iframeTrack.scrollLeft = centerOffset(iframeTrack, overlay)
+    overlay.querySelector('.iframe-scroll').scrollTop = 0
+    setOpen(true)
+    syncAndScale()
   })
 
-  let scaleFrame = 0
-
-  function updateCardScales() {
-    scaleFrame = 0
-    const cardEls = track.querySelectorAll('.card')
-    if (!cardEls.length) return
-
-    const bounds = track.getBoundingClientRect()
-    const center = bounds.left + bounds.width / 2
-    const cardWidth = cardEls[0].getBoundingClientRect().width
-
-    let active = cardEls[0]
-    let activeDist = Infinity
-
-    for (const card of cardEls) {
-      const rect = card.getBoundingClientRect()
-      const dist = Math.abs(rect.left + rect.width / 2 - center)
-      const t = Math.min(dist / Math.max(cardWidth, 1), 1)
-      const scale = 1 - t * 0.1
-      card.style.transform = `scale(${scale})`
-      card.style.zIndex = String(10 - Math.round(dist))
-      if (dist < activeDist) {
-        activeDist = dist
-        active = card
-      }
-    }
-
-    for (const card of cardEls) {
-      card.classList.toggle('is-center', card === active)
-    }
-  }
-
-  function requestScaleUpdate() {
-    if (scaleFrame) return
-    scaleFrame = requestAnimationFrame(updateCardScales)
-  }
-
-  track.addEventListener('scroll', requestScaleUpdate, { passive: true })
-  new ResizeObserver(requestScaleUpdate).observe(track)
+  iframeTrack.addEventListener('click', (event) => {
+    if (!event.target.closest('.iframe-close')) return
+    setOpen(false)
+    syncAndScale()
+  })
 
   function update(nextState) {
-    const max = Math.max(0, track.scrollWidth - track.clientWidth)
-    const ratio = max === 0 ? 0 : track.scrollLeft / max
-
+    const ratio = scrollRatio(leader())
     const articles = articlesByBias(visibleArticles(nextState))
-    track.innerHTML = articles.map(cardMarkup).join('')
+    cardTrack.innerHTML = articles.map(cardMarkup).join('')
+    iframeTrack.innerHTML = articles.map(overlayMarkup).join('')
 
     requestAnimationFrame(() => {
-      const nextMax = Math.max(0, track.scrollWidth - track.clientWidth)
-      track.scrollLeft = ratio * nextMax
-      updateCardScales()
+      const lead = leader()
+      lead.scrollLeft = ratio * maxScroll(lead)
+      syncAndScale()
     })
   }
 
+  iframeTrack.classList.add('is-following')
   update(state)
 
-  return { update, getTrack: () => track, updateCardScales }
+  return {
+    update,
+    getTrack: leader,
+    updateCardScales: syncAndScale,
+  }
 }

@@ -18,8 +18,11 @@ const state = {
 const slider = createSlider(app, state)
 // const overview = createOverview(app, state)
 const mic = createMic()
-const cards = createCards(app, state)
-const carouselSlider = createCarouselSlider(app, () => cards.getTrack())
+let carouselSlider = null
+const cards = createCards(app, state, {
+  onOpenChange: () => carouselSlider?.refresh(),
+})
+carouselSlider = createCarouselSlider(app, () => cards.getTrack())
 
 function render() {
   slider.update(state)

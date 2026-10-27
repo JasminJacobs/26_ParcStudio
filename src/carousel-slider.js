@@ -1,5 +1,6 @@
 /*
-  Draggable thumb in .slider-container — maps to horizontal scroll on .cards-track.
+  Draggable thumb in .slider-container — maps to horizontal scroll on the visible track
+  (cards, or the iframe overlays when they are open).
 */
 export function createCarouselSlider(root, getTrack) {
   const container = root.querySelector('.slider-container')
@@ -51,19 +52,19 @@ export function createCarouselSlider(root, getTrack) {
   function snapToNearestCard() {
     const track = getTrack()
     if (!track) return
-    const cards = track.querySelectorAll('.card')
-    if (!cards.length) return
+    const items = track.children
+    if (!items.length) return
 
     const viewportCenter = track.scrollLeft + track.clientWidth / 2
-    let nearest = cards[0]
+    let nearest = items[0]
     let nearestDist = Infinity
 
-    for (const card of cards) {
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2
-      const dist = Math.abs(cardCenter - viewportCenter)
+    for (const item of items) {
+      const itemCenter = item.offsetLeft + item.offsetWidth / 2
+      const dist = Math.abs(itemCenter - viewportCenter)
       if (dist < nearestDist) {
         nearestDist = dist
-        nearest = card
+        nearest = item
       }
     }
 
