@@ -8,6 +8,9 @@
   --frame-h: 874px;
   --screen-radius: 55px;
   --bezel: 12px;
+  /* Real iPhone 16 Pro height: 149.6 mm = 565 px (CSS: 96 px per inch).
+     The 402 × 874 screen is scaled down so the whole phone is this tall. */
+  --device-h: 565px;
   --preview-bg: #ff0000;
 
   /* Colors */
