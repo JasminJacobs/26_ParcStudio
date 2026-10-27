@@ -1,0 +1,159 @@
+/* Figma: Default-Preferred (22:1494) — article page */
+
+/* Reset buttons used as icons / toggles */
+button {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Header (22:1495) */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  padding: 8px 34px 8px 19px;
+  border-top: 0.5px solid var(--color-fg);
+  border-bottom: 0.5px solid var(--color-fg);
+}
+
+.header__burger {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+/* Logo sits centered in the remaining space */
+.header__logo {
+  display: flex;
+  flex: 1 0 0;
+  justify-content: center;
+  height: 100%;
+}
+.header__logo img {
+  width: 70.919px;
+  height: 41px;
+}
+
+/* Body (22:1516) */
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: calc(100% - 54px);
+  padding: 10px var(--space-3);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.article::-webkit-scrollbar {
+  display: none;
+}
+.article > * {
+  flex-shrink: 0;
+}
+
+/* Meta (22:1517) */
+.meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 26px;
+}
+
+.meta__published {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 184px;
+  font-weight: var(--weight-medium);
+  font-size: 12px;
+  line-height: 11px; /* Figma text box height */
+  letter-spacing: -0.084px;
+}
+
+.meta__icons {
+  display: flex;
+  align-items: center;
+  gap: 12.267px;
+}
+.meta__icons img[src*='link'] {
+  width: 19.167px;
+  height: 19.167px;
+}
+.meta__icons img[src*='bookmark'] {
+  width: 14.95px;
+  height: 19.933px;
+}
+.meta__icons img[src*='block'] {
+  width: 23px;
+  height: 23px;
+}
+
+/* Title (22:1533) — text style "Headline Title" */
+.article__title {
+  font-weight: var(--weight-medium);
+  font-size: 30px;
+  line-height: 30px;
+  letter-spacing: -0.3px;
+  min-height: 123px; /* Figma text box */
+}
+
+/* BiasComparison (22:1535) */
+.bias {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-3);
+  border-radius: 5px;
+  background: var(--color-grey);
+}
+
+.bias__label {
+  flex-shrink: 0;
+  width: 85px;
+  font-weight: var(--weight-book);
+  font-size: 10px;
+  line-height: 9px; /* Figma: 2 lines in 18px */
+  letter-spacing: -0.07px;
+}
+
+.bias__button {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: 10.072px;
+  font-weight: var(--weight-medium);
+  font-size: 15px;
+  line-height: 13px; /* Figma: 29px button − 16px padding */
+  letter-spacing: -0.105px;
+  white-space: nowrap;
+}
+.bias__button[aria-pressed='true'] {
+  background: #ffffff;
+}
+
+/* Summary (22:1540) — text style "scrolling text" */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: var(--space-2);
+  font-weight: var(--weight-book);
+  font-size: 19px;
+  line-height: 21px;
+}
+.summary li {
+  margin-left: 28.5px;
+  list-style: disc;
+}
+.summary a {
+  color: inherit;
+  text-decoration: none;
+}

@@ -20,25 +20,31 @@ const state = {
   view: 'slider', // 'slider' | 'overview'
 }
 
-const slider = createSlider(app, state)
-const overview = createOverview(app, state)
-const mic = createMic()
+// Bias Comparison: one button active at a time
+const biasButtons = app.querySelectorAll('.bias__button')
+biasButtons.forEach((button) =>
+  button.addEventListener('click', () => {
+    biasButtons.forEach((b) => b.setAttribute('aria-pressed', b === button))
+  }),
+)
 
-function render() {
-  slider.update(state)
-  overview.update(state)
-}
+// Interactions (slider, overview, mic) — mounted once their Figma frames are built.
+// Until then they would draw placeholder layers over the article page.
+function mountInteractions() {
+  const slider = createSlider(app, state)
+  const overview = createOverview(app, state)
+  const mic = createMic()
 
-// Switch between the gallery and the zoomed-out overview
-export function setView(view) {
-  state.view = view
+  function render() {
+    slider.update(state)
+    overview.update(state)
+  }
+
+  // Blowing into the mic toggles the "most read" filter
+  mic.on('blow', () => {
+    state.filter = state.filter === 'all' ? 'most-read' : 'all'
+    render()
+  })
+
   render()
 }
-
-// Blowing into the mic toggles the "most read" filter
-mic.on('blow', () => {
-  state.filter = state.filter === 'all' ? 'most-read' : 'all'
-  render()
-})
-
-render()

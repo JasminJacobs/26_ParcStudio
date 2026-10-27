@@ -8,7 +8,56 @@
     <title>ParcStudio — Ground News</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Figma: Default-Preferred (22:1494) -->
+      <header class="header">
+        <button class="header__burger" type="button" aria-label="Menu">
+          <img src="/assets/icons/burger.svg" width="24" height="24" alt="" />
+        </button>
+        <a class="header__logo" href="#" aria-label="Ground News">
+          <img src="/assets/icons/logo.svg" width="71" height="41" alt="Ground News" />
+        </a>
+      </header>
+
+      <main class="article">
+        <div class="meta">
+          <p class="meta__published">
+            <span>Published 2 days ago · France ·</span>
+            <span>Updated 9 hours ago</span>
+          </p>
+          <div class="meta__icons">
+            <button type="button" aria-label="Copy link">
+              <img src="/assets/icons/link.svg" width="20" height="20" alt="" />
+            </button>
+            <button type="button" aria-label="Bookmark">
+              <img src="/assets/icons/bookmark.svg" width="15" height="20" alt="" />
+            </button>
+            <button type="button" aria-label="Block source">
+              <img src="/assets/icons/block.svg" width="23" height="23" alt="" />
+            </button>
+          </div>
+        </div>
+
+        <h1 class="article__title">
+          Hundreds of thousands march across France in protests over schools and policing
+        </h1>
+
+        <div class="bias" role="group" aria-label="Bias Comparison">
+          <span class="bias__label">Bias<br />Comparison</span>
+          <button class="bias__button" type="button" aria-pressed="false">Left</button>
+          <button class="bias__button" type="button" aria-pressed="true">Center</button>
+          <button class="bias__button" type="button" aria-pressed="false">Right</button>
+        </div>
+
+        <ul class="summary">
+          <li>On Saturday, October 24, nationwide protests drew between 410,000 and nearly 800,000 people across France, with 70,000 police deployed to counter potential violence according to the Interior Ministry and union organizers.</li>
+          <li>Sparked by high school staffing shortages last month, the movement evolved into a nationwide challenge as students and workers demanded increased education funding and relief from soaring living costs.</li>
+          <li>Police deployed water cannons and tear gas across multiple cities, while major Paris museums closed pre-emptively; government officials reported nearly 1,000 arrests as authorities attempted to prevent widespread looting.</li>
+          <li>Political pressure intensified on President Emmanuel Macron as far-left candidate Jean-Luc Melenchon and the far-right National Rally criticized his handling of the crisis; Melenchon warned that "this is going to repeat itself every week."</li>
+          <li>The Yellow Vests and labor unions announced further demonstrations for October 31 and November 5, demanding the freedom to <a href="https://ground.news/interest/protest" target="_blank" rel="noopener">protest</a> and challenging the government's alleged "authoritarian drift" and fiscal policies.</li>
+        </ul>
+      </main>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
