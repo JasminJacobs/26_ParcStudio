@@ -6,6 +6,9 @@
   /* Frame: iPhone 16 Pro (402 × 874 pt) */
   --frame-w: 402px;
   --frame-h: 874px;
+  --screen-radius: 55px;
+  --bezel: 12px;
+  --preview-bg: #f0f0f0;
 
   /* Colors */
   --color-bg: #ffffff;
