@@ -127,16 +127,26 @@ button {
   flex: 1 0 0;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2);
-  border-radius: 10.072px;
+  padding: 9.432px var(--space-2) 7.942px;
+  border-radius: 5px;
   font-weight: var(--weight-medium);
-  font-size: 15px;
-  line-height: 13px; /* Figma: 29px button − 16px padding */
-  letter-spacing: -0.105px;
+  font-size: 14.89px;
+  line-height: 10.921px;
+  letter-spacing: -0.1042px;
   white-space: nowrap;
 }
+
+/* Active states (Figma component "Button") */
 .bias__button[aria-pressed='true'] {
-  background: #ffffff;
+  background: #ffffff; /* Center */
+}
+.bias__button--left[aria-pressed='true'] {
+  background: var(--color-red); /* Button/Default */
+  color: #ffffff;
+}
+.bias__button--right[aria-pressed='true'] {
+  background: var(--color-blue); /* Button/Variant2 */
+  color: #ffffff;
 }
 
 /* Summary (22:1540) — text style "scrolling text" */

@@ -19,10 +19,9 @@
   --color-bg: #eeefe8;
   --color-fg: #000000;
   --color-grey: #dadbd6;
+  --color-red: #ff0000;
+  --color-blue: #006fff;
   --color-muted: #8a8a8a;
-  --color-bias-left: #2d5bd7;
-  --color-bias-center: #d9d9d9;
-  --color-bias-right: #d7322d;
 
   /* Type */
   /* Figma uses Medway (Book 450, Medium 500). It renders where Medway is
