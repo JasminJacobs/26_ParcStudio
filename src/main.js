@@ -1,8 +1,10 @@
 import './styles/main.css'
 import articles from './data/articles.json'
 import { createSlider } from './interactions/slider.js'
-import { createOverview } from './interactions/overview.js'
+// import { createOverview } from './interactions/overview.js'
 import { createMic } from './interactions/mic.js'
+import { createCards } from './cards.js'
+import { createCarouselSlider } from './carousel-slider.js'
 
 const app = document.querySelector('#app')
 
@@ -21,12 +23,22 @@ const state = {
 }
 
 const slider = createSlider(app, state)
-const overview = createOverview(app, state)
+// const overview = createOverview(app, state)
 const mic = createMic()
+let carouselSlider = null
+const cards = createCards(app, state, {
+  onOpenChange: () => carouselSlider?.refresh(),
+})
+carouselSlider = createCarouselSlider(app, () => cards.getTrack())
 
 function render() {
   slider.update(state)
-  overview.update(state)
+  // overview.update(state)
+  cards.update(state)
+  requestAnimationFrame(() => {
+    carouselSlider.refresh()
+    cards.updateCardScales?.()
+  })
 }
 
 // Switch between the gallery and the zoomed-out overview
@@ -42,3 +54,8 @@ mic.on('blow', () => {
 })
 
 render()
+
+let viewportHeight = window.innerHeight
+let viewportWidth = window.innerWidth
+console.log("viewportHeight", viewportHeight)
+console.log("viewportWidth", viewportWidth)

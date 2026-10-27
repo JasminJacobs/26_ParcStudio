@@ -8,12 +8,32 @@
   padding: 0;
 }
 
+@font-face {
+  font-family: 'Medway';
+  src: url('/public/fonts/Medway-Regular.otf') format('otf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --font: 'Medway', sans-serif;
+  --color-bg: #EEEFE8;
+  --color-fg: #000000;
+  --text-s: 12px;
+  --leading-s: 128%;
+  --text-m: 24px;
+  --leading-m: 112%;
+  --text-l: 36px;
+  --leading-l: 104%;
+  --letter-spacing-l: -0.02em;
+}
+
 html,
 body {
   height: 100%;
   background: var(--color-bg);
   color: var(--color-fg);
-  font-family: var(--font-sans);
+  font-family: var(--font);
   line-height: var(--leading);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -28,6 +48,8 @@ body {
   overflow: hidden;
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
+
+    padding: 12px;
 }
 
 /* Desktop preview: show the app inside an iPhone 16 Pro sized frame */
@@ -75,4 +97,336 @@ body {
 img {
   display: block;
   max-width: 100%;
+}
+
+header {
+  height: 100px;
+  width: 100%;
+}
+
+header .logo {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  height: 100%;
+}
+
+.logo svg {
+  width: 100px !important;
+}
+
+/* HEADLINE SPACE */
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.headline-title {
+  font-family: var(--font);
+  font-size: var(--text-l);
+  line-height: var(--leading-l);
+  color: var(--color-fg);
+  letter-spacing: var(--letter-spacing-l);
+
+  hyphens: auto;
+}
+
+.headline-description {
+  font-size: 16px;
+  line-height: 128%;
+}
+
+/* CARDS */
+
+.cards {
+  --card-w: 300px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 60vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card {
+  flex: 0 0 var(--card-w);
+  width: var(--card-w);
+  height: 400px;
+  scroll-snap-align: center;
+  scroll-snap-stop: normal;
+  transform: scale(0.9);
+  transform-origin: center center;
+  will-change: transform;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.card-source {
+  font-size: var(--text-s);
+  margin-bottom: var(--space-2);
+  opacity: 0.85;
+}
+
+.card-title {
+  font-family: var(--font);
+  font-weight: normal;
+  font-size: var(--text-m);
+  line-height: var(--leading-m);
+}
+
+.cards-track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
+  padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cards-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* The hidden track is driven from the visible one, so it must not snap on its own */
+.cards-track.is-scrubbing,
+.cards-track.is-following,
+.iframes-track.is-scrubbing,
+.iframes-track.is-following {
+  scroll-snap-type: none;
+}
+
+.cards-track {
+  transition: opacity 300ms var(--ease);
+}
+
+.cards.is-covered .cards-track {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* SLIDER */
+
+.slider-container {
+  position: absolute;
+  bottom: 24px;
+  left: 12px;
+  width: calc(100% - 24px);
+  height: 72px;
+  padding: 12px;
+  border-radius: 36px;
+  z-index: 30;
+}
+
+.carousel-slider {
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slider__rail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slider__track-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: black;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.carousel-slider__thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 1;
+  width: 4px;
+  height: 48px;
+  margin-top: -24px;
+  background: black;
+  border-radius: 2px;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* The visible thumb is 4px wide; this widens the area you can grab */
+.carousel-slider__thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0 -20px;
+}
+
+.carousel-slider__thumb.is-dragging {
+  cursor: grabbing;
+}
+
+.carousel-label {
+  position: absolute;
+  top: 60%;
+
+  width: fit-content;
+  font-size: 12px;
+}
+
+#carousel-label-left {
+  left: 0;
+  text-align: left;
+  transform: translateX(50%);
+}
+
+#carousel-label-right {
+  right: 0;
+  text-align: right;
+  transform: translateX(-50%);
+}
+
+.slider-label {
+  font-size: 12px;
+  height: 12px;
+  width: fit-content;
+  color: var(--color-fg);
+}
+
+/* iFRAME OVERLAY */
+
+.iframes {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  right: 0;
+  height: 75vh;
+  z-index: 20;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(24px);
+  transition: opacity 300ms var(--ease), transform 300ms var(--ease),
+    visibility 0s linear 300ms;
+}
+
+.iframes.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+}
+
+.iframes-track {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  height: 100%;
+  padding-inline: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.iframes-track::-webkit-scrollbar {
+  display: none;
+}
+
+.iframe-overlay {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: center;
+  transform: scale(0.9);
+  transform-origin: center center;
+  will-change: transform;
+
+  border-radius: 30px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.iframe-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.iframe-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.iframe-scroll img {
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.iframe-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: rgba(128, 128, 128, 0.5);
+  border-radius: 9999px;
+  outline: none;
+  border: none;
+}
+
+.iframe-close::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 9999px;
+  -webkit-box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+          box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+  background-color: rgb(255 255 255 / 10%);
+}
+
+.iframe-close::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: 9999px;
+  -webkit-backdrop-filter: blur(0px);
+          backdrop-filter: blur(0px);
+  -webkit-filter: url(#btn-glass);
+          filter: url(#btn-glass);
+  overflow: hidden;
+  isolation: isolate;
 }
