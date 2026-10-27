@@ -301,6 +301,7 @@ img {
 /* iFRAME OVERLAY */
 
 .iframes {
+  --iframe-w: 315px;
   position: absolute;
   top: 0;
   left: 0;
@@ -328,7 +329,9 @@ img {
   align-items: stretch;
   gap: 12px;
   height: 100%;
-  padding-inline: 12px;
+  /* centre the 315px popup in the screen */
+  padding-inline: calc((100% - var(--iframe-w)) / 2);
+  scroll-padding-inline: calc((100% - var(--iframe-w)) / 2);
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x proximity;
@@ -342,7 +345,7 @@ img {
 
 .iframe-overlay {
   position: relative;
-  flex: 0 0 100%;
+  flex: 0 0 var(--iframe-w); /* 1:1 with the 315px-wide article screenshots */
   height: 100%;
   scroll-snap-align: center;
   transform: scale(0.9);
