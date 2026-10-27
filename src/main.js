@@ -35,3 +35,8 @@ mic.on('blow', () => {
 })
 
 render()
+
+let viewportHeight = window.innerHeight
+let viewportWidth = window.innerWidth
+console.log("viewportHeight", viewportHeight)
+console.log("viewportWidth", viewportWidth)
