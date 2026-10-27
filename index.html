@@ -44,18 +44,33 @@
 
         <div class="bias" role="group" aria-label="Bias Comparison">
           <span class="bias__label">Bias<br />Comparison</span>
-          <button class="bias__button bias__button--left" type="button" aria-pressed="false">Left</button>
-          <button class="bias__button" type="button" aria-pressed="true">Center</button>
-          <button class="bias__button bias__button--right" type="button" aria-pressed="false">Right</button>
+          <button class="bias__button bias__button--left" type="button" data-bias="left" aria-pressed="false">Left</button>
+          <button class="bias__button" type="button" data-bias="center" aria-pressed="true">Center</button>
+          <button class="bias__button bias__button--right" type="button" data-bias="right" aria-pressed="false">Right</button>
         </div>
 
-        <ul class="summary">
-          <li>On Saturday, October 24, nationwide protests drew between 410,000 and nearly 800,000 people across France, with 70,000 police deployed to counter potential violence according to the Interior Ministry and union organizers.</li>
-          <li>Sparked by high school staffing shortages last month, the movement evolved into a nationwide challenge as students and workers demanded increased education funding and relief from soaring living costs.</li>
-          <li>Police deployed water cannons and tear gas across multiple cities, while major Paris museums closed pre-emptively; government officials reported nearly 1,000 arrests as authorities attempted to prevent widespread looting.</li>
-          <li>Political pressure intensified on President Emmanuel Macron as far-left candidate Jean-Luc Melenchon and the far-right National Rally criticized his handling of the crisis; Melenchon warned that "this is going to repeat itself every week."</li>
-          <li>The Yellow Vests and labor unions announced further demonstrations for October 31 and November 5, demanding the freedom to <a href="https://ground.news/interest/protest" target="_blank" rel="noopener">protest</a> and challenging the government's alleged "authoritarian drift" and fiscal policies.</li>
-        </ul>
+        <!-- One summary per bias; the active one slides in from its side -->
+        <div class="summaries">
+          <ul class="summary" data-bias="left" hidden>
+            <li>More than 400,000 people joined protests across France over school funding, living costs and public services, according to the Interior Ministry.</li>
+            <li>The Paris march was mostly peaceful until masked protesters threw objects and fireworks at police, who used tear gas, sound grenades and water cannons.</li>
+            <li>Interior Minister Laurent Nuñez said police made nearly 1,000 arrests, while 70,000 officers were deployed nationwide.</li>
+            <li>The protests grew from student demonstrations into a broader movement involving workers, unions and students.</li>
+          </ul>
+          <ul class="summary" data-bias="center">
+            <li>On Saturday, October 24, nationwide protests drew between 410,000 and nearly 800,000 people across France, with 70,000 police deployed to counter potential violence according to the Interior Ministry and union organizers.</li>
+            <li>Sparked by high school staffing shortages last month, the movement evolved into a nationwide challenge as students and workers demanded increased education funding and relief from soaring living costs.</li>
+            <li>Police deployed water cannons and tear gas across multiple cities, while major Paris museums closed pre-emptively; government officials reported nearly 1,000 arrests as authorities attempted to prevent widespread looting.</li>
+            <li>Political pressure intensified on President Emmanuel Macron as far-left candidate Jean-Luc Melenchon and the far-right National Rally criticized his handling of the crisis; Melenchon warned that "this is going to repeat itself every week."</li>
+            <li>The Yellow Vests and labor unions announced further demonstrations for October 31 and November 5, demanding the freedom to <a href="https://ground.news/interest/protest" target="_blank" rel="noopener">protest</a> and challenging the government's alleged "authoritarian drift" and fiscal policies.</li>
+          </ul>
+          <ul class="summary" data-bias="right" hidden>
+            <li>Hundreds of thousands of people marched across France over high living costs, <a href="https://ground.news/interest/education_fb8947" target="_blank" rel="noopener">education</a> funding, wages, and public services; the Interior Ministry reported 410,000 demonstrators nationwide, including 110,000 in Paris.</li>
+            <li>France deployed 70,000 police officers, while authorities changed the Paris march route and banned some rallies to reduce the risk of renewed violence.</li>
+            <li>Clashes occurred in Lyon and Paris, where police used tear gas; authorities reported 135 arrests nationwide.</li>
+            <li>Businesses, museums, and other cultural institutions closed or increased security after about 3,000 shops were damaged or looted the previous weekend.</li>
+          </ul>
+        </div>
       </main>
     </div>
     <script type="module" src="/src/main.js"></script>
