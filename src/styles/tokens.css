@@ -16,7 +16,8 @@
   --color-bias-right: #d7322d;
 
   /* Type */
-  --font-sans: system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  /* Figma uses Medway — the web version uses the system font Helvetica Neue instead */
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --text-s: 13px;
   --text-m: 17px;
   --text-l: 28px;

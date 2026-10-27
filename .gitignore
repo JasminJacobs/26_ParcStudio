@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Font files stay out of the repo (Medway is Figma only; web uses Helvetica Neue)
+*.otf
+*.ttf
+*.woff
+*.woff2
