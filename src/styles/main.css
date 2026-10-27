@@ -305,6 +305,7 @@ img {
 }
 
 .iframes.is-open {
+  margin-top: 3em;
   opacity: 1;
   visibility: visible;
   transform: none;
