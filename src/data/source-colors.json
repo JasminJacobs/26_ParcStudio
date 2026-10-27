@@ -8,5 +8,7 @@
   "Les Echos": ["#15029F", "#C2A17A", "#FAEC70"],
   "Le Figaro": ["#286FB7", "#10649E"],
   "CNews": ["#E2071B", "#010202"],
-  "La Croix": ["#EF7C12", "#088BBE"]
+  "La Croix": ["#EF7C12", "#088BBE"],
+  "La Repubblica": ["#1F3E77", "#0B1A33"],
+  "CNN": ["#CC0000", "#6E0000"]
 }

@@ -148,9 +148,20 @@ img {
 }
 
 .card-source {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Figma Card-V1: logo + source */
   font-size: var(--text-s);
   margin-bottom: var(--space-2);
   opacity: 0.85;
+}
+
+.card-logo {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .card-title {
