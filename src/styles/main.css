@@ -1,0 +1,64 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  line-height: var(--leading);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* The app always fills the phone screen, respecting notch / home indicator */
+#app {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Desktop preview: show the app inside an iPhone 16 Pro sized frame */
+@media (min-width: 600px) {
+  body {
+    display: grid;
+    place-items: center;
+    background: #e5e5e5;
+  }
+  #app {
+    width: var(--frame-w);
+    height: var(--frame-h);
+    background: var(--color-bg);
+    border-radius: 48px;
+    box-shadow: 0 20px 60px rgb(0 0 0 / 0.15);
+  }
+}
+
+/* Each interaction renders into its own full-size layer */
+.view {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease);
+}
+.view[hidden] {
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
