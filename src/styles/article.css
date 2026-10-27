@@ -101,6 +101,7 @@ button {
   line-height: 30px;
   letter-spacing: -0.3px;
   min-height: 123px; /* Figma text box */
+  margin-top: 8px;
 }
 
 /* BiasComparison (22:1535) */
