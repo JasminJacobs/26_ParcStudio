@@ -23,6 +23,17 @@ const BIAS_LABELS = {
 
 const DEFAULT_IFRAME = 'img/screenshot01.png'
 
+// How fast title / source / bias fade on pinch-out.
+// Higher = gone sooner. Opacity hits 0 at progress 1 / TEXT_FADE
+// (3 → gone at ~33% of the zoom, 1.7 was the old value).
+const TEXT_FADE = 8
+
+// Extra px on top of the logo's measured rest position when shrinking starts.
+// 0 keeps it on the pre-`.is-shrinking` spot; +x is right, +y is down.
+const LOGO_START_X = 0
+const LOGO_START_Y = 0
+const LOGO_END = 32
+
 const SOURCE_LOGOS = {
   teleSUR: 'telesur.png',
   'HuffPost It': 'huffpost-it.png',
@@ -159,10 +170,14 @@ function lerp(a, b, t) {
   return a + (b - a) * t
 }
 
+function layerScale(container) {
+  return container.getBoundingClientRect().width / Math.max(container.offsetWidth, 1)
+}
+
 function rectRelative(el, container) {
   const a = el.getBoundingClientRect()
   const b = container.getBoundingClientRect()
-  const scale = b.width / Math.max(container.offsetWidth, 1)
+  const scale = layerScale(container)
   return {
     x: (a.left - b.left) / scale,
     y: (a.top - b.top) / scale,
@@ -171,12 +186,32 @@ function rectRelative(el, container) {
   }
 }
 
+function logoOffset(card, container) {
+  const logo = card.querySelector('.card-logo')
+  const scale = layerScale(container)
+  const cardRect = card.getBoundingClientRect()
+  if (!logo) {
+    return { left: 16, top: cardRect.height / scale - 56, bottom: 24, size: LOGO_END }
+  }
+  const logoRect = logo.getBoundingClientRect()
+  const left = (logoRect.left - cardRect.left) / scale + LOGO_START_X
+  const top = (logoRect.top - cardRect.top) / scale + LOGO_START_Y
+  const size = logoRect.height / scale
+  const bottom = cardRect.height / scale - top - size
+  return { left, top, bottom, size }
+}
+
 function resetCardStyle(card) {
   const background = card.style.background
   const color = card.style.color
   card.removeAttribute('style')
   card.style.background = background
   card.style.color = color
+  const logo = card.querySelector('.card-logo')
+  if (logo) {
+    logo.style.width = ''
+    logo.style.height = ''
+  }
 }
 
 // Centre item at full size, neighbours down to 0.9
@@ -290,17 +325,21 @@ export function createCards(root, state, { onOpenChange } = {}) {
     const measured = cards.map((card) => ({
       card,
       rect: rectRelative(card, layer),
+      logo: logoOffset(card, layer),
     }))
 
     const from = new Map()
     layer.classList.add('is-active')
 
-    for (const { card, rect } of measured) {
+    for (const { card, rect, logo } of measured) {
       from.set(String(card.dataset.id), {
         el: card,
         type: card.dataset.type,
         source: card.dataset.source,
         ...rect,
+        logoLeft: logo.left,
+        logoBottom: logo.bottom,
+        logoSize: logo.size,
       })
 
       const placeholder = document.createElement('article')
@@ -310,7 +349,6 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.after(placeholder)
 
       layer.append(card)
-      card.classList.add('is-shrinking')
       card.style.position = 'absolute'
       card.style.margin = '0'
       card.style.transform = 'none'
@@ -319,6 +357,15 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.style.top = `${rect.y}px`
       card.style.width = `${rect.w}px`
       card.style.height = `${rect.h}px`
+      card.style.setProperty('--logo-left', `${logo.left}px`)
+      card.style.setProperty('--logo-top', `${logo.top}px`)
+      card.style.setProperty('--title-opacity', '1')
+      const logoEl = card.querySelector('.card-logo')
+      if (logoEl) {
+        logoEl.style.width = `${logo.size}px`
+        logoEl.style.height = `${logo.size}px`
+      }
+      card.classList.add('is-shrinking')
     }
 
     syncAndScale()
@@ -342,7 +389,20 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.style.height = `${h}px`
       card.style.padding = `${lerp(16, 6, ease)}px ${lerp(16, 10, ease)}px`
       card.style.borderRadius = `${lerp(0, 18, ease)}px`
-      card.style.setProperty('--title-opacity', String(Math.max(0, 1 - ease * 1.7)))
+      card.style.setProperty(
+        '--title-opacity',
+        String(Math.max(0, 1 - ease * TEXT_FADE)),
+      )
+      const logo = lerp(start.logoSize, LOGO_END, ease)
+      const left = lerp(start.logoLeft, (w - logo) / 2, ease)
+      const top = lerp(h - start.logoBottom - logo, (h - logo) / 2, ease)
+      card.style.setProperty('--logo-left', `${left}px`)
+      card.style.setProperty('--logo-top', `${top}px`)
+      const logoEl = card.querySelector('.card-logo')
+      if (logoEl) {
+        logoEl.style.width = `${logo}px`
+        logoEl.style.height = `${logo}px`
+      }
       card.classList.toggle('is-label', ease > 0.52)
     }
   }

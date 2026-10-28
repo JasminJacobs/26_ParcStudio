@@ -137,6 +137,7 @@ img {
   flex: 0 0 var(--card-w);
   width: var(--card-w);
   height: 400px;
+  position: relative;
   scroll-snap-align: center;
   scroll-snap-stop: normal;
   transform: scale(0.9);
@@ -162,6 +163,7 @@ img {
 }
 
 .card-logo {
+  position: absolute;
   flex-shrink: 0;
   width: 32px;
   height: 32px;
@@ -171,7 +173,8 @@ img {
 }
 
 .card-tags-text {
-  height: fit-content;
+  margin-left: 40px;
+  opacity: var(--title-opacity, 1);
 }
 
 .card-type-separator {
@@ -496,35 +499,36 @@ img {
 
 .card.is-shrinking {
   overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  gap: 0;
 }
 
-.card.is-shrinking .card-title {
+.card.is-shrinking .card-logo {
+  left: var(--logo-left, var(--space-3));
+  top: var(--logo-top);
+  bottom: auto;
+  margin: 0;
+  transform: none;
+}
+
+.card.is-shrinking .card-title,
+.card.is-shrinking .card-tags-text {
+  pointer-events: none;
+}
+
+/* .card.is-shrinking .card-title {
   position: absolute;
   left: 12px;
   right: 12px;
   bottom: 36px;
-  pointer-events: none;
-}
+} */
 
 .card.is-label {
-  border-radius: 999px;
+  border-radius: 200px;
   cursor: pointer;
 }
 
-.card.is-label .card-title {
+.card.is-label .card-title,
+.card.is-label .card-tags-text {
   visibility: hidden;
-}
-
-.card.is-label .card-source {
-  margin: 0;
-  opacity: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 148px;
 }
 
 .map {

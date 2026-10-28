@@ -10,8 +10,7 @@ const CLUSTER_ANCHORS = {
   Conservative: { x: 0.74, y: 0.78 },
 }
 
-const CHIP_H = 28
-const CHIP_PAD_X = 10
+const CHIP = 40
 const PINCH_RANGE = 0.42
 
 function clamp(value, min, max) {
@@ -40,26 +39,11 @@ function fieldBox(layer) {
   return { x: side, y: top, w: w - side * 2, h: h - top - bottom }
 }
 
-let measureCtx
-function textWidth(text) {
-  measureCtx ??= document.createElement('canvas').getContext('2d')
-  measureCtx.font = '12px Medway, "Helvetica Neue", sans-serif'
-  return measureCtx.measureText(text).width
-}
-
-function chipSize(source) {
-  const w = Math.min(
-    168,
-    Math.max(52, Math.ceil(textWidth(source || '')) + CHIP_PAD_X * 2),
-  )
-  return { w, h: CHIP_H }
-}
 
 function columnCount(n) {
   if (n <= 1) return 1
-  if (n === 2) return 2
-  if (n <= 4) return 1
-  return 2
+  if (n <= 4) return 2
+  return 3
 }
 
 function layoutClusters(from, layer) {
@@ -80,13 +64,12 @@ function layoutClusters(from, layer) {
     const cx = field.x + anchor.x * field.w
     const cy = field.y + anchor.y * field.h
     const n = members.length
-    const sizes = members.map((item) => chipSize(item.source))
     const cols = columnCount(n)
     const rows = Math.ceil(n / cols)
-    const gapX = 8
-    const gapY = 8
-    const colW = Math.max(...sizes.map((s) => s.w)) + gapX
-    const rowH = CHIP_H + gapY
+    const gapX = 10
+    const gapY = 10
+    const colW = CHIP + gapX
+    const rowH = CHIP + gapY
     const gridW = cols * colW - gapX
     const gridH = rows * rowH - gapY
     const originX = cx - gridW / 2
@@ -95,7 +78,8 @@ function layoutClusters(from, layer) {
     members.forEach((item, i) => {
       const col = i % cols
       const row = Math.floor(i / cols)
-      const { w, h } = sizes[i]
+      const w = CHIP
+      const h = CHIP
       const jitter = (hash01(Number(item.id) * 7.13) - 0.5) * (cols === 1 ? 16 : 6)
       const stagger = cols > 1 && row % 2 === 1 ? 12 : 0
       let x = originX + col * colW + stagger + jitter
