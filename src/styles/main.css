@@ -248,58 +248,66 @@ img {
   height: 100%;
 }
 
-.carousel-slider__track-line {
+/* The bar: one block per article (--bar-unit wide, incl. a 2px gap) in its tag colour.
+   Its left edge starts at the centre marker; JS shifts it so the current article sits there. */
+.slider-bar {
   position: absolute;
-  left: 0;
-  right: 0;
   top: 50%;
-  height: 1px;
-  background: black;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* --r is the 0–1 position along the slider; marks line up with the thumb's centre (4px wide) */
-.carousel-slider__marks {
-  position: absolute;
-  inset: 0;
+  left: 50%;
+  height: 12px;
+  margin-top: -6px;
+  display: flex;
+  will-change: transform;
   pointer-events: none;
 }
 
-.carousel-slider__tick {
-  position: absolute;
-  top: 50%;
-  left: calc(2px + var(--r) * (100% - 4px));
-  width: 1px;
-  height: 8px;
-  background: black;
-  transform: translate(-50%, -50%);
+.slider-bar__segment {
+  flex: 0 0 auto;
+  height: 100%;
+  /* 2px gaps between articles, punched out of the segment colour */
+  -webkit-mask: repeating-linear-gradient(
+    90deg,
+    #000 0 calc(var(--bar-unit) - 2px),
+    transparent calc(var(--bar-unit) - 2px) var(--bar-unit)
+  );
+  mask: repeating-linear-gradient(
+    90deg,
+    #000 0 calc(var(--bar-unit) - 2px),
+    transparent calc(var(--bar-unit) - 2px) var(--bar-unit)
+  );
 }
 
+.slider-bar__segment[data-bias='farleft'] { background: var(--tag-farleft); }
+.slider-bar__segment[data-bias='left'] { background: var(--tag-left); }
+.slider-bar__segment[data-bias='leanleft'] { background: var(--tag-leanleft); }
+.slider-bar__segment[data-bias='centre'] { background: var(--tag-centre); }
+.slider-bar__segment[data-bias='leanright'] { background: var(--tag-leanright); }
+.slider-bar__segment[data-bias='right'] { background: var(--tag-right); }
+.slider-bar__segment[data-bias='farright'] { background: var(--tag-farright); }
+
+/* Fixed centre marker: shows the current article */
 .carousel-slider__thumb {
   position: absolute;
   top: 50%;
-  left: 0;
+  left: 50%;
   z-index: 1;
   width: 4px;
   height: 48px;
-  margin-top: -24px;
+  margin: -24px 0 0 -2px;
   background: black;
   border-radius: 2px;
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
+  pointer-events: none;
+}
+
+/* The whole slider is the grab area; it handles its own drag (no page scroll, no pinch) */
+.slider-container {
   cursor: grab;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* The visible thumb is 4px wide; this widens the area you can grab */
-.carousel-slider__thumb::before {
-  content: '';
-  position: absolute;
-  inset: 0 -20px;
-}
-
-.carousel-slider__thumb.is-dragging {
+.slider-container.is-dragging {
   cursor: grabbing;
 }
 
@@ -323,9 +331,9 @@ img {
   transform: translateX(-50%);
 }
 
-/* Positioned against .slider-container, so offset by its 12px padding */
+/* Follows the centre zone on the bar (--centre is set from JS, 0–1 of the rail) */
 #carousel-label-centre {
-  left: calc(14px + var(--centre, 0.5) * (100% - 28px));
+  left: calc(12px + var(--centre, 0.5) * (100% - 24px));
   text-align: center;
   transform: translateX(-50%);
 }

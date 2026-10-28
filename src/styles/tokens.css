@@ -23,6 +23,15 @@
   --color-blue: #006fff;
   --color-muted: #8a8a8a;
 
+  /* Tag colours, far left → far right (TODO: exact values from Figma frame #tagcolor) */
+  --tag-farleft: #b30000;
+  --tag-left: #ff0000;
+  --tag-leanleft: #ff9a9a;
+  --tag-centre: #ffffff;
+  --tag-leanright: #8fb9ff;
+  --tag-right: #006fff;
+  --tag-farright: #0040a0;
+
   /* Type */
   /* Figma uses Medway (Book 450, Medium 500). It renders where Medway is
      installed; everywhere else it falls back to Helvetica Neue. */
