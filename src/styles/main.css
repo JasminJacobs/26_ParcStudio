@@ -229,6 +229,8 @@ img {
   --bar-unit: 16px; /* width per article, block + gap */
   --bar-gap: 6px; /* space between two articles */
   --bar-height: 45px;
+  --bar-drag-scale: 1.15; /* the bar grows by this while you drag it */
+  --bar-drag-duration: 600ms; /* how long the growing / shrinking takes */
 }
 
 .carousel-slider {
@@ -253,6 +255,16 @@ img {
   display: flex;
   will-change: transform;
   pointer-events: none;
+  /* Scales around its left edge, which sits at the marker,
+     so the current article stays under the marker while it grows */
+  transform-origin: 0 50%;
+  scale: 1;
+  /* easeOutQuint */
+  transition: scale var(--bar-drag-duration) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slider-container.is-dragging .slider-bar {
+  scale: var(--bar-drag-scale);
 }
 
 .slider-bar__segment {
@@ -315,6 +327,18 @@ img {
   white-space: nowrap;
   font-family: var(--font-medium);
   font-size: 14px;
+  /* Old and new word sit on top of each other while they swap */
+  display: grid;
+  justify-items: center;
+}
+
+.carousel-label > span {
+  grid-area: 1 / 1;
+}
+
+/* Roll: words only show inside the label's line */
+.carousel-label[data-transition='roll'] {
+  overflow: hidden;
 }
 
 .slider-label {
