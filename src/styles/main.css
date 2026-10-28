@@ -251,7 +251,7 @@ img {
 .slider-bar {
   position: absolute;
   top: 50%;
-  left: calc(50% + 4px);
+  left: 50%;
   height: var(--bar-height);
   margin-top: calc(var(--bar-height) / -2);
   display: flex;
