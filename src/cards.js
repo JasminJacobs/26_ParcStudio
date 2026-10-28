@@ -388,7 +388,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.style.width = `${w}px`
       card.style.height = `${h}px`
       card.style.padding = `${lerp(16, 6, ease)}px ${lerp(16, 10, ease)}px`
-      card.style.borderRadius = `${lerp(0, 18, ease)}px`
+      card.style.borderRadius = `${lerp(0, 26, ease)}px`
       card.style.setProperty(
         '--title-opacity',
         String(Math.max(0, 1 - ease * TEXT_FADE)),
