@@ -205,10 +205,14 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function setProgress(t) {
+    const entering = progress === 0 && t > 0
     progress = clamp(t, 0, 1)
     const current = ensureSession()
     cards.applyFlight(current.from, current.to, progress)
     applyChrome(progress, current.wasOpen)
+    if (entering) {
+      root.dispatchEvent(new CustomEvent('parc:overview-enter'))
+    }
   }
 
   function finish(target) {
