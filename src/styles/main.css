@@ -11,7 +11,7 @@
 
 :root {
   --font: var(--font-sans); /* Medway only if installed locally — never as a file */
-  --color-bg: #EEEFE8;
+  --color-bg: #e7e7e7;
   --color-fg: #000000;
   --text-s: 12px;
   --leading-s: 128%;
@@ -228,8 +228,11 @@ img {
   --bar-unit: 14.4px; /* width per article, block + gap */
   --bar-gap: 5.4px; /* space between two articles */
   --bar-height: 40.5px;
-  --bar-drag-scale: 1.02; /* the bar grows by this while you drag it */
-  --bar-drag-duration: 400ms; /* how long the growing / shrinking takes */
+  --bar-drag-scale: 1.02; /* the whole bar grows a little while you drag it */
+  --block-scale: 1.3; /* the block under the marker grows this much in height */
+  --block-scale-near: 1.07; /* the block before and after it grow this much */
+  --block-duration: 400ms; /* its grow / shrink, ease-in-out */
+  --bar-drag-duration: 600ms; /* how long the growing / shrinking takes */
 }
 
 .carousel-slider {
@@ -266,29 +269,33 @@ img {
   scale: var(--bar-drag-scale);
 }
 
-.slider-bar__segment {
-  flex: 0 0 auto;
+/* One block per article: --bar-unit wide incl. the gap on its right */
+.slider-bar__block {
+  flex: none;
+  width: calc(var(--bar-unit) - var(--bar-gap));
   height: 100%;
-  /* Gaps between articles, punched out of the segment colour */
-  -webkit-mask: repeating-linear-gradient(
-    90deg,
-    #000 0 calc(var(--bar-unit) - var(--bar-gap)),
-    transparent calc(var(--bar-unit) - var(--bar-gap)) var(--bar-unit)
-  );
-  mask: repeating-linear-gradient(
-    90deg,
-    #000 0 calc(var(--bar-unit) - var(--bar-gap)),
-    transparent calc(var(--bar-unit) - var(--bar-gap)) var(--bar-unit)
-  );
+  margin-right: var(--bar-gap);
+  scale: 1 1;
+  transition: scale var(--block-duration) ease-in-out;
 }
 
-.slider-bar__segment[data-bias='farleft'] { background: var(--tag-farleft); }
-.slider-bar__segment[data-bias='left'] { background: var(--tag-left); }
-.slider-bar__segment[data-bias='leanleft'] { background: var(--tag-leanleft); }
-.slider-bar__segment[data-bias='centre'] { background: var(--tag-centre); }
-.slider-bar__segment[data-bias='leanright'] { background: var(--tag-leanright); }
-.slider-bar__segment[data-bias='right'] { background: var(--tag-right); }
-.slider-bar__segment[data-bias='farright'] { background: var(--tag-farright); }
+/* While dragging, the block under the marker grows in height */
+.slider-container.is-dragging .slider-bar__block.is-current {
+  scale: 1 var(--block-scale);
+}
+
+/* …and its two neighbours a little */
+.slider-container.is-dragging .slider-bar__block.is-near {
+  scale: 1 var(--block-scale-near);
+}
+
+.slider-bar__block[data-bias='farleft'] { background: var(--tag-farleft); }
+.slider-bar__block[data-bias='left'] { background: var(--tag-left); }
+.slider-bar__block[data-bias='leanleft'] { background: var(--tag-leanleft); }
+.slider-bar__block[data-bias='centre'] { background: var(--tag-centre); }
+.slider-bar__block[data-bias='leanright'] { background: var(--tag-leanright); }
+.slider-bar__block[data-bias='right'] { background: var(--tag-right); }
+.slider-bar__block[data-bias='farright'] { background: var(--tag-farright); }
 
 /* Fixed centre marker: shows the current article */
 .carousel-slider__thumb {
@@ -298,7 +305,7 @@ img {
   z-index: 1;
   width: 2px;
   height: 65px;
-  margin: -28px 0 0 0;
+  margin: -28px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
   background: black;
   border-radius: 2px;
   pointer-events: none;

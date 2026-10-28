@@ -12,6 +12,8 @@ import { BIAS_ORDER } from './cards.js'
 
 // Width per article on the bar: set as --bar-unit on .slider-container in main.css
 let UNIT = 12
+// Gap between two blocks: --bar-gap in main.css
+let GAP = 0
 
 // Tag names shown under the marker
 const TAG_NAMES = {
@@ -60,17 +62,6 @@ function scrollForPos(track, pos) {
   return x - track.clientWidth / 2
 }
 
-// Consecutive articles with the same tag become one coloured segment
-function segments(articles) {
-  const runs = []
-  for (const a of articles) {
-    const last = runs[runs.length - 1]
-    if (last && last.bias === a.bias) last.count++
-    else runs.push({ bias: a.bias, count: 1 })
-  }
-  return runs
-}
-
 // Centre zone on the bar, as [start, end] in article units (article i spans i … i+1)
 function centreZone(articles) {
   const centre = articles
@@ -90,6 +81,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   if (!container) return { refresh() {} }
 
   UNIT = parseFloat(getComputedStyle(container).getPropertyValue('--bar-unit')) || UNIT
+  GAP = parseFloat(getComputedStyle(container).getPropertyValue('--bar-gap')) || 0
   // The markup is in index.html (.slider-container)
 
   const rail = container.querySelector('.carousel-slider__rail')
@@ -107,6 +99,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   let barKey = ''
   let pos = 0
   let labelIndex = -1
+  let currentBlock = null
 
   // Swap the word under the marker. dir: +1 when moving to a later article
   // (the bar moves left), −1 when moving to an earlier one.
@@ -144,13 +137,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     if (key === barKey) return
     barKey = key
 
+    // One block per article, so the one under the marker can grow on its own
     bar.style.width = `${articles.length * UNIT}px`
-    bar.innerHTML = segments(articles)
-      .map(
-        (s) =>
-          `<span class="slider-bar__segment" data-bias="${s.bias}" style="flex-basis:${s.count * UNIT}px"></span>`,
-      )
+    bar.innerHTML = articles
+      .map((a) => `<span class="slider-bar__block" data-bias="${a.bias}"></span>`)
       .join('')
+    currentBlock = null
     zone = centreZone(articles)
     container.setAttribute('aria-valuemin', '1')
     container.setAttribute('aria-valuemax', String(articles.length))
@@ -159,10 +151,24 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   // Move the bar so article `pos` sits under the centre marker
   function place(nextPos) {
     pos = nextPos
-    bar.style.transform = `translate3d(${-(pos + 0.5) * UNIT}px, 0, 0)`
+    // Block i starts at i × UNIT and is (UNIT − GAP) wide: put its middle on the marker
+    bar.style.transform = `translate3d(${-(pos * UNIT + (UNIT - GAP) / 2)}px, 0, 0)`
 
     const index = Math.round(pos)
     const article = articles[index]
+
+    // Mark the block under the marker (it grows while dragging, see main.css)
+    const block = bar.children[index] ?? null
+    if (block !== currentBlock) {
+      currentBlock?.classList.remove('is-current')
+      currentBlock?.previousElementSibling?.classList.remove('is-near')
+      currentBlock?.nextElementSibling?.classList.remove('is-near')
+      block?.classList.add('is-current')
+      // the closest block before and after grow a little too
+      block?.previousElementSibling?.classList.add('is-near')
+      block?.nextElementSibling?.classList.add('is-near')
+      currentBlock = block
+    }
 
     // The label under the marker names the tag of the article under it
     if (index !== labelIndex) {
