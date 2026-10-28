@@ -40,7 +40,7 @@ button {
   height: 41px;
 }
 
-/* Scroll: article first, then the gallery locks to the screen */
+/* Everything below the header scrolls in one column */
 .scroller {
   height: calc(100% - 54px);
   overflow-y: auto;
@@ -55,9 +55,7 @@ button {
 .article {
   display: flex;
   flex-direction: column;
-  gap: 0; /* between meta, title, gallery and Bias Comparison */
   min-height: 100%;
-  padding: 0;
   overflow-x: clip; /* clips the sliding summaries at the screen edge */
 }
 .article > * {
@@ -65,16 +63,14 @@ button {
 }
 
 /* Gallery (Figma Gallery-1, 22:1636) — fills the rest of the first screen
-   under the title, so cards and slider bar are visible without scrolling.
-   --gallery-h is measured in main.js (fitGallery). Full width (cancels the
-   article's side padding). */
+   under the title, so cards and slider bar are visible without scrolling
+   (--gallery-h is measured in main.js, fitGallery). */
 .gallery {
   position: relative;
-  /* Own layer: cards, slider bar and popup keep their order inside the gallery,
+  /* own layer: cards, popup and slider bar keep their order inside,
      but the whole gallery scrolls under the sticky title */
   isolation: isolate;
   height: var(--gallery-h, 593px);
-  margin: 0 calc(-1 * var(--space-3));
   overflow: hidden;
 }
 
@@ -116,21 +112,17 @@ button {
 }
 
 /* Title (22:1533 / 22:1675) — text style "Headline Title"
-   One title for both screens: it scrolls with the article until it is
-   --title-top (15px) below the header (Figma Gallery-1), then stays there.
-   .is-stuck (set in main.js) fills the space above it, so text scrolling
-   underneath stays hidden. */
+   Sticky: scrolls with the article until it is --title-top below the header,
+   then stays there. While stuck (.is-stuck, set in main.js) a line shows
+   under it and the strip above it is filled, so text scrolling underneath
+   stays hidden. */
 .article__title {
-  --title-top: 15px; /* where the title sticks, below the header (main.js reads it too) */
+  --title-top: 15px; /* where it sticks (main.js reads it too) */
   position: sticky;
   top: var(--title-top);
   z-index: 10;
   min-height: 123px; /* Figma text box */
-  /* 16px bottom padding keeps scrolled text away from the title; the
-     negative margin cancels it, so the layout below doesn't move */
-  /* margin: 8px calc(-1 * var(--space-3)) -16px;
-  padding: 0 var(--space-3) 16px; */
-  padding: 0 18px 18px 18px;
+  padding: 0 18px 18px;
   box-sizing: content-box;
   background: var(--color-bg);
   font-family: var(--font);
@@ -140,33 +132,25 @@ button {
   letter-spacing: -0.35px; /* -1% */
 }
 
-/* .article__title.is-stuck {
-  font-size: 28px;
-} */
-
-/* 0.5px line along the bottom of the title once it is stuck */
+/* 0.5px line under the title while it is stuck */
 .article__title::after {
   content: '';
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: auto 0 0;
   height: 0.5px;
   background: var(--color-fg);
   opacity: 0;
-  /* disappears when the scrolling stops */
-  transition: opacity 400ms ease-in-out;
+  transition: opacity 400ms ease-in-out; /* disappears */
 }
 .article__title.is-stuck::after {
   opacity: 1;
-  transition: opacity 200ms ease; /* appears when the title reaches the top */
+  transition: opacity 200ms ease; /* appears */
 }
+/* fills the --title-top strip above the stuck title */
 .article__title.is-stuck::before {
   content: '';
   position: absolute;
-  right: 0;
-  bottom: 100%;
-  left: 0;
+  inset: auto 0 100%;
   height: var(--title-top);
   background: var(--color-bg);
 }
@@ -188,14 +172,40 @@ button {
   line-height: 21px;
 }
 
-/* BiasComparison (22:1475): grey bar with the three buttons, no rounded corners */
+/* BiasComparison (22:1475): grey bar with the three buttons.
+   Sticks right under the stuck title while the summaries scroll
+   (--title-bottom is measured in main.js). */
 .bias {
+  position: sticky;
+  top: var(--title-bottom, 200px);
+  z-index: 9;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   height: 67px;
   padding: 12px;
-  border-radius: 2px; 
+  border-radius: 2px;
+}
+
+/* Two layers behind the buttons:
+   ::before  beige backdrop at the sides (over the section's 18px padding),
+             so the lists don't show beside the bar
+   ::after   the grey bar itself */
+.bias::before,
+.bias::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.bias::before {
+  z-index: -2;
+  inset: 0 -18px;
+  background: var(--color-bg);
+}
+.bias::after {
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
   background: var(--color-grey);
 }
 
@@ -245,12 +255,14 @@ button {
   font-size: 19px;
   line-height: 120%;
 }
+/* Hidden lists stay in the grid cell (just invisible), so the block is always
+   as high as the longest list and the page below doesn't jump */
 .summary[hidden] {
-  display: none;
+  display: flex;
+  visibility: hidden;
 }
 .summary li {
-  margin-left: 28.5px;
-  list-style: disc;
+  list-style: none; /* no bullet points */
 }
 .summary a {
   color: inherit;
