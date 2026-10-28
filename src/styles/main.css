@@ -104,13 +104,16 @@ img {
 /* CARDS */
 
 .cards {
-  --card-w: 300px;
+  /* Cards shrink with the gallery: the slider bar takes 128px at the bottom
+     (104px + 24px), the card leaves 30px around it to scale; width = 85% of the height */
+  --card-h: min(400px, calc(var(--gallery-h, 593px) - 128px - 30px));
+  --card-w: calc(var(--card-h) * 0.8);
   position: absolute;
   left: 0;
   right: 0;
   width: 100%;
-  top: 175px; /* below the gallery title (Figma Gallery-1) */
-  height: 465px;
+  top: 0; /* the gallery now starts right under the title */
+  height: calc(100% - 128px); /* everything above the slider bar */
   z-index: 1;
   pointer-events: none;
 }
@@ -118,7 +121,7 @@ img {
 .card {
   flex: 0 0 var(--card-w);
   width: var(--card-w);
-  height: 400px;
+  height: var(--card-h);
   position: relative;
   scroll-snap-align: center;
   scroll-snap-stop: normal;
@@ -138,7 +141,7 @@ img {
   flex-direction: row;
   align-items: center;
   width: 100%;
-  font-size: var(--text-s);
+  font-size: 12px; /* newspaper name | tag */
   margin-bottom: var(--space-2);
   text-transform: capitalize;
   opacity: 0.85;
@@ -166,7 +169,7 @@ img {
 .card-title {
   font-family: var(--font);
   font-weight: normal;
-  font-size: var(--text-l);
+  font-size: 32px;
   line-height: var(--leading-m);
   opacity: var(--title-opacity, 1);
 }
@@ -222,9 +225,9 @@ img {
   z-index: 30;
 
   /* Slider bar settings — change them here (the JS reads --bar-unit) */
-  --bar-unit: 16px; /* width per article, block + gap */
-  --bar-gap: 6px; /* space between two articles */
-  --bar-height: 45px;
+  --bar-unit: 14.4px; /* width per article, block + gap */
+  --bar-gap: 5.4px; /* space between two articles */
+  --bar-height: 40.5px;
   --bar-drag-scale: 1.15; /* the bar grows by this while you drag it */
   --bar-drag-duration: 600ms; /* how long the growing / shrinking takes */
 }

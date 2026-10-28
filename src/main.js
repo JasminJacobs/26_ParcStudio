@@ -54,6 +54,19 @@ biasButtons.forEach((button) =>
   button.addEventListener('click', () => showBias(button.dataset.bias)),
 )
 
+// First screen: the gallery fills the space under the title, so the cards and
+// the slider bar are visible without scrolling (--gallery-h, article.css)
+const gallery = app.querySelector('.gallery')
+function fitGallery() {
+  const scroll = app.querySelector('.scroller')
+  const top = gallery.offsetTop - scroll.offsetTop // gallery top on the first screen
+  const h = Math.max(360, scroll.clientHeight - top)
+  gallery.style.setProperty('--gallery-h', `${h}px`)
+}
+fitGallery()
+document.fonts?.ready.then(fitGallery) // the title wraps differently once the font is in
+window.addEventListener('resize', fitGallery)
+
 // Sticky title: mark it once it is stuck below the header.
 // It sticks when the meta above it has scrolled to within --title-top
 // (article.css, .article__title) of the top.
