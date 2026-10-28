@@ -121,6 +121,33 @@
               </ul>
             </div>
           </section>
+
+          <!-- 2e. GALLERY (Figma: Gallery-1), fills the screen once it locks -->
+          <section class="gallery" aria-label="Gallery">
+
+            <!-- Cards carousel. JS: cards.js adds one .card per article -->
+            <section class="cards" aria-label="Stories">
+              <div class="cards-track"></div>
+            </section>
+
+            <!-- Slider bar at the bottom. JS: carousel-slider.js fills the bar and the label -->
+            <div class="slider-container">
+              <div class="carousel-slider">
+                <div class="carousel-slider__rail">
+                  <div class="slider-bar" aria-hidden="true"></div>
+                  <div class="carousel-slider__thumb" aria-hidden="true"></div>
+                </div>
+                <div class="carousel-label" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <!-- Popup with the article screenshots, opens on top of the cards when a card is clicked.
+                 JS: cards.js adds one .iframe-overlay per article -->
+            <section class="iframes" aria-label="Articles">
+              <div class="iframes-track"></div>
+            </section>
+            <div class="slider-cover"></div>
+          </section>
         </main>
       </div>
 

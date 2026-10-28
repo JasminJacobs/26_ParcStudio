@@ -251,7 +251,7 @@ img {
 .slider-bar {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: calc(50% + 4px);
   height: var(--bar-height);
   margin-top: calc(var(--bar-height) / -2);
   display: flex;
@@ -303,7 +303,7 @@ img {
   top: 45%;
   left: 50%;
   z-index: 1;
-  width: 3px;
+  width: 2px;
   height: 65px;
   margin: -28px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
   background: black;
@@ -331,7 +331,7 @@ img {
   transform: translateX(-50%);
   width: fit-content;
   white-space: nowrap;
-  font-family: var(--font-medium);
+  font-family: var(--font);
   font-size: 14px;
   /* Old and new word sit on top of each other while they swap */
   display: grid;
@@ -352,6 +352,17 @@ img {
   height: 12px;
   width: fit-content;
   color: var(--color-fg);
+}
+
+.slider-cover {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 104px;
+  pointer-events: none;
+  background: linear-gradient(0.25turn, var(--color-bg) 2%, transparent 10%, transparent 90%, var(--color-bg) 98%);  
+  z-index: 200;
 }
 
 /* iFRAME OVERLAY */
