@@ -52,12 +52,12 @@
           </div>
 
           <!-- 2b. TITLE — sticky: scrolls up with the page, then stays 15px below the header
-                   (--title-top in article.css). A thin line shows under it while scrolling. -->
+                   (--title-top in article.css). A thin line shows under it while it sticks. -->
           <h1 class="article__title">
             Hundreds of thousands march across France in protests over schools and policing
           </h1>
 
-          <!-- 2c. GALLERY — one screen high, under the sticky title (Figma: Gallery-1).
+          <!-- 2c. GALLERY — fills the first screen under the title (Figma: Gallery-1).
                    From top to bottom: cards, slider bar; the popup opens over the cards,
                    the slider bar stays visible below it. -->
           <section class="gallery" aria-label="Gallery">
@@ -86,12 +86,13 @@
             <section class="iframes" aria-label="Articles">
               <div class="iframes-track"></div>
             </section>
-            <div class="slider-cover"></div>
 
+            <!-- Fades the slider bar out at the left and right edge -->
+            <div class="slider-cover"></div>
           </section>
 
-          <!-- 2d. BIAS COMPARISON — line on top, heading, three buttons, then the summary
-                   of the chosen side (Figma 48:756) -->
+          <!-- 2d. BIAS COMPARISON — line on top, heading, three buttons (sticky under the title),
+                   then the summary of the chosen side (Figma 48:756) -->
           <section class="bias-section" aria-labelledby="bias-heading">
             <h2 class="bias-section__title" id="bias-heading">Bias Comparison</h2>
 
@@ -124,32 +125,6 @@
                 <li>Businesses, museums, and other cultural institutions closed or increased security after about 3,000 shops were damaged or looted the previous weekend.</li>
               </ul>
             </div>
-          </section>
-
-          <!-- 2e. GALLERY (Figma: Gallery-1), fills the screen once it locks -->
-          <section class="gallery" aria-label="Gallery">
-
-            <!-- Cards carousel. JS: cards.js adds one .card per article -->
-            <section class="cards" aria-label="Stories">
-              <div class="cards-track"></div>
-            </section>
-
-            <!-- Slider bar at the bottom. JS: carousel-slider.js fills the bar and the label -->
-            <div class="slider-container">
-              <div class="carousel-slider">
-                <div class="carousel-slider__rail">
-                  <div class="slider-bar" aria-hidden="true"></div>
-                  <div class="carousel-slider__thumb" aria-hidden="true"></div>
-                </div>
-                <div class="carousel-label" aria-hidden="true"></div>
-              </div>
-            </div>
-
-            <!-- Popup with the article screenshots, opens on top of the cards when a card is clicked.
-                 JS: cards.js adds one .iframe-overlay per article -->
-            <section class="iframes" aria-label="Articles">
-              <div class="iframes-track"></div>
-            </section>
           </section>
         </main>
       </div>

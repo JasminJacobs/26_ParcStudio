@@ -239,16 +239,26 @@ img {
   padding: 12px;
   border-radius: 36px;
   z-index: 30;
+  /* the whole slider is the grab area; it handles its own drag
+     (no page scroll, no pinch) */
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 
-  /* Slider bar settings — change them here (the JS reads --bar-unit) */
+  /* Slider bar settings — change them here (the JS reads unit and gap) */
   --bar-unit: 14.4px; /* width per article, block + gap */
-  --bar-gap: 5.4px; /* space between two articles */
+  --bar-gap: 5.4px; /* space between two blocks */
   --bar-height: 40.5px;
-  --bar-drag-scale: 1.02; /* the whole bar grows a little while you drag it */
+  --bar-drag-scale: 1.02; /* the whole bar grows a little while dragging… */
+  --bar-drag-duration: 600ms; /* …over this time */
   --block-scale: 1.3; /* the block under the marker grows this much in height */
-  --block-scale-near: 1.07; /* the block before and after it grow this much */
-  --block-duration: 400ms; /* its grow / shrink, ease-in-out */
-  --bar-drag-duration: 600ms; /* how long the growing / shrinking takes */
+  --block-scale-near: 1.07; /* the block before and after it */
+  --block-duration: 400ms; /* their grow / shrink, ease-in-out */
+}
+
+.slider-container.is-dragging {
+  cursor: grabbing;
 }
 
 .carousel-slider {
@@ -262,8 +272,8 @@ img {
   height: 100%;
 }
 
-/* The bar: one block per article (--bar-unit wide, incl. --bar-gap) in its tag colour.
-   Its left edge starts at the centre marker; JS shifts it so the current article sits there. */
+/* The bar: one block per article in its tag colour. Its left edge starts at
+   the marker; JS shifts it so the middle of the current block sits there. */
 .slider-bar {
   position: absolute;
   top: 50%;
@@ -321,22 +331,10 @@ img {
   z-index: 1;
   width: 2px;
   height: 65px;
-  margin: -28px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
+  margin: -28px 0 0 -1px; /* half the width, so its middle sits exactly at 50% */
   background: black;
   border-radius: 2px;
   pointer-events: none;
-}
-
-/* The whole slider is the grab area; it handles its own drag (no page scroll, no pinch) */
-.slider-container {
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.slider-container.is-dragging {
-  cursor: grabbing;
 }
 
 /* Under the marker: the tag of the current article (text set from JS) */
@@ -363,13 +361,6 @@ img {
   overflow: hidden;
 }
 
-.slider-label {
-  font-size: 12px;
-  height: 12px;
-  width: fit-content;
-  color: var(--color-fg);
-}
-
 .slider-cover {
   position: absolute;
   bottom: 0;
@@ -377,7 +368,7 @@ img {
   right: 0;
   height: 104px;
   pointer-events: none;
-  background: linear-gradient(0.25turn, var(--color-bg) 5%, transparent 10%, transparent 90%, var(--color-bg) 95%);  
+  background: linear-gradient(0.25turn, var(--color-bg) 5%, transparent 10%, transparent 90%, var(--color-bg) 95%);
   z-index: 200;
 }
 
