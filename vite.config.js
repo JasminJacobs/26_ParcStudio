@@ -5,6 +5,8 @@ export default defineConfig({
   base: '/26_ParcStudio/',
   server: {
     host: true, // reachable from the iPhone on the same Wi-Fi
-    allowedHosts: ['.trycloudflare.com'],
+    port: 5173,
+    strictPort: true, // keep the Cloudflare tunnel pointed at a stable port
+    allowedHosts: true, // Cloudflare quick tunnels (*.trycloudflare.com)
   },
 })

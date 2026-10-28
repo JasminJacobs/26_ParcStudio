@@ -16,6 +16,8 @@ if (matchMedia('(min-width: 600px)').matches) {
 }
 
 const scroller = app.querySelector('.scroller')
+const titleContainer = app.querySelector('.article__title-container')
+const titleClip = app.querySelector('.article__title-clip')
 const title = app.querySelector('.article__title')
 const gallery = app.querySelector('.gallery')
 const biasBar = app.querySelector('.bias')
@@ -42,26 +44,58 @@ document.fonts?.ready.then(fitGallery) // the title wraps differently once the f
 window.addEventListener('resize', fitGallery)
 
 /* ---------- Sticky title ---------- */
-// It sticks --title-top below the header (article.css). Two things depend on it:
+// The container sticks --title-top below the header (article.css). Two things depend on it:
 // --title-bottom: where the stuck title ends; the Bias Comparison bar sticks there
 // .is-stuck:      set while it sticks; shows the line under it (article.css)
-const titleTop = () => parseFloat(getComputedStyle(title).top) || 0
+const titleTop = () => parseFloat(getComputedStyle(titleContainer).top) || 0
 function setTitleBottom() {
   // exact height incl. fractions (offsetHeight rounds, which left a hairline gap)
-  const height = title.getBoundingClientRect().height / zoom()
+  const height = titleContainer.getBoundingClientRect().height / zoom()
   app.style.setProperty('--title-bottom', `${titleTop() + height}px`)
 }
 setTitleBottom()
-new ResizeObserver(setTitleBottom).observe(title)
+new ResizeObserver(() => {
+  setTitleBottom()
+  fitGallery()
+}).observe(titleClip)
+
+function titleScale() {
+  const smallScale = parseFloat(getComputedStyle(title).getPropertyValue('--title-small-scale'))
+  return title.classList.contains('small') ? smallScale || 0.375 : 1
+}
+
+// Clip height = unscaled title height × scale, so the layout tracks the visual text.
+function layoutTitleSize() {
+  titleClip.style.height = `${title.offsetHeight * titleScale()}px`
+}
+
+// Compact title while an iframe is open, the overview is zoomed out, or the page is scrolled.
+function syncTitleSize() {
+  const small =
+    scroller.scrollTop > 0 ||
+    Boolean(app.querySelector('.iframes.is-open')) ||
+    app.classList.contains('is-overviewing') ||
+    app.classList.contains('is-overview')
+  const changed = title.classList.contains('small') !== small
+  title.classList.toggle('small', small)
+  if (changed || !titleClip.style.height) layoutTitleSize()
+}
+
+layoutTitleSize()
+document.fonts?.ready.then(layoutTitleSize)
+window.addEventListener('resize', layoutTitleSize)
 
 scroller.addEventListener(
   'scroll',
   () => {
-    const stuck = scroller.scrollTop > 0 && pageTop(title) - scroller.scrollTop <= titleTop() + 0.5
-    title.classList.toggle('is-stuck', stuck)
+    const stuck =
+      scroller.scrollTop > 0 && pageTop(titleContainer) - scroller.scrollTop <= titleTop() + 0.5
+    titleContainer.classList.toggle('is-stuck', stuck)
+    syncTitleSize()
   },
   { passive: true },
 )
+app.addEventListener('parc:overview-enter', syncTitleSize)
 
 /* ---------- Bias Comparison ---------- */
 // The active button colours itself (200ms, article.css) and its summary slides
@@ -128,7 +162,10 @@ const state = {
 const mic = createMic()
 let carouselSlider = null
 const cards = createCards(app, state, {
-  onOpenChange: () => carouselSlider?.refresh(),
+  onOpenChange() {
+    carouselSlider?.refresh()
+    syncTitleSize()
+  },
 })
 carouselSlider = createCarouselSlider(
   app,
@@ -138,6 +175,7 @@ carouselSlider = createCarouselSlider(
 const overview = createOverview(app, state, cards, {
   onViewChange(view) {
     state.view = view
+    syncTitleSize()
     if (view === 'slider') {
       requestAnimationFrame(() => {
         carouselSlider.refresh()
