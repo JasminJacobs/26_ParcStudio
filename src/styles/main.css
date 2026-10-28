@@ -10,7 +10,7 @@
 }
 
 :root {
-  --font: var(--font-sans); /* Medway only if installed locally — never as a file */
+  --font: var(--font-sans);
   --color-bg: #e7e7e7;
   --color-fg: #000000;
   --text-s: 12px;
@@ -172,6 +172,11 @@ img {
   font-size: 32px;
   line-height: var(--leading-m);
   opacity: var(--title-opacity, 1);
+}
+
+.card.is-text-in .card-title,
+.card.is-text-in .card-tags-text {
+  transition: opacity 280ms ease;
 }
 
 .cards-track {

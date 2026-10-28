@@ -27,6 +27,7 @@ const DEFAULT_IFRAME = 'img/screenshot01.png'
 // Higher = gone sooner. Opacity hits 0 at progress 1 / TEXT_FADE
 // (3 → gone at ~33% of the zoom, 1.7 was the old value).
 const TEXT_FADE = 8
+const TEXT_IN_MS = 300
 
 // Extra px on top of the logo's measured rest position when shrinking starts.
 // 0 keeps it on the pre-`.is-shrinking` spot; +x is right, +y is down.
@@ -373,7 +374,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
     return from
   }
 
-  function applyFlight(from, to, t) {
+  function applyFlight(from, to, t, inbound = false) {
     for (const [id, start] of from) {
       const end = to.get(id)
       if (!end) continue
@@ -389,10 +390,9 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.style.height = `${h}px`
       card.style.padding = `${lerp(16, 6, ease)}px ${lerp(16, 10, ease)}px`
       card.style.borderRadius = `${lerp(0, 26, ease)}px`
-      card.style.setProperty(
-        '--title-opacity',
-        String(Math.max(0, 1 - ease * TEXT_FADE)),
-      )
+      // Hold title/source off while flying home; they fade in after endFlight.
+      const textOpacity = inbound ? 0 : Math.max(0, 1 - ease * TEXT_FADE)
+      card.style.setProperty('--title-opacity', String(textOpacity))
       const logo = lerp(start.logoSize, LOGO_END, ease)
       const left = lerp(start.logoLeft, (w - logo) / 2, ease)
       const top = lerp(h - start.logoBottom - logo, (h - logo) / 2, ease)
@@ -435,6 +435,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
 
   function endFlight() {
     if (!flight) return
+    const landed = []
     for (const [id, item] of flight.from) {
       const placeholder = cardTrack.querySelector(
         `.card.is-placeholder[data-id="${id}"]`,
@@ -442,12 +443,28 @@ export function createCards(root, state, { onOpenChange } = {}) {
       const card = item.el
       resetCardStyle(card)
       card.classList.remove('is-shrinking', 'is-label')
+      card.classList.add('is-text-in')
+      card.style.setProperty('--title-opacity', '0')
+      landed.push(card)
       if (placeholder) placeholder.replaceWith(card)
       else cardTrack.append(card)
     }
     layer.classList.remove('is-active')
     flight = null
     syncAndScale()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        for (const card of landed) {
+          card.style.setProperty('--title-opacity', '1')
+        }
+      })
+    })
+    setTimeout(() => {
+      for (const card of landed) {
+        card.classList.remove('is-text-in')
+        card.style.removeProperty('--title-opacity')
+      }
+    }, TEXT_IN_MS)
   }
 
   function update(nextState) {

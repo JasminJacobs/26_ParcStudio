@@ -135,6 +135,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   let pinch = null
   let raf = 0
   let wheelTimer = 0
+  let inbound = false
 
   function renderClusters(clusters) {
     map.innerHTML = clusters
@@ -205,14 +206,18 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function setProgress(t) {
-    const entering = progress === 0 && t > 0
-    progress = clamp(t, 0, 1)
+    const next = clamp(t, 0, 1)
+    if (next < progress) inbound = true
+    if (next > progress) inbound = false
+    const entering = progress === 0 && next > 0
+    progress = next
     const current = ensureSession()
-    cards.applyFlight(current.from, current.to, progress)
+    cards.applyFlight(current.from, current.to, progress, inbound)
     applyChrome(progress, current.wasOpen)
     if (entering) {
       root.dispatchEvent(new CustomEvent('parc:overview-enter'))
     }
+    if (progress === 0) inbound = false
   }
 
   function finish(target) {
@@ -344,7 +349,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     const layout = layoutClusters(session.from, cards.getLayer())
     session.to = layout.targets
     renderClusters(layout.clusters)
-    cards.applyFlight(session.from, session.to, progress)
+    cards.applyFlight(session.from, session.to, progress, inbound)
   })
 
   root.addEventListener('parc:overview', (event) => {

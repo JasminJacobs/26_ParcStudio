@@ -2,6 +2,14 @@
   Design tokens — to be replaced with the values from the Figma file.
   Keep all colors, type and spacing here so the interactions only reference variables.
 */
+
+@font-face {
+  font-family: 'Medway';
+  src: url('/26_ParcStudio/fonts/Medway-Regular.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   /* Frame: iPhone 16 Pro (402 × 874 pt) */
   --frame-w: 402px;
@@ -33,8 +41,8 @@
   --tag-farright: #0000ff;
 
   /* Type */
-  /* Figma uses Medway (Book 450, Medium 500). It renders where Medway is
-     installed; everywhere else it falls back to Helvetica Neue. */
+  /* Medway Regular is served from public/fonts/ (gitignored) for local
+     and Cloudflare preview. GitHub has no file, so this falls back. */
   --font-sans: 'Medway', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-medium: 'Medway-Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* the Medium cut */
   --weight-book: 450;
