@@ -13,6 +13,17 @@ import { BIAS_ORDER } from './cards.js'
 // Width per article on the bar: set as --bar-unit on .slider-container in main.css
 let UNIT = 12
 
+// Tag names shown under the marker
+const TAG_NAMES = {
+  farleft: 'Far Left',
+  left: 'Left',
+  leanleft: 'Lean Left',
+  centre: 'Centre',
+  leanright: 'Lean Right',
+  right: 'Right',
+  farright: 'Far Right',
+}
+
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
 
 // Centre of each item, in the track's scroll coordinates
@@ -78,18 +89,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
         <div class="slider-bar" aria-hidden="true"></div>
         <div class="carousel-slider__thumb" aria-hidden="true"></div>
       </div>
-      <div class="carousel-label" id="carousel-label-left">Left</div>
-      <div class="carousel-label" id="carousel-label-centre">Centre</div>
-      <div class="carousel-label" id="carousel-label-right">Right</div>
+      <div class="carousel-label" aria-hidden="true"></div>
     </div>`
 
   const rail = container.querySelector('.carousel-slider__rail')
   const bar = container.querySelector('.slider-bar')
-  const labels = {
-    left: container.querySelector('#carousel-label-left'),
-    centre: container.querySelector('#carousel-label-centre'),
-    right: container.querySelector('#carousel-label-right'),
-  }
+  const label = container.querySelector('.carousel-label')
 
   container.setAttribute('role', 'slider')
   container.setAttribute('aria-label', 'Browse stories')
@@ -123,22 +128,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     pos = nextPos
     bar.style.transform = `translate3d(${-(pos + 0.5) * UNIT}px, 0, 0)`
 
-    // The labels move with the bar: each sits under the middle of its zone
-    // (Left: far left … lean left, Centre, Right: lean right … far right)
-    const w = rail.clientWidth
-    const x = (i) => w / 2 + (i - pos - 0.5) * UNIT // px from the rail's left edge
-    const zones = {
-      left: [0, zone[0]],
-      centre: zone,
-      right: [zone[1], articles.length],
-    }
-    for (const [name, [a, b]] of Object.entries(zones)) {
-      container.style.setProperty(`--label-${name}`, `${(x(a) + x(b)) / 2}px`)
-      labels[name].hidden = b <= a
-    }
-
     const index = Math.round(pos)
     const article = articles[index]
+
+    // The label under the marker names the tag of the article under it
+    const tag = TAG_NAMES[article?.bias] ?? ''
+    if (label.textContent !== tag) label.textContent = tag
     container.setAttribute('aria-valuenow', String(index + 1))
     if (article) container.setAttribute('aria-valuetext', `${article.source}, ${article.bias}`)
   }
@@ -267,7 +262,8 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     started = true
     const [a, b] = zone
     const middle = b > a ? (a + b - 1) / 2 : (articles.length - 1) / 2
-    scrollTo(Math.round(middle), false)
+    // With an even count, take the left one of the two middle articles
+    scrollTo(Math.floor(middle), false)
   }
 
   function refresh() {

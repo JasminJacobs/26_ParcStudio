@@ -294,39 +294,15 @@ img {
   cursor: grabbing;
 }
 
+/* Under the marker: the tag of the current article (text set from JS) */
 .carousel-label {
   position: absolute;
   top: calc(50% + 32px); /* below the marker */
-
-  width: fit-content;
-  font-size: 12px;
-}
-
-/* The labels move with the bar, each under the middle of its zone.
-   --label-left / --label-centre / --label-right are set from JS (px from the rail's left edge);
-   12px = .slider-container padding */
-#carousel-label-left {
-  left: calc(12px + var(--label-left, 0px));
-}
-
-#carousel-label-centre {
-  left: calc(12px + var(--label-centre, 50%));
-}
-
-#carousel-label-right {
-  left: calc(12px + var(--label-right, 100%));
-}
-
-#carousel-label-left,
-#carousel-label-centre,
-#carousel-label-right {
-  text-align: center;
-  white-space: nowrap;
+  left: 50%;
   transform: translateX(-50%);
-}
-
-.carousel-label[hidden] {
-  display: none;
+  width: fit-content;
+  white-space: nowrap;
+  font-size: 12px;
 }
 
 .slider-label {
