@@ -36,6 +36,7 @@
   /* Figma uses Medway (Book 450, Medium 500). It renders where Medway is
      installed; everywhere else it falls back to Helvetica Neue. */
   --font-sans: 'Medway', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-medium: 'Medway-Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* the Medium cut */
   --weight-book: 450;
   --weight-medium: 500;
   --text-s: 13px;

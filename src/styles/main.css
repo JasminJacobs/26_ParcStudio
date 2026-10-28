@@ -215,8 +215,8 @@ img {
   z-index: 30;
 
   /* Slider bar settings — change them here (the JS reads --bar-unit) */
-  --bar-unit: 12px; /* width per article, block + gap */
-  --bar-gap: 4px; /* space between two articles */
+  --bar-unit: 16px; /* width per article, block + gap */
+  --bar-gap: 6px; /* space between two articles */
   --bar-height: 45px;
 }
 
@@ -271,11 +271,11 @@ img {
 /* Fixed centre marker: shows the current article */
 .carousel-slider__thumb {
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   z-index: 1;
-  width: 4px;
-  height: 56px;
+  width: 3px;
+  height: 65px;
   margin: -28px 0 0 -2px;
   background: black;
   border-radius: 2px;
@@ -297,12 +297,13 @@ img {
 /* Under the marker: the tag of the current article (text set from JS) */
 .carousel-label {
   position: absolute;
-  top: calc(50% + 32px); /* below the marker */
+  top: calc(50% + 37px); /* below the marker */
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;
   white-space: nowrap;
-  font-size: 12px;
+  font-family: var(--font-medium);
+  font-size: 14px;
 }
 
 .slider-label {
