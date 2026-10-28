@@ -226,11 +226,12 @@ img {
   color: var(--color-fg);
   opacity: 0;
 
-  transition: opacity 600ms var(--ease);
+  transition: opacity 300ms var(--ease) 300ms;
 }
 
 .hint.is-visible {
   opacity: 0.5;
+  transition: opacity 600ms var(--ease);
 }
 
 /* SLIDER */
@@ -266,7 +267,7 @@ img {
   --block-scale: 1.3; /* the block under the marker grows this much in height */
   --block-scale-near: 1.07; /* the block before and after it */
   --block-duration: 400ms; /* their grow / shrink, ease-in-out */
-  transition: --bar-height 300ms var(--ease), bottom 300ms var(--ease);
+  transition: --bar-height 300ms var(--ease) 300ms, bottom 300ms var(--ease) 300ms;
 }
 
 .slider-container.is-dragging {
@@ -348,7 +349,7 @@ img {
   border-radius: 2px;
   pointer-events: none;
 
-  transition: height 300ms var(--ease), margin 300ms var(--ease);
+  transition: height 300ms var(--ease) 300ms, margin 300ms var(--ease) 300ms;
 }
 
 /* Under the marker: the tag of the current article (text set from JS) */
@@ -365,8 +366,7 @@ img {
   display: grid;
   justify-items: center;
 
-  transition: opacity 300ms var(--ease);
-
+  transition: opacity 300ms var(--ease) 300ms;
 }
 
 .carousel-counter {
@@ -378,7 +378,7 @@ img {
   opacity: 0.5;
   z-index: 300;
 
-  transition: opacity 300ms var(--ease), display 300ms var(--ease) 300ms;
+  transition: opacity 300ms var(--ease) 300ms, display 300ms var(--ease) 300ms;
 }
 
 .carousel-label > span {
@@ -652,22 +652,27 @@ img {
 
 .carousel-label.iframeopen {
   opacity: 0;
+  transition: opacity 300ms var(--ease);
 }
 
 .carousel-counter.iframeopen {
   opacity: 0;
+  transition: opacity 300ms var(--ease);
 }
 
 .hint.iframeopen {
   opacity: 0;
+  transition: opacity 300ms var(--ease);
 }
 
 .carousel-slider__thumb.iframeopen {
   height: 12px;
   margin: -2px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
+  transition: height 300ms var(--ease), margin 300ms var(--ease);
 }
 
 .slider-container.iframeopen {
   --bar-height: 6px;
   bottom: -36px;
+  transition: --bar-height 300ms var(--ease), bottom 300ms var(--ease);
 }

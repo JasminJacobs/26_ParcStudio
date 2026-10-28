@@ -81,7 +81,7 @@ button {
   justify-content: space-between;
   padding: 18px;
 
-  transition: opacity 300ms var(--ease);
+  transition: opacity 300ms var(--ease) 300ms;
 }
 
 .meta__published {
@@ -287,6 +287,7 @@ button {
 
 .meta.iframeopen {
   opacity: 0;
+  transition: opacity 300ms var(--ease);
 }
 
 .article__title.iframeopen {
