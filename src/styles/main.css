@@ -209,32 +209,10 @@ img {
   bottom: 24px;
   left: 12px;
   width: calc(100% - 24px);
-  height: 72px;
+  height: 104px;
   padding: 12px;
   border-radius: 36px;
   z-index: 30;
-}
-
-/* --centre-start / --centre-end (0–1) are set from JS; the bg colour fills the centre zone */
-.slider-container::before {
-  content: '';
-  position: absolute;
-  width: calc(100% + 96px);
-  height: 200px;
-  left: -48px;
-  top: -20px;
-  bottom: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.8) 0%,
-    var(--color-bg) calc(14px + var(--centre-start, 0.5) * (100% - 28px)),
-    var(--color-bg) calc(14px + var(--centre-end, 0.5) * (100% - 28px)),
-    rgba(0, 0, 255, 0.8) 100%
-  );
-  filter: blur(16px);
-  pointer-events: none;
 }
 
 .carousel-slider {
@@ -254,8 +232,8 @@ img {
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 12px;
-  margin-top: -6px;
+  height: 32px;
+  margin-top: -16px;
   display: flex;
   will-change: transform;
   pointer-events: none;
@@ -292,8 +270,8 @@ img {
   left: 50%;
   z-index: 1;
   width: 4px;
-  height: 48px;
-  margin: -24px 0 0 -2px;
+  height: 56px;
+  margin: -28px 0 0 -2px;
   background: black;
   border-radius: 2px;
   pointer-events: none;
@@ -313,7 +291,7 @@ img {
 
 .carousel-label {
   position: absolute;
-  top: 60%;
+  top: calc(50% + 32px); /* below the marker */
 
   width: fit-content;
   font-size: 12px;

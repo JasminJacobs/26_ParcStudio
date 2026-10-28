@@ -10,7 +10,7 @@
 */
 import { BIAS_ORDER } from './cards.js'
 
-const UNIT = 10 // px per article on the bar (block + gap, see .slider-bar)
+const UNIT = 16 // px per article on the bar (14px block + 2px gap, see .slider-bar)
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
 
@@ -117,11 +117,9 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     pos = nextPos
     bar.style.transform = `translate3d(${-(pos + 0.5) * UNIT}px, 0, 0)`
 
-    // The red/blue glow and the Centre label stay with the centre zone on the bar
+    // The Centre label stays with the centre zone on the bar
     const w = rail.clientWidth || 1
     const edge = (i) => clamp((w / 2 + (i - pos - 0.5) * UNIT) / w, 0, 1)
-    container.style.setProperty('--centre-start', edge(zone[0]))
-    container.style.setProperty('--centre-end', edge(zone[1]))
     container.style.setProperty('--centre', (edge(zone[0]) + edge(zone[1])) / 2)
 
     const index = Math.round(pos)
@@ -246,9 +244,21 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     resizeObserver.observe(track)
   }
 
+  // Start in the middle of the centre zone (or the middle article if there is none)
+  let started = false
+  function startInCentre() {
+    const track = getTrack()
+    if (started || !track || !track.clientWidth || !articles.length) return
+    started = true
+    const [a, b] = zone
+    const middle = b > a ? (a + b - 1) / 2 : (articles.length - 1) / 2
+    scrollTo(Math.round(middle), false)
+  }
+
   function refresh() {
     bindTrack()
     renderBar()
+    startInCentre()
     syncFromTrack()
   }
 
