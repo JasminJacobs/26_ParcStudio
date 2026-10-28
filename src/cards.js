@@ -11,6 +11,7 @@ export const BIAS_ORDER = [
   'farright',
 ]
 
+// Tag names (the tag is not shown on the cards at the moment)
 const BIAS_LABELS = {
   farleft: 'Far left',
   left: 'Left',
@@ -94,19 +95,11 @@ function articlesByBias(articles) {
   })
 }
 
-function relativeLuminance(hex) {
-  const raw = hex.replace('#', '')
-  const channels = [0, 2, 4].map((i) => parseInt(raw.slice(i, i + 2), 16) / 255)
-  return channels
-    .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
-    .reduce((acc, c, i) => acc + c * [0.2126, 0.7152, 0.0722][i], 0)
-}
-
+// Card background: white at the top, fading into the source's colour
+// (taken from its logo, see data/source-colors.json) by 55% of the height
 function cardSurface(source) {
-  const colors = sourceColors[source] ?? ['#6b6b6b', '#2a2a2a']
-  const background = `linear-gradient(180deg, ${colors.join(', ')})`
-  const luminance = relativeLuminance(colors[0])
-  const color = luminance > 0.55 ? '#000000' : '#ffffff'
+  const color = sourceColors[source] ?? '#6b6b6b'
+  const background = `linear-gradient(180deg, #ffffff 0%, ${color} 55%)`
   return { background, color }
 }
 
@@ -120,16 +113,15 @@ function cardMarkup(article) {
       data-bias="${article.bias}"
       data-type="${article.type ?? ''}"
       data-source="${article.source}"
-      style="background: ${background}; color: ${color}"
+      style="background: ${background}; --card-color: ${color}"
     >
-      <h2 class="card-title">${article.title}</h2>
       <div class="card-tags">
         <img class="card-logo" src="${logo}" alt=""/>
         <div class="card-tags-text">
-            <label class="card-source">${article.source}</label><span class="card-type-separator"> | </span>
-            <label class="card-bias">${BIAS_LABELS[article.bias] ?? article.bias}</label>
+          <label class="card-source">${article.source}</label>
         </div>
       </div>
+      <h2 class="card-title">${article.title}</h2>
     </article>`
 }
 
@@ -204,10 +196,10 @@ function logoOffset(card, container) {
 
 function resetCardStyle(card) {
   const background = card.style.background
-  const color = card.style.color
+  const cardColor = card.style.getPropertyValue('--card-color')
   card.removeAttribute('style')
   card.style.background = background
-  card.style.color = color
+  card.style.setProperty('--card-color', cardColor)
   const logo = card.querySelector('.card-logo')
   if (logo) {
     logo.style.width = ''
@@ -215,14 +207,22 @@ function resetCardStyle(card) {
   }
 }
 
-// Centre item at full size, neighbours down to 0.9
-function scaleItems(track) {
+// Side cards are this big next to the centre card (Figma: 206.7 / 270)
+const CARD_SIDE_SCALE = 0.7656
+// Side screenshots in the popup
+const IFRAME_SIDE_SCALE = 0.9
+
+// Centre item at full size, its neighbours down to `sideScale`
+function scaleItems(track, sideScale) {
   const items = track.children
   if (!items.length) return
 
   const bounds = track.getBoundingClientRect()
   const center = bounds.left + bounds.width / 2
-  const itemWidth = items[0].offsetWidth
+  // distance between two neighbouring items, centre to centre, in screen px
+  // like `dist` below (the mockup is zoomed, so offset values would not match)
+  const mid = (el) => { const r = el.getBoundingClientRect(); return r.left + r.width / 2 }
+  const pitch = items.length > 1 ? mid(items[1]) - mid(items[0]) : items[0].getBoundingClientRect().width
 
   let active = items[0]
   let activeDist = Infinity
@@ -230,8 +230,8 @@ function scaleItems(track) {
   for (const item of items) {
     const rect = item.getBoundingClientRect()
     const dist = Math.abs(rect.left + rect.width / 2 - center)
-    const t = Math.min(dist / Math.max(itemWidth, 1), 1)
-    item.style.transform = `scale(${1 - t * 0.1})`
+    const t = Math.min(dist / Math.max(pitch, 1), 1)
+    item.style.transform = `scale(${1 - t * (1 - sideScale)})`
     item.style.zIndex = String(Math.max(1, 1000 - Math.round(dist)))
     if (dist < activeDist) {
       activeDist = dist
@@ -274,8 +274,8 @@ export function createCards(root, state, { onOpenChange } = {}) {
     const lead = leader()
     const follow = follower()
     follow.scrollLeft = scrollRatio(lead) * maxScroll(follow)
-    scaleItems(cardTrack)
-    scaleItems(iframeTrack)
+    scaleItems(cardTrack, CARD_SIDE_SCALE)
+    scaleItems(iframeTrack, IFRAME_SIDE_SCALE)
   }
 
   function requestSync(event) {

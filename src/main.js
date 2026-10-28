@@ -12,7 +12,8 @@ const app = document.querySelector('#app')
 if (matchMedia('(min-width: 600px)').matches) {
   const css = getComputedStyle(document.documentElement)
   const px = (name) => parseFloat(css.getPropertyValue(name))
-  app.style.zoom = px('--device-h') / (px('--frame-h') + 2 * px('--bezel'))
+  // Always the real phone's scale, so a shorter --frame-h stays true to size
+  app.style.zoom = px('--device-h') / (px('--screen-h-real') + 2 * px('--bezel'))
 }
 
 const scroller = app.querySelector('.scroller')
