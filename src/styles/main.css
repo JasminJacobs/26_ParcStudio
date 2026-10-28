@@ -15,9 +15,9 @@
   --color-fg: #000000;
   --text-s: 12px;
   --leading-s: 128%;
-  --text-m: 24px;
+  --text-m: 21px;
   --leading-m: 112%;
-  --text-l: 36px;
+  --text-l: 32px;
   --leading-l: 104%;
   --letter-spacing-l: -0.02em;
 }
@@ -160,7 +160,7 @@ img {
 .card-title {
   font-family: var(--font);
   font-weight: normal;
-  font-size: var(--text-m);
+  font-size: var(--text-l);
   line-height: var(--leading-m);
   opacity: var(--title-opacity, 1);
 }
