@@ -90,14 +90,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   if (!container) return { refresh() {} }
 
   UNIT = parseFloat(getComputedStyle(container).getPropertyValue('--bar-unit')) || UNIT
-  container.innerHTML = `
-    <div class="carousel-slider">
-      <div class="carousel-slider__rail">
-        <div class="slider-bar" aria-hidden="true"></div>
-        <div class="carousel-slider__thumb" aria-hidden="true"></div>
-      </div>
-      <div class="carousel-label" aria-hidden="true"></div>
-    </div>`
+  // The markup is in index.html (.slider-container)
 
   const rail = container.querySelector('.carousel-slider__rail')
   const bar = container.querySelector('.slider-bar')

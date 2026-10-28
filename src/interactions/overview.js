@@ -132,11 +132,15 @@ function layoutClusters(from, layer) {
 }
 
 export function createOverview(root, state, cards, { onViewChange } = {}) {
-  const map = document.createElement('section')
-  map.className = 'map'
-  map.setAttribute('aria-label', 'Sources by type')
-  map.setAttribute('aria-hidden', 'true')
-  root.append(map)
+  // .map is in index.html; created here only if it is missing
+  let map = root.querySelector('.map')
+  if (!map) {
+    map = document.createElement('section')
+    map.className = 'map'
+    map.setAttribute('aria-label', 'Sources by type')
+    map.setAttribute('aria-hidden', 'true')
+    root.append(map)
+  }
 
   const headline = root.querySelector('.headline')
   const slider = root.querySelector('.slider-container')

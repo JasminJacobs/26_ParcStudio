@@ -73,24 +73,6 @@ body {
   }
 }
 
-/* Leftover full-screen layer from the old views — pass events through so
-   the article (bias, summary) can scroll. */
-.view {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease);
-}
-.view[hidden] {
-  display: block;
-  opacity: 0;
-  pointer-events: none;
-}
-/* Placeholder views (e.g. .slider) are still empty: keep them from covering the article */
-.view:empty {
-  display: none;
-}
-
 img {
   display: block;
   max-width: 100%;

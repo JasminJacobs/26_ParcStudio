@@ -9,7 +9,12 @@
   </head>
   <body>
     <div id="app">
-      <!-- Figma: Default-Preferred (22:1494) -->
+      <!-- ============================================================
+           Reading order = screen order, top to bottom.
+           Empty containers marked "JS:" are filled by the script named.
+           ============================================================ -->
+
+      <!-- 1. HEADER (Figma: Default-Preferred) -->
       <header class="header">
         <button class="header__burger" type="button" aria-label="Menu">
           <img src="/assets/icons/burger.svg" width="24" height="24" alt="" />
@@ -19,9 +24,12 @@
         </a>
       </header>
 
-      <!-- One vertical scroll: article first, then the gallery locks to the screen -->
+      <!-- 2. PAGE: one vertical scroll. The article comes first;
+              scrolling on, the gallery locks to the screen. -->
       <div class="scroller">
         <main class="article">
+
+          <!-- 2a. Meta: published / updated, icons -->
           <div class="meta">
             <p class="meta__published">
               <span>Published 2 days ago · France ·</span>
@@ -40,50 +48,77 @@
             </div>
           </div>
 
-          <!-- Sticky: under the meta at first, then fixed 36px below the header -->
+          <!-- 2b. Title: sticky — under the meta at first, then stays 36px below the header -->
           <h1 class="article__title">
             Hundreds of thousands march across France in protests over schools and policing
           </h1>
 
-          <div class="bias" role="group" aria-label="Bias Comparison">
-            <span class="bias__label">Bias<br />Comparison</span>
-            <button class="bias__button bias__button--left" type="button" data-bias="left" aria-pressed="false">Left</button>
-            <button class="bias__button" type="button" data-bias="center" aria-pressed="true">Center</button>
-            <button class="bias__button bias__button--right" type="button" data-bias="right" aria-pressed="false">Right</button>
-          </div>
+          <!-- 2c. Bias Comparison (Figma 48:756): line on top, heading, three buttons, summaries -->
+          <section class="bias-section" aria-labelledby="bias-heading">
+            <h2 class="bias-section__title" id="bias-heading">Bias Comparison</h2>
 
-          <!-- One summary per bias; the active one slides in from its side -->
-          <div class="summaries">
-            <ul class="summary" data-bias="left" hidden>
-              <li>More than 400,000 people joined protests across France over school funding, living costs and public services, according to the Interior Ministry.</li>
-              <li>The Paris march was mostly peaceful until masked protesters threw objects and fireworks at police, who used tear gas, sound grenades and water cannons.</li>
-              <li>Interior Minister Laurent Nuñez said police made nearly 1,000 arrests, while 70,000 officers were deployed nationwide.</li>
-              <li>The protests grew from student demonstrations into a broader movement involving workers, unions and students.</li>
-            </ul>
-            <ul class="summary" data-bias="center">
-              <li>On Saturday, October 24, nationwide protests drew between 410,000 and nearly 800,000 people across France, with 70,000 police deployed to counter potential violence according to the Interior Ministry and union organizers.</li>
-              <li>Sparked by high school staffing shortages last month, the movement evolved into a nationwide challenge as students and workers demanded increased education funding and relief from soaring living costs.</li>
-              <li>Police deployed water cannons and tear gas across multiple cities, while major Paris museums closed pre-emptively; government officials reported nearly 1,000 arrests as authorities attempted to prevent widespread looting.</li>
-              <li>Political pressure intensified on President Emmanuel Macron as far-left candidate Jean-Luc Melenchon and the far-right National Rally criticized his handling of the crisis; Melenchon warned that "this is going to repeat itself every week."</li>
-              <li>The Yellow Vests and labor unions announced further demonstrations for October 31 and November 5, demanding the freedom to <a href="https://ground.news/interest/protest" target="_blank" rel="noopener">protest</a> and challenging the government's alleged "authoritarian drift" and fiscal policies.</li>
-            </ul>
-            <ul class="summary" data-bias="right" hidden>
-              <li>Hundreds of thousands of people marched across France over high living costs, <a href="https://ground.news/interest/education_fb8947" target="_blank" rel="noopener">education</a> funding, wages, and public services; the Interior Ministry reported 410,000 demonstrators nationwide, including 110,000 in Paris.</li>
-              <li>France deployed 70,000 police officers, while authorities changed the Paris march route and banned some rallies to reduce the risk of renewed violence.</li>
-              <li>Clashes occurred in Lyon and Paris, where police used tear gas; authorities reported 135 arrests nationwide.</li>
-              <li>Businesses, museums, and other cultural institutions closed or increased security after about 3,000 shops were damaged or looted the previous weekend.</li>
-            </ul>
-          </div>
+            <div class="bias" role="group" aria-label="Bias Comparison">
+              <button class="bias__button bias__button--left" type="button" data-bias="left" aria-pressed="false">Left</button>
+              <button class="bias__button" type="button" data-bias="center" aria-pressed="true">Center</button>
+              <button class="bias__button bias__button--right" type="button" data-bias="right" aria-pressed="false">Right</button>
+            </div>
 
-          <!-- Figma: Gallery-1 (22:1636) — cards and slider; the sticky title sits on top -->
+            <!-- 2d. Summaries: one list per bias; the active one slides in from its side -->
+            <div class="summaries">
+              <ul class="summary" data-bias="left" hidden>
+                <li>More than 400,000 people joined protests across France over school funding, living costs and public services, according to the Interior Ministry.</li>
+                <li>The Paris march was mostly peaceful until masked protesters threw objects and fireworks at police, who used tear gas, sound grenades and water cannons.</li>
+                <li>Interior Minister Laurent Nuñez said police made nearly 1,000 arrests, while 70,000 officers were deployed nationwide.</li>
+                <li>The protests grew from student demonstrations into a broader movement involving workers, unions and students.</li>
+              </ul>
+              <ul class="summary" data-bias="center">
+                <li>On Saturday, October 24, nationwide protests drew between 410,000 and nearly 800,000 people across France, with 70,000 police deployed to counter potential violence according to the Interior Ministry and union organizers.</li>
+                <li>Sparked by high school staffing shortages last month, the movement evolved into a nationwide challenge as students and workers demanded increased education funding and relief from soaring living costs.</li>
+                <li>Police deployed water cannons and tear gas across multiple cities, while major Paris museums closed pre-emptively; government officials reported nearly 1,000 arrests as authorities attempted to prevent widespread looting.</li>
+                <li>Political pressure intensified on President Emmanuel Macron as far-left candidate Jean-Luc Melenchon and the far-right National Rally criticized his handling of the crisis; Melenchon warned that "this is going to repeat itself every week."</li>
+                <li>The Yellow Vests and labor unions announced further demonstrations for October 31 and November 5, demanding the freedom to <a href="https://ground.news/interest/protest" target="_blank" rel="noopener">protest</a> and challenging the government's alleged "authoritarian drift" and fiscal policies.</li>
+              </ul>
+              <ul class="summary" data-bias="right" hidden>
+                <li>Hundreds of thousands of people marched across France over high living costs, <a href="https://ground.news/interest/education_fb8947" target="_blank" rel="noopener">education</a> funding, wages, and public services; the Interior Ministry reported 410,000 demonstrators nationwide, including 110,000 in Paris.</li>
+                <li>France deployed 70,000 police officers, while authorities changed the Paris march route and banned some rallies to reduce the risk of renewed violence.</li>
+                <li>Clashes occurred in Lyon and Paris, where police used tear gas; authorities reported 135 arrests nationwide.</li>
+                <li>Businesses, museums, and other cultural institutions closed or increased security after about 3,000 shops were damaged or looted the previous weekend.</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- 2e. GALLERY (Figma: Gallery-1), fills the screen once it locks -->
           <section class="gallery" aria-label="Gallery">
-            <section class="cards" aria-label="Stories"></section>
-            <section class="iframes" aria-label="Articles"></section>
-            <div class="slider-container"></div>
+
+            <!-- Cards carousel. JS: cards.js adds one .card per article -->
+            <section class="cards" aria-label="Stories">
+              <div class="cards-track"></div>
+            </section>
+
+            <!-- Slider bar at the bottom. JS: carousel-slider.js fills the bar and the label -->
+            <div class="slider-container">
+              <div class="carousel-slider">
+                <div class="carousel-slider__rail">
+                  <div class="slider-bar" aria-hidden="true"></div>
+                  <div class="carousel-slider__thumb" aria-hidden="true"></div>
+                </div>
+                <div class="carousel-label" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <!-- Popup with the article screenshots, opens on top of the cards when a card is clicked.
+                 JS: cards.js adds one .iframe-overlay per article -->
+            <section class="iframes" aria-label="Articles">
+              <div class="iframes-track"></div>
+            </section>
           </section>
         </main>
-
       </div>
+
+      <!-- 3. ZOOM-OUT OVERVIEW (pinch), lies over the whole screen.
+              JS: overview.js — the cards fly into .cards-layer, the type clusters are drawn in .map -->
+      <section class="map" aria-label="Sources by type" aria-hidden="true"></section>
+      <div class="cards-layer"></div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
