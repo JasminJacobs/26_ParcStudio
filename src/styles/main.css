@@ -354,7 +354,7 @@ img {
   right: 0;
   height: 104px;
   pointer-events: none;
-  background: linear-gradient(0.25turn, var(--color-bg) 2%, transparent 10%, transparent 90%, var(--color-bg) 98%);  
+  background: linear-gradient(0.25turn, var(--color-bg) 5%, transparent 10%, transparent 90%, var(--color-bg) 95%);  
   z-index: 200;
 }
 

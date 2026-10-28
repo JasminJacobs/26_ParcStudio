@@ -55,9 +55,9 @@ button {
 .article {
   display: flex;
   flex-direction: column;
-  gap: 22px; /* between meta, title, gallery and Bias Comparison */
+  gap: 0; /* between meta, title, gallery and Bias Comparison */
   min-height: 100%;
-  padding: 10px var(--space-3) 0;
+  padding: 0;
   overflow-x: clip; /* clips the sliding summaries at the screen edge */
 }
 .article > * {
@@ -83,7 +83,7 @@ button {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 18px 0px;
+  padding: 18px;
 }
 
 .meta__published {
@@ -130,16 +130,21 @@ button {
      negative margin cancels it, so the layout below doesn't move */
   /* margin: 8px calc(-1 * var(--space-3)) -16px;
   padding: 0 var(--space-3) 16px; */
-  padding-bottom: 12px;
+  padding: 0 18px 18px 18px;
   box-sizing: content-box;
   background: var(--color-bg);
   font-family: var(--font);
   font-size: 35px;
-  line-height: 38px;
+  line-height: 106%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
 }
-/* 0.5px line along the bottom of the title box while scrolling */
+
+/* .article__title.is-stuck {
+  font-size: 28px;
+} */
+
+/* 0.5px line along the bottom of the title once it is stuck */
 .article__title::after {
   content: '';
   position: absolute;
@@ -152,9 +157,9 @@ button {
   /* disappears when the scrolling stops */
   transition: opacity 400ms ease-in-out;
 }
-.article__title.is-scrolling::after {
+.article__title.is-stuck::after {
   opacity: 1;
-  transition: opacity 200ms ease; /* appears */
+  transition: opacity 200ms ease; /* appears when the title reaches the top */
 }
 .article__title.is-stuck::before {
   content: '';
@@ -171,7 +176,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: var(--space-3); /* 16px */
-  padding-top: 11px;
+  padding: 18px;
   border-top: 0.5px solid var(--color-fg);
 }
 

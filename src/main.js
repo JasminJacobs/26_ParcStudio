@@ -73,7 +73,6 @@ window.addEventListener('resize', fitGallery)
 const scroller = app.querySelector('.scroller')
 const title = app.querySelector('.article__title')
 const meta = app.querySelector('.meta')
-let scrollIdle = 0
 scroller.addEventListener(
   'scroll',
   () => {
@@ -82,12 +81,6 @@ scroller.addEventListener(
     const top = parseFloat(getComputedStyle(title).top) || 0
     const stuck = scroller.scrollTop >= titleSlot - top
     title.classList.toggle('is-stuck', stuck)
-
-    // Scrolling (up or down) while stuck: .is-scrolling shows the line under the title;
-    // it goes again 100ms after the scrolling stops
-    title.classList.toggle('is-scrolling', stuck)
-    clearTimeout(scrollIdle)
-    scrollIdle = setTimeout(() => title.classList.remove('is-scrolling'), 100)
   },
   { passive: true },
 )
