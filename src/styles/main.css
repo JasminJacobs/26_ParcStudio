@@ -15,7 +15,7 @@
   --color-fg: #000000;
   --text-s: 12px;
   --leading-s: 128%;
-  --text-m: 21px;
+  --text-m: 24px;
   --leading-m: 112%;
   --text-l: 32px;
   --leading-l: 104%;
@@ -88,7 +88,7 @@ img {
 
 .headline-title {
   font-family: var(--font);
-  font-size: var(--text-l);
+  font-size: var(--text-m);
   line-height: var(--leading-l);
   color: var(--color-fg);
   letter-spacing: var(--letter-spacing-l);
@@ -179,9 +179,8 @@ img {
 .card-title {
   font-family: var(--font);
   font-weight: normal;
-  font-size: calc(8.58 * var(--u)); /* 32.9px on a 383px card */
-  line-height: 1.125;
-  padding: 0 calc(0.8 * var(--u));
+  font-size: var(--text-m);
+  line-height: var(--leading-m);
   opacity: var(--title-opacity, 1);
 }
 
@@ -230,7 +229,7 @@ img {
 
 .hint {
   position: absolute;
-  bottom: 98px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--text-s);
@@ -265,7 +264,7 @@ img {
   /* Slider bar settings — change them here (the JS reads unit and gap) */
   --bar-unit: 14.4px; /* width per article, block + gap */
   --bar-gap: 5.4px; /* space between two blocks */
-  --bar-height: 40.5px;
+  --bar-height: 32px;
   --bar-drag-scale: 1.02; /* the whole bar grows a little while dragging… */
   --bar-drag-duration: 600ms; /* …over this time */
   --block-scale: 1.3; /* the block under the marker grows this much in height */
@@ -356,7 +355,7 @@ img {
 /* Under the marker: the tag of the current article (text set from JS) */
 .carousel-label {
   position: absolute;
-  top: calc(50% + 32px); /* below the marker */
+  top: 2px; /* above the marker */
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;
@@ -366,6 +365,16 @@ img {
   /* Old and new word sit on top of each other while they swap */
   display: grid;
   justify-items: center;
+}
+
+.carousel-counter {
+  position: absolute;
+  bottom: 12px;
+  left: 18px;
+  font-size: var(--text-s);
+  color: var(--color-fg);
+  opacity: 0.5;
+  z-index: 300;
 }
 
 .carousel-label > span {
@@ -391,13 +400,14 @@ img {
 /* iFRAME OVERLAY */
 
 .iframes {
-  --iframe-w: 315px;
+  --iframe-w: 95%;
+  height: 100%;
   position: absolute;
-  top: 0;
+  top: -120px;
   left: 0;
   right: 0;
   bottom: 120px; /* keeps the slider visible */
-  z-index: 20;
+  z-index: 400;
 
   opacity: 0;
   visibility: hidden;
@@ -407,7 +417,7 @@ img {
 }
 
 .iframes.is-open {
-  margin-top: 3em;
+  margin-top: 0;
   opacity: 1;
   visibility: visible;
   transform: none;

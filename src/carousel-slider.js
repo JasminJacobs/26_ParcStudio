@@ -87,6 +87,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   const rail = container.querySelector('.carousel-slider__rail')
   const bar = container.querySelector('.slider-bar')
   const label = container.querySelector('.carousel-label')
+  const counter = root.querySelector('.carousel-counter')
   label.dataset.transition = LABEL_TRANSITION
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -133,6 +134,10 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
 
   function renderBar() {
     articles = getArticles()
+    if (counter) {
+      const n = articles.length
+      counter.textContent = n === 1 ? '1 article' : `${n} articles`
+    }
     const key = articles.map((a) => `${a.id}:${a.bias}`).join(',')
     if (key === barKey) return
     barKey = key
