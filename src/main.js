@@ -1,11 +1,9 @@
 import './styles/main.css'
 import articles from './data/articles.json'
-import { createSlider } from './interactions/slider.js'
 import { createOverview } from './interactions/overview.js'
 import { createMic } from './interactions/mic.js'
 import { createCards } from './cards.js'
 import { createCarouselSlider } from './carousel-slider.js'
-import { createScrollLock } from './interactions/scroll-lock.js'
 
 const app = document.querySelector('#app')
 
@@ -56,19 +54,27 @@ biasButtons.forEach((button) =>
   button.addEventListener('click', () => showBias(button.dataset.bias)),
 )
 
-// Article scrolls freely, the gallery locks to the screen
-createScrollLock(app.querySelector('.scroller'), app.querySelector('.gallery'))
-
-// Sticky title: mark it once it is stuck 36px below the header.
-// It sticks when the meta above it has scrolled to within 36px of the top.
+// Sticky title: mark it once it is stuck below the header.
+// It sticks when the meta above it has scrolled to within --title-top
+// (article.css, .article__title) of the top.
 const scroller = app.querySelector('.scroller')
 const title = app.querySelector('.article__title')
 const meta = app.querySelector('.meta')
+let scrollIdle = 0
 scroller.addEventListener(
   'scroll',
   () => {
-    const titleSlot = meta.offsetTop + meta.offsetHeight + 16 + 8 - scroller.offsetTop // gap + margin
-    title.classList.toggle('is-stuck', scroller.scrollTop >= titleSlot - 36)
+    const gap = parseFloat(getComputedStyle(meta.parentElement).rowGap) || 0
+    const titleSlot = meta.offsetTop + meta.offsetHeight + gap + 8 - scroller.offsetTop // gap + title margin
+    const top = parseFloat(getComputedStyle(title).top) || 0
+    const stuck = scroller.scrollTop >= titleSlot - top
+    title.classList.toggle('is-stuck', stuck)
+
+    // Scrolling (up or down) while stuck: .is-scrolling shows the line under the title;
+    // it goes again 100ms after the scrolling stops
+    title.classList.toggle('is-scrolling', stuck)
+    clearTimeout(scrollIdle)
+    scrollIdle = setTimeout(() => title.classList.remove('is-scrolling'), 100)
   },
   { passive: true },
 )
@@ -80,7 +86,6 @@ const state = {
   view: 'slider', // 'slider' | 'overview'
 }
 
-const slider = createSlider(app, state)
 const mic = createMic()
 let carouselSlider = null
 const cards = createCards(app, state, {
@@ -94,7 +99,6 @@ carouselSlider = createCarouselSlider(
 const overview = createOverview(app, state, cards, {
   onViewChange(view) {
     state.view = view
-    slider.update(state) // .view.slider gets/loses [hidden] after the pinch
     if (view === 'slider') {
       requestAnimationFrame(() => {
         carouselSlider.refresh()
@@ -105,7 +109,6 @@ const overview = createOverview(app, state, cards, {
 })
 
 function render() {
-  slider.update(state)
   cards.update(state)
   overview.update(state)
   requestAnimationFrame(() => {

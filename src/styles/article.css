@@ -1,4 +1,4 @@
-/* Figma: Default-Preferred (22:1494) — article page */
+/* Figma: Default (22:1081) — article page */
 
 /* Reset buttons used as icons / toggles */
 button {
@@ -44,18 +44,18 @@ button {
 .scroller {
   height: calc(100% - 54px);
   overflow-y: auto;
-  overscroll-behavior: contain; /* gallery lock: src/interactions/scroll-lock.js */
+  overscroll-behavior: contain;
   scrollbar-width: none;
 }
 .scroller::-webkit-scrollbar {
   display: none;
 }
 
-/* Body (22:1516) */
+/* Body (22:1451) */
 .article {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 41px; /* between meta, title, Bias Comparison and gallery */
   min-height: 100%;
   padding: 10px var(--space-3) 0;
   overflow-x: clip; /* clips the sliding summaries at the screen edge */
@@ -86,7 +86,7 @@ button {
   flex-direction: column;
   gap: 5px;
   width: 184px;
-  font-weight: var(--weight-medium);
+  font-family: var(--font-medium);
   font-size: 12px;
   line-height: 11px; /* Figma text box height */
   letter-spacing: -0.084px;
@@ -112,12 +112,13 @@ button {
 
 /* Title (22:1533 / 22:1675) — text style "Headline Title"
    One title for both screens: it scrolls with the article until it is
-   36px below the header (Figma Gallery-1), then stays there.
-   .is-stuck (set in main.js) fills the 36px above it, so text scrolling
+   --title-top (15px) below the header (Figma Gallery-1), then stays there.
+   .is-stuck (set in main.js) fills the space above it, so text scrolling
    underneath stays hidden. */
 .article__title {
+  --title-top: 15px; /* where the title sticks, below the header (main.js reads it too) */
   position: sticky;
-  top: 36px;
+  top: var(--title-top);
   z-index: 10;
   min-height: 123px; /* Figma text box */
   /* 16px bottom padding keeps scrolled text away from the title; the
@@ -126,10 +127,28 @@ button {
   padding: 0 var(--space-3) 16px;
   box-sizing: content-box;
   background: var(--color-bg);
-  font-weight: var(--weight-medium);
-  font-size: 30px;
-  line-height: 30px;
-  letter-spacing: -0.3px;
+  font-family: var(--font-medium);
+  font-size: 35px;
+  line-height: 38px;
+  font-weight: 400;
+  letter-spacing: -0.35px; /* -1% */
+}
+/* 0.5px line along the bottom of the title box while scrolling */
+.article__title::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 0.5px;
+  background: var(--color-fg);
+  opacity: 0;
+  /* disappears when the scrolling stops */
+  transition: opacity 400ms ease-in-out;
+}
+.article__title.is-scrolling::after {
+  opacity: 1;
+  transition: opacity 200ms ease; /* appears */
 }
 .article__title.is-stuck::before {
   content: '';
@@ -137,27 +156,35 @@ button {
   right: 0;
   bottom: 100%;
   left: 0;
-  height: 36px;
+  height: var(--title-top);
   background: var(--color-bg);
 }
 
-/* BiasComparison (22:1535) */
+/* Bias Comparison section (48:756): thin line on top, heading, buttons, summaries */
+.bias-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3); /* 16px */
+  padding-top: 11px;
+  border-top: 0.5px solid var(--color-fg);
+}
+
+/* Heading — text style "scrolling text" (Medway Book 19/21) */
+.bias-section__title {
+  font-family: var(--font-sans);
+  font-weight: normal;
+  font-size: 19px;
+  line-height: 21px;
+}
+
+/* BiasComparison (22:1475): grey bar with the three buttons, no rounded corners */
 .bias {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  height: 67px;
   padding: 12px var(--space-2) 12px var(--space-3);
-  border-radius: 5px;
   background: var(--color-grey);
-}
-
-.bias__label {
-  flex-shrink: 0;
-  width: 85px;
-  font-weight: var(--weight-book);
-  font-size: 10px;
-  line-height: 9px; /* Figma: 2 lines in 18px */
-  letter-spacing: -0.07px;
 }
 
 .bias__button {
@@ -165,12 +192,12 @@ button {
   flex: 1 0 0;
   align-items: center;
   justify-content: center;
-  padding: 9.432px var(--space-2) 7.942px;
-  border-radius: 5px;
-  font-weight: var(--weight-medium);
-  font-size: 14.89px;
+  padding: 12px var(--space-2) 11px; /* 34px high */
+  border-radius: 2.5px;
+  font-family: var(--font-sans); /* Medway Book */
+  font-size: 15px;
   line-height: 10.921px;
-  letter-spacing: -0.1042px;
+  letter-spacing: -0.105px; /* -0.7% */
   white-space: nowrap;
   transition:
     background-color 200ms ease,
@@ -202,7 +229,7 @@ button {
   flex-direction: column;
   gap: 14px;
   padding-top: var(--space-2);
-  font-weight: var(--weight-book);
+  font-family: var(--font-sans); /* Medway Book */
   font-size: 19px;
   line-height: 21px;
 }

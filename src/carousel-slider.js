@@ -24,6 +24,13 @@ const TAG_NAMES = {
   farright: 'Far Right',
 }
 
+// How the tag under the marker changes: 'slide' | 'roll' | 'fade' | 'none'
+//   slide: the old word leaves with the bar, the new one comes in from the other side
+//   roll:  the words roll up or down, like a split-flap display
+//   fade:  the old word fades out while the new one fades in
+const LABEL_TRANSITION = 'slide'
+const LABEL_DURATION = 220 // ms
+
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
 
 // Centre of each item, in the track's scroll coordinates
@@ -83,18 +90,13 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   if (!container) return { refresh() {} }
 
   UNIT = parseFloat(getComputedStyle(container).getPropertyValue('--bar-unit')) || UNIT
-  container.innerHTML = `
-    <div class="carousel-slider">
-      <div class="carousel-slider__rail">
-        <div class="slider-bar" aria-hidden="true"></div>
-        <div class="carousel-slider__thumb" aria-hidden="true"></div>
-      </div>
-      <div class="carousel-label" aria-hidden="true"></div>
-    </div>`
+  // The markup is in index.html (.slider-container)
 
   const rail = container.querySelector('.carousel-slider__rail')
   const bar = container.querySelector('.slider-bar')
   const label = container.querySelector('.carousel-label')
+  label.dataset.transition = LABEL_TRANSITION
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
 
   container.setAttribute('role', 'slider')
   container.setAttribute('aria-label', 'Browse stories')
@@ -104,6 +106,37 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   let zone = [0, 0]
   let barKey = ''
   let pos = 0
+  let labelIndex = -1
+
+  // Swap the word under the marker. dir: +1 when moving to a later article
+  // (the bar moves left), −1 when moving to an earlier one.
+  function setLabel(text, dir) {
+    const current = label.lastElementChild
+    if (current?.textContent === text) return
+
+    // On fast drags, drop words that are still leaving
+    ;[...label.children].slice(0, -1).forEach((el) => el.remove())
+
+    const next = document.createElement('span')
+    next.textContent = text
+    label.append(next)
+    if (!current || LABEL_TRANSITION === 'none' || reduceMotion.matches) {
+      current?.remove()
+      return
+    }
+
+    const move = {
+      slide: (d) => `translateX(${d * 16}px)`,
+      roll: (d) => `translateY(${d * 100}%)`,
+      fade: () => 'none',
+    }[LABEL_TRANSITION]
+    const timing = { duration: LABEL_DURATION, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+    current.animate(
+      [{ transform: 'none', opacity: 1 }, { transform: move(-dir), opacity: 0 }],
+      timing,
+    ).finished.then(() => current.remove(), () => {})
+    next.animate([{ transform: move(dir), opacity: 0 }, { transform: 'none', opacity: 1 }], timing)
+  }
 
   function renderBar() {
     articles = getArticles()
@@ -132,8 +165,10 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     const article = articles[index]
 
     // The label under the marker names the tag of the article under it
-    const tag = TAG_NAMES[article?.bias] ?? ''
-    if (label.textContent !== tag) label.textContent = tag
+    if (index !== labelIndex) {
+      setLabel(TAG_NAMES[article?.bias] ?? '', index > labelIndex ? 1 : -1)
+      labelIndex = index
+    }
     container.setAttribute('aria-valuenow', String(index + 1))
     if (article) container.setAttribute('aria-valuetext', `${article.source}, ${article.bias}`)
   }
@@ -141,6 +176,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   function syncFromTrack() {
     const track = getTrack()
     if (track) place(posFromTrack(track))
+  }
+
+  // How much the bar is scaled up while dragging (--bar-drag-scale in main.css),
+  // so the bar stays under the finger
+  function dragScale() {
+    return parseFloat(getComputedStyle(container).getPropertyValue('--bar-drag-scale')) || 1
   }
 
   // Screen px per layout px (the phone mockup is scaled with CSS zoom)
@@ -183,7 +224,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     if (!drag || event.pointerId !== drag.id) return
     const dx = (event.clientX - drag.startX) / screenScale()
     if (Math.abs(dx) > 3) drag.moved = true
-    scrollTo(drag.startPos - dx / UNIT, false)
+    scrollTo(drag.startPos - dx / (UNIT * dragScale()), false)
   })
 
   function endDrag(event) {
@@ -195,7 +236,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     if (!drag.moved) {
       const r = rail.getBoundingClientRect()
       const x = (event.clientX - (r.left + r.width / 2)) / screenScale()
-      target = Math.round(pos + x / UNIT)
+      target = Math.round(pos + x / (UNIT * dragScale()))
     }
 
     drag = null
