@@ -106,8 +106,10 @@ img {
 .cards {
   /* Cards shrink with the gallery: the slider bar takes 128px at the bottom
      (104px + 24px), the card leaves 30px around it to scale; width = 85% of the height */
-  --card-h: 328px;
-  --card-w: calc(var(--card-h) * 0.8);
+  /* Figma size 270 × 383, smaller when the first screen is shorter
+     (128px slider bar + 20px room to scale below the cards) */
+  --card-h: min(383px, calc(var(--gallery-h, 593px) - 128px - 20px));
+  --card-w: calc(var(--card-h) * 0.705);
   position: absolute;
   left: 0;
   right: 0;
@@ -125,45 +127,53 @@ img {
   position: relative;
   scroll-snap-align: center;
   scroll-snap-stop: normal;
-  transform: scale(0.9);
+  transform: scale(0.7656); /* side card; JS scales the centre one to 1 (cards.js) */
   transform-origin: center center;
   will-change: transform;
-  padding: var(--space-3);
+  /* logo + source at the top, title at the bottom (Figma: Default — Gallery by JJ).
+     Everything inside scales with the card height (--u = 1% of it), so a
+     smaller card looks the same as the 383px Figma card */
+  --u: calc(var(--card-h) / 100);
+  overflow: hidden;
+  padding: calc(1.3 * var(--u)) calc(3.5 * var(--u)) calc(2.9 * var(--u));
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-start;
+  color: #ffffff;
+}
+
+/* Gap between the centre card and a side card: 24px at 270px card width
+   (Figma). The side cards are scaled to 0.7656 around their centre, which
+   already opens 11.7% of the width; so the cards overlap slightly in the
+   layout: 24/270 - (1 - 0.7656) / 2 = -2.83% of the width */
+.card + .card {
+  margin-left: calc(var(--card-w) * -0.0283);
 }
 
 .card-tags {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: calc(1.3 * var(--u));
   width: 100%;
-  font-size: 12px; /* newspaper name | tag */
-  margin-bottom: var(--space-2);
-  text-transform: capitalize;
-  opacity: 0.85;
+  min-height: calc(14.4 * var(--u));
+  padding-left: calc(0.5 * var(--u));
+  color: #000000;
+  font-size: calc(4.83 * var(--u)); /* source name: 18.5px on a 383px card */
 }
 
 .card-logo {
-  position: absolute;
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: calc(10.7 * var(--u)); /* 41px */
+  height: calc(10.7 * var(--u));
   border-radius: 50%;
-  margin-right: 8px;
   object-fit: contain;
+  box-shadow: 0 5px 5px rgb(0 0 0 / 0.25);
 }
 
 .card-tags-text {
-  margin-left: 40px;
   opacity: var(--title-opacity, 1);
-}
-
-.card-type-separator {
-  font-feature-settings: "case";
 }
 
 .card-title {
@@ -182,7 +192,7 @@ img {
 .cards-track {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 0; /* spacing: see .card + .card */
   width: 100%;
   height: 100%;
   pointer-events: auto;
@@ -542,6 +552,7 @@ img {
 }
 
 .card.is-shrinking .card-logo {
+  position: absolute; /* in the card it sits in the row; while flying it is placed freely */
   left: var(--logo-left, var(--space-3));
   top: var(--logo-top);
   bottom: auto;

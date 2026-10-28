@@ -11,9 +11,13 @@
   font-display: swap;
 }
 :root {
-  /* Frame: iPhone 16 Pro (402 × 874 pt) */
+  /* Frame: iPhone 16 Pro (402 × 874 pt).
+     --frame-h is the height the website gets:
+       874px = full screen (app / home-screen web app)
+       678px = Safari with status bar + address bar + toolbar showing (approx.) */
   --frame-w: 402px;
-  --frame-h: 874px;
+  --frame-h: 678px;
+  --screen-h-real: 874px; /* the real screen height, keeps the scale true to size */
   --screen-radius: 55px;
   --bezel: 12px;
   /* Real iPhone 16 Pro height: 149.6 mm.
