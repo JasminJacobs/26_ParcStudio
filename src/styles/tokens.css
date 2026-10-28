@@ -24,12 +24,12 @@
   --color-muted: #8a8a8a;
 
   /* Tag colours, far left → far right (Figma frame "Tag Colors") */
-  --tag-farleft: #ff0000;
-  --tag-left: rgba(255, 0, 0, 0.5);
-  --tag-leanleft: rgba(255, 0, 0, 0.25);
-  --tag-centre: rgba(0, 0, 0, 0.15);
-  --tag-leanright: rgba(0, 0, 255, 0.25);
-  --tag-right: rgba(0, 0, 255, 0.5);
+  --tag-farleft: #fa0000;
+  --tag-left: rgb(255 133 133);
+  --tag-leanleft: rgb(229 195 195);
+  --tag-centre: rgb(203 203 203);
+  --tag-leanright: rgb(193 193 235);
+  --tag-right: rgb(142 142 240);
   --tag-farright: #0000ff;
 
   /* Type */
