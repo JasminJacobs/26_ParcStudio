@@ -138,10 +138,11 @@ button {
   background: var(--color-bg);
   font-family: var(--font);
   font-size: var(--text-m);
+  text-align: center;
   line-height: 104%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
-  transform-origin: 18px 0; /* left padding, top of the box */
+  transform-origin: 50% 0; /* left padding, top of the box */
 
   transition: transform 600ms var(--ease);
 }

@@ -231,7 +231,7 @@ img {
 
 .hint.is-visible {
   opacity: 0.5;
-  transition: opacity 600ms var(--ease);
+  transition: opacity 600ms var(--ease) 300ms;
 }
 
 /* SLIDER */
