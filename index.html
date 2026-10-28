@@ -12,7 +12,7 @@
       <!-- ============================================================
            Read from top to bottom = the screen from top to bottom.
              1. Header
-             2. Article page (scrolls): meta, title, Bias Comparison, gallery
+             2. Article page (scrolls): meta, title, gallery, Bias Comparison
              3. Zoom-out overview (lies on top, appears when pinching)
            Empty containers marked "JS:" are filled by the script named.
            ============================================================ -->
@@ -28,7 +28,7 @@
       </header>
 
       <!-- 2. ARTICLE PAGE — everything below the header scrolls in one column:
-              2a meta → 2b title → 2c Bias Comparison → 2d gallery -->
+              2a meta → 2b title → 2c gallery → 2d Bias Comparison -->
       <div class="scroller">
         <main class="article">
 
@@ -57,7 +57,36 @@
             Hundreds of thousands march across France in protests over schools and policing
           </h1>
 
-          <!-- 2c. BIAS COMPARISON — line on top, heading, three buttons, then the summary
+          <!-- 2c. GALLERY — one screen high, under the sticky title (Figma: Gallery-1).
+                   From top to bottom: cards, slider bar; the popup opens over the cards,
+                   the slider bar stays visible below it. -->
+          <section class="gallery" aria-label="Gallery">
+
+            <!-- Cards: one card per article, swipe sideways. JS: cards.js -->
+            <section class="cards" aria-label="Stories">
+              <div class="cards-track"></div>
+            </section>
+
+            <!-- Slider bar at the bottom: one block per article in its tag colour, the black
+                 marker in the middle, the tag name under it. JS: carousel-slider.js -->
+            <div class="slider-container">
+              <div class="carousel-slider">
+                <div class="carousel-slider__rail">
+                  <div class="slider-bar" aria-hidden="true"></div>
+                  <div class="carousel-slider__thumb" aria-hidden="true"></div>
+                </div>
+                <div class="carousel-label" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <!-- Popup: clicking a card opens the article screenshot on top.
+                 One screenshot per article, swipe sideways. JS: cards.js -->
+            <section class="iframes" aria-label="Articles">
+              <div class="iframes-track"></div>
+            </section>
+          </section>
+
+          <!-- 2d. BIAS COMPARISON — line on top, heading, three buttons, then the summary
                    of the chosen side (Figma 48:756) -->
           <section class="bias-section" aria-labelledby="bias-heading">
             <h2 class="bias-section__title" id="bias-heading">Bias Comparison</h2>
@@ -91,35 +120,6 @@
                 <li>Businesses, museums, and other cultural institutions closed or increased security after about 3,000 shops were damaged or looted the previous weekend.</li>
               </ul>
             </div>
-          </section>
-
-          <!-- 2d. GALLERY — one screen high, under the sticky title (Figma: Gallery-1).
-                   From top to bottom: cards, slider bar; the popup opens over the cards,
-                   the slider bar stays visible below it. -->
-          <section class="gallery" aria-label="Gallery">
-
-            <!-- Cards: one card per article, swipe sideways. JS: cards.js -->
-            <section class="cards" aria-label="Stories">
-              <div class="cards-track"></div>
-            </section>
-
-            <!-- Slider bar at the bottom: one block per article in its tag colour, the black
-                 marker in the middle, the tag name under it. JS: carousel-slider.js -->
-            <div class="slider-container">
-              <div class="carousel-slider">
-                <div class="carousel-slider__rail">
-                  <div class="slider-bar" aria-hidden="true"></div>
-                  <div class="carousel-slider__thumb" aria-hidden="true"></div>
-                </div>
-                <div class="carousel-label" aria-hidden="true"></div>
-              </div>
-            </div>
-
-            <!-- Popup: clicking a card opens the article screenshot on top.
-                 One screenshot per article, swipe sideways. JS: cards.js -->
-            <section class="iframes" aria-label="Articles">
-              <div class="iframes-track"></div>
-            </section>
           </section>
         </main>
       </div>
