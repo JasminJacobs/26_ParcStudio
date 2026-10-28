@@ -85,6 +85,11 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
 
   const rail = container.querySelector('.carousel-slider__rail')
   const bar = container.querySelector('.slider-bar')
+  const labels = {
+    left: container.querySelector('#carousel-label-left'),
+    centre: container.querySelector('#carousel-label-centre'),
+    right: container.querySelector('#carousel-label-right'),
+  }
 
   container.setAttribute('role', 'slider')
   container.setAttribute('aria-label', 'Browse stories')
@@ -118,10 +123,19 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     pos = nextPos
     bar.style.transform = `translate3d(${-(pos + 0.5) * UNIT}px, 0, 0)`
 
-    // The Centre label stays with the centre zone on the bar
-    const w = rail.clientWidth || 1
-    const edge = (i) => clamp((w / 2 + (i - pos - 0.5) * UNIT) / w, 0, 1)
-    container.style.setProperty('--centre', (edge(zone[0]) + edge(zone[1])) / 2)
+    // The labels move with the bar: each sits under the middle of its zone
+    // (Left: far left … lean left, Centre, Right: lean right … far right)
+    const w = rail.clientWidth
+    const x = (i) => w / 2 + (i - pos - 0.5) * UNIT // px from the rail's left edge
+    const zones = {
+      left: [0, zone[0]],
+      centre: zone,
+      right: [zone[1], articles.length],
+    }
+    for (const [name, [a, b]] of Object.entries(zones)) {
+      container.style.setProperty(`--label-${name}`, `${(x(a) + x(b)) / 2}px`)
+      labels[name].hidden = b <= a
+    }
 
     const index = Math.round(pos)
     const article = articles[index]

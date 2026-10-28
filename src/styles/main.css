@@ -302,23 +302,31 @@ img {
   font-size: 12px;
 }
 
+/* The labels move with the bar, each under the middle of its zone.
+   --label-left / --label-centre / --label-right are set from JS (px from the rail's left edge);
+   12px = .slider-container padding */
 #carousel-label-left {
-  left: 0;
-  text-align: left;
-  transform: translateX(50%);
+  left: calc(12px + var(--label-left, 0px));
+}
+
+#carousel-label-centre {
+  left: calc(12px + var(--label-centre, 50%));
 }
 
 #carousel-label-right {
-  right: 0;
-  text-align: right;
+  left: calc(12px + var(--label-right, 100%));
+}
+
+#carousel-label-left,
+#carousel-label-centre,
+#carousel-label-right {
+  text-align: center;
+  white-space: nowrap;
   transform: translateX(-50%);
 }
 
-/* Follows the centre zone on the bar (--centre is set from JS, 0–1 of the rail) */
-#carousel-label-centre {
-  left: calc(12px + var(--centre, 0.5) * (100% - 24px));
-  text-align: center;
-  transform: translateX(-50%);
+.carousel-label[hidden] {
+  display: none;
 }
 
 .slider-label {
