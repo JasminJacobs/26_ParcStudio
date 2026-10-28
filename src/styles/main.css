@@ -225,8 +225,8 @@ img {
   --bar-unit: 16px; /* width per article, block + gap */
   --bar-gap: 6px; /* space between two articles */
   --bar-height: 45px;
-  --bar-drag-scale: 1.15; /* the bar grows by this while you drag it */
-  --bar-drag-duration: 600ms; /* how long the growing / shrinking takes */
+  --bar-drag-scale: 1.02; /* the bar grows by this while you drag it */
+  --bar-drag-duration: 400ms; /* how long the growing / shrinking takes */
 }
 
 .carousel-slider {
@@ -245,7 +245,7 @@ img {
 .slider-bar {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: calc(50% + 4px);
   height: var(--bar-height);
   margin-top: calc(var(--bar-height) / -2);
   display: flex;
@@ -293,9 +293,9 @@ img {
   top: 45%;
   left: 50%;
   z-index: 1;
-  width: 3px;
+  width: 2px;
   height: 65px;
-  margin: -28px 0 0 -2px;
+  margin: -28px 0 0 0;
   background: black;
   border-radius: 2px;
   pointer-events: none;
@@ -321,7 +321,7 @@ img {
   transform: translateX(-50%);
   width: fit-content;
   white-space: nowrap;
-  font-family: var(--font-medium);
+  font-family: var(--font);
   font-size: 14px;
   /* Old and new word sit on top of each other while they swap */
   display: grid;
@@ -342,6 +342,17 @@ img {
   height: 12px;
   width: fit-content;
   color: var(--color-fg);
+}
+
+.slider-cover {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 104px;
+  pointer-events: none;
+  background: linear-gradient(0.25turn, var(--color-bg) 2%, transparent 10%, transparent 90%, var(--color-bg) 98%);  
+  z-index: 200;
 }
 
 /* iFRAME OVERLAY */

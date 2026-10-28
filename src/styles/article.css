@@ -55,7 +55,7 @@ button {
 .article {
   display: flex;
   flex-direction: column;
-  gap: 41px; /* between meta, title, Bias Comparison and gallery */
+  gap: 0px; /* between meta, title, Bias Comparison and gallery */
   min-height: 100%;
   padding: 10px var(--space-3) 0;
   overflow-x: clip; /* clips the sliding summaries at the screen edge */
@@ -78,7 +78,7 @@ button {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding-top: 26px;
+  padding: 18px 0px;
 }
 
 .meta__published {
@@ -86,7 +86,7 @@ button {
   flex-direction: column;
   gap: 5px;
   width: 184px;
-  font-family: var(--font-medium);
+  font-family: var(--font);
   font-size: 12px;
   line-height: 11px; /* Figma text box height */
   letter-spacing: -0.084px;
@@ -123,14 +123,15 @@ button {
   min-height: 123px; /* Figma text box */
   /* 16px bottom padding keeps scrolled text away from the title; the
      negative margin cancels it, so the layout below doesn't move */
-  margin: 8px calc(-1 * var(--space-3)) -16px;
-  padding: 0 var(--space-3) 16px;
+  /* margin: 8px calc(-1 * var(--space-3)) -16px;
+  padding: 0 var(--space-3) 16px; */
+  padding-bottom: 12px;
   box-sizing: content-box;
   background: var(--color-bg);
-  font-family: var(--font-medium);
+  font-family: var(--font);
   font-size: 35px;
   line-height: 38px;
-  font-weight: 400;
+  font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
 }
 /* 0.5px line along the bottom of the title box while scrolling */
@@ -183,7 +184,8 @@ button {
   align-items: center;
   gap: var(--space-2);
   height: 67px;
-  padding: 12px var(--space-2) 12px var(--space-3);
+  padding: 12px;
+  border-radius: 2px; 
   background: var(--color-grey);
 }
 
@@ -193,7 +195,7 @@ button {
   align-items: center;
   justify-content: center;
   padding: 12px var(--space-2) 11px; /* 34px high */
-  border-radius: 2.5px;
+  border-radius: 2px;
   font-family: var(--font-sans); /* Medway Book */
   font-size: 15px;
   line-height: 10.921px;
