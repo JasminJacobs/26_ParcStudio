@@ -388,7 +388,9 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.style.top = `${cy - h / 2}px`
       card.style.width = `${w}px`
       card.style.height = `${h}px`
-      card.style.padding = `${lerp(16, 6, ease)}px ${lerp(16, 10, ease)}px`
+      // Pad to 0: leftover padding on iOS (overflow + radius) becomes the
+      // logo's containing block, so it sits off-centre in the chip.
+      card.style.padding = `${lerp(16, 0, ease)}px`
       card.style.borderRadius = `${lerp(0, 26, ease)}px`
       // Hold title/source off while flying home; they fade in after endFlight.
       const textOpacity = inbound ? 0 : Math.max(0, 1 - ease * TEXT_FADE)
