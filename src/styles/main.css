@@ -213,6 +213,11 @@ img {
   padding: 12px;
   border-radius: 36px;
   z-index: 30;
+
+  /* Slider bar settings — change them here (the JS reads --bar-unit) */
+  --bar-unit: 12px; /* width per article, block + gap */
+  --bar-gap: 4px; /* space between two articles */
+  --bar-height: 45px;
 }
 
 .carousel-slider {
@@ -226,14 +231,14 @@ img {
   height: 100%;
 }
 
-/* The bar: one block per article (--bar-unit wide, incl. a 2px gap) in its tag colour.
+/* The bar: one block per article (--bar-unit wide, incl. --bar-gap) in its tag colour.
    Its left edge starts at the centre marker; JS shifts it so the current article sits there. */
 .slider-bar {
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 32px;
-  margin-top: -16px;
+  height: var(--bar-height);
+  margin-top: calc(var(--bar-height) / -2);
   display: flex;
   will-change: transform;
   pointer-events: none;
@@ -242,16 +247,16 @@ img {
 .slider-bar__segment {
   flex: 0 0 auto;
   height: 100%;
-  /* 2px gaps between articles, punched out of the segment colour */
+  /* Gaps between articles, punched out of the segment colour */
   -webkit-mask: repeating-linear-gradient(
     90deg,
-    #000 0 calc(var(--bar-unit) - 2px),
-    transparent calc(var(--bar-unit) - 2px) var(--bar-unit)
+    #000 0 calc(var(--bar-unit) - var(--bar-gap)),
+    transparent calc(var(--bar-unit) - var(--bar-gap)) var(--bar-unit)
   );
   mask: repeating-linear-gradient(
     90deg,
-    #000 0 calc(var(--bar-unit) - 2px),
-    transparent calc(var(--bar-unit) - 2px) var(--bar-unit)
+    #000 0 calc(var(--bar-unit) - var(--bar-gap)),
+    transparent calc(var(--bar-unit) - var(--bar-gap)) var(--bar-unit)
   );
 }
 

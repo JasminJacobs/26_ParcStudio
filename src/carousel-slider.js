@@ -10,7 +10,8 @@
 */
 import { BIAS_ORDER } from './cards.js'
 
-const UNIT = 16 // px per article on the bar (14px block + 2px gap, see .slider-bar)
+// Width per article on the bar: set as --bar-unit on .slider-container in main.css
+let UNIT = 12
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
 
@@ -70,7 +71,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   const container = root.querySelector('.slider-container')
   if (!container) return { refresh() {} }
 
-  container.style.setProperty('--bar-unit', `${UNIT}px`)
+  UNIT = parseFloat(getComputedStyle(container).getPropertyValue('--bar-unit')) || UNIT
   container.innerHTML = `
     <div class="carousel-slider">
       <div class="carousel-slider__rail">
