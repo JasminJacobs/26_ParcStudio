@@ -11,6 +11,16 @@ export const BIAS_ORDER = [
   'farright',
 ]
 
+const BIAS_LABELS = {
+  farleft: 'Far left',
+  left: 'Left',
+  leanleft: 'Lean left',
+  centre: 'Centre',
+  leanright: 'Lean right',
+  right: 'Right',
+  farright: 'Far right',
+}
+
 const DEFAULT_IFRAME = 'img/screenshot01.png'
 
 const CLOSE_ICON = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Close</title><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
@@ -54,7 +64,10 @@ function cardMarkup(article) {
       style="background: ${background}; color: ${color}"
     >
       <h2 class="card-title">${article.title}</h2>
-      <label class="card-source">${article.source}</label>
+      <div class="card-tags">
+            <label class="card-source">${article.source}</label><span class="card-type-separator"> | </span>
+            <label class="card-bias">${BIAS_LABELS[article.bias] ?? article.bias}</label>
+      </div>
     </article>`
 }
 
