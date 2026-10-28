@@ -150,16 +150,32 @@ img {
   align-items: flex-start;
 }
 
-.card-source {
-  display: flex;
-  align-items: center;
-  gap: 12px; /* Figma Card-V1: logo + source */
-}
 .card-tags {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
   font-size: var(--text-s);
   margin-bottom: var(--space-2);
   text-transform: capitalize;
   opacity: 0.85;
+}
+
+.card-logo {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: contain;
+}
+
+.card-tags-text {
+  height: fit-content;
+}
+
+.card-type-separator {
+  font-feature-settings: "case";
 }
 
 .card-title {

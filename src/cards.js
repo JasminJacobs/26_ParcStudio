@@ -23,6 +23,52 @@ const BIAS_LABELS = {
 
 const DEFAULT_IFRAME = 'img/screenshot01.png'
 
+const SOURCE_LOGOS = {
+  teleSUR: 'telesur.png',
+  'HuffPost It': 'huffpost-it.png',
+  'Le Temps': 'le-temps.png',
+  'La Stampa': 'la-stampa.png',
+  Reuters: 'reuters.png',
+  'Le Monde': 'le-monde.png',
+  'La Repubblica': 'la-repubblica.png',
+  CNN: 'cnn.png',
+  Spiegel: 'spiegel.png',
+  'franceinfo.fr': 'franceinfo.png',
+  'Zeit Online': 'zeit-online.png',
+  'Sueddeutsche Zeitung': 'sueddeutsche-zeitung.png',
+  'Democracy Now!': 'democracy-now.png',
+  Tagesschau: 'tagesschau.png',
+  '15min.lt': '15min.png',
+  Euronews: 'euronews.png',
+  'Radio France Internationale': 'rfi.png',
+  'BBC News': 'bbc-news.png',
+  'Deutsche Welle': 'deutsche-welle.png',
+  Bloomberg: 'bloomberg.png',
+  KRDO: 'krdo.png',
+  'Neue Zürcher Zeitung': 'nzz.png',
+  'FOCUS online': 'focus-online.png',
+  Bild: 'bild.png',
+  'n-tv': 'n-tv.png',
+  Welt: 'welt.png',
+  'Frankfurter Allgemeine': 'faz.png',
+  'National Post': 'national-post.png',
+  RedState: 'redstate.png',
+  Breitbart: 'breitbart.png',
+  'topwar.ru': 'topwar.png',
+}
+
+function publicUrl(path) {
+  const base = import.meta.env.BASE_URL
+  const file = path.replace(/^\//, '')
+  return base.endsWith('/') ? base + file : `${base}/${file}`
+}
+
+function logoSrc(article) {
+  const file =
+    SOURCE_LOGOS[article.source] ?? article.logo?.split('/').pop()
+  return file ? publicUrl(`img/logos/${file}`) : ''
+}
+
 const CLOSE_ICON = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Close</title><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
 
 function articlesByBias(articles) {
@@ -54,6 +100,7 @@ function cardSurface(source) {
 
 function cardMarkup(article) {
   const { background, color } = cardSurface(article.source)
+  const logo = logoSrc(article)
   return `
     <article
       class="card"
@@ -65,14 +112,12 @@ function cardMarkup(article) {
     >
       <h2 class="card-title">${article.title}</h2>
       <div class="card-tags">
+        <img class="card-logo" src="${logo}" alt=""/>
+        <div class="card-tags-text">
             <label class="card-source">${article.source}</label><span class="card-type-separator"> | </span>
             <label class="card-bias">${BIAS_LABELS[article.bias] ?? article.bias}</label>
+        </div>
       </div>
-      <label class="card-source">${
-        article.logo
-          ? `<img class="card-logo" src="${import.meta.env.BASE_URL + article.logo}" alt="" width="32" height="32" />`
-          : ''
-      }${article.source}</label>
     </article>`
 }
 
