@@ -180,6 +180,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   }
 
   function syncFromTrack() {
+    if (drag || settleRaf) return
     const track = getTrack()
     if (track) place(posFromTrack(track))
   }
@@ -195,42 +196,89 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     return rail.getBoundingClientRect().width / Math.max(rail.offsetWidth, 1)
   }
 
-  function scrollTo(nextPos, smooth) {
+  function scrollTo(nextPos) {
     const track = getTrack()
     if (!track || !articles.length) return
     const p = clamp(nextPos, 0, articles.length - 1)
-    if (smooth) {
-      track.scrollTo({ left: scrollForPos(track, p), behavior: 'smooth' })
-    } else {
-      track.scrollLeft = scrollForPos(track, p)
-      place(p)
+    track.scrollLeft = scrollForPos(track, p)
+    place(p)
+  }
+
+  function stopSettle() {
+    cancelAnimationFrame(settleRaf)
+    settleRaf = 0
+  }
+
+  function settleTo(target, onDone) {
+    stopSettle()
+    const start = pos
+    const dest = clamp(target, 0, Math.max(0, articles.length - 1))
+    const dist = dest - start
+    if (Math.abs(dist) < 0.002) {
+      scrollTo(dest)
+      onDone?.()
+      return
     }
+    const duration = 280
+    const t0 = performance.now()
+    function tick(now) {
+      const u = Math.min(1, (now - t0) / duration)
+      const eased = 1 - (1 - u) ** 3
+      scrollTo(start + dist * eased)
+      if (u < 1) {
+        settleRaf = requestAnimationFrame(tick)
+        return
+      }
+      settleRaf = 0
+      onDone?.()
+    }
+    settleRaf = requestAnimationFrame(tick)
   }
 
   // Drag: the bar follows the finger, so dragging left brings later articles in
   let drag = null
+  let settleRaf = 0
 
   container.addEventListener('pointerdown', (event) => {
     const track = getTrack()
     if (!track || !articles.length) return
     event.preventDefault()
     event.stopPropagation()
+    stopSettle()
+
+    // Turn snap off without letting iOS shift the scroll position
+    const sl = track.scrollLeft
+    track.classList.add('is-scrubbing')
+    track.scrollLeft = sl
+    place(posFromTrack(track))
+
     drag = {
       id: event.pointerId,
       startX: event.clientX,
       startPos: pos,
       moved: false,
+      primed: false,
     }
     container.classList.add('is-dragging')
-    track.classList.add('is-scrubbing')
-    container.setPointerCapture(event.pointerId)
+    try {
+      container.setPointerCapture(event.pointerId)
+    } catch {
+      /* iOS may throw if capture is not supported */
+    }
   })
 
   container.addEventListener('pointermove', (event) => {
     if (!drag || event.pointerId !== drag.id) return
+    // Capture / the first touchmove often reports a bogus clientX on iOS
+    if (!drag.primed) {
+      drag.startX = event.clientX
+      drag.startPos = pos
+      drag.primed = true
+      return
+    }
     const dx = (event.clientX - drag.startX) / screenScale()
     if (Math.abs(dx) > 3) drag.moved = true
-    scrollTo(drag.startPos - dx / (UNIT * dragScale()), false)
+    scrollTo(drag.startPos - dx / (UNIT * dragScale()))
   })
 
   function endDrag(event) {
@@ -247,12 +295,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
 
     drag = null
     container.classList.remove('is-dragging')
-    track?.classList.remove('is-scrubbing')
-    scrollTo(target, true)
+    settleTo(target, () => track?.classList.remove('is-scrubbing'))
   }
 
   container.addEventListener('pointerup', endDrag)
   container.addEventListener('pointercancel', endDrag)
+  container.addEventListener('lostpointercapture', endDrag)
 
   // Trackpad: a sideways swipe over the bar moves it the same way
   let wheelTimer = 0
@@ -262,12 +310,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
       if (event.ctrlKey || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return
       event.preventDefault()
       const track = getTrack()
+      stopSettle()
       track?.classList.add('is-scrubbing')
-      scrollTo(pos + event.deltaX / screenScale() / UNIT, false)
+      scrollTo(pos + event.deltaX / screenScale() / UNIT)
       clearTimeout(wheelTimer)
       wheelTimer = setTimeout(() => {
-        track?.classList.remove('is-scrubbing')
-        scrollTo(Math.round(pos), true)
+        settleTo(Math.round(pos), () => track?.classList.remove('is-scrubbing'))
       }, 140)
     },
     { passive: false },
@@ -278,7 +326,9 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     const step = { ArrowLeft: -1, ArrowRight: 1 }[event.key]
     if (!step) return
     event.preventDefault()
-    scrollTo(Math.round(pos) + step, true)
+    const track = getTrack()
+    track?.classList.add('is-scrubbing')
+    settleTo(Math.round(pos) + step, () => track?.classList.remove('is-scrubbing'))
   })
 
   // Swiping the cards (or screenshots) moves the bar
@@ -310,7 +360,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     const [a, b] = zone
     const middle = b > a ? (a + b - 1) / 2 : (articles.length - 1) / 2
     // With an even count, take the left one of the two middle articles
-    scrollTo(Math.floor(middle), false)
+    scrollTo(Math.floor(middle))
   }
 
   function refresh() {
