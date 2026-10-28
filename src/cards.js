@@ -54,7 +54,11 @@ function cardMarkup(article) {
       style="background: ${background}; color: ${color}"
     >
       <h2 class="card-title">${article.title}</h2>
-      <label class="card-source">${article.source}</label>
+      <label class="card-source">${
+        article.logo
+          ? `<img class="card-logo" src="${import.meta.env.BASE_URL + article.logo}" alt="" width="32" height="32" />`
+          : ''
+      }${article.source}</label>
     </article>`
 }
 
