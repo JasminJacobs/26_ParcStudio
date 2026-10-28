@@ -157,6 +157,11 @@ img {
   opacity: 0.85;
 }
 
+.card-type-separator {
+  text-transform: uppercase;
+  font-feature-settings: "case";
+}
+
 .card-title {
   font-family: var(--font);
   font-weight: normal;
