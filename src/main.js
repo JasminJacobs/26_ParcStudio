@@ -65,8 +65,16 @@ function titleScale() {
 }
 
 // Clip height = unscaled title height × scale, so the layout tracks the visual text.
+// Pin pixels first: height cannot transition from `auto`.
 function layoutTitleSize() {
-  titleClip.style.height = `${title.offsetHeight * titleScale()}px`
+  const next = `${title.offsetHeight * titleScale()}px`
+  if (!titleClip.style.height) {
+    titleClip.style.transition = 'none'
+    titleClip.style.height = `${title.offsetHeight}px`
+    void titleClip.offsetHeight
+    titleClip.style.transition = ''
+  }
+  titleClip.style.height = next
 }
 
 // Compact title while an iframe is open, the overview is zoomed out, or the page is scrolled.
@@ -81,9 +89,16 @@ function syncTitleSize() {
   if (changed || !titleClip.style.height) layoutTitleSize()
 }
 
-layoutTitleSize()
-document.fonts?.ready.then(layoutTitleSize)
-window.addEventListener('resize', layoutTitleSize)
+function pinTitleSize() {
+  titleClip.style.transition = 'none'
+  layoutTitleSize()
+  void titleClip.offsetHeight
+  titleClip.style.transition = ''
+}
+
+pinTitleSize()
+document.fonts?.ready.then(pinTitleSize)
+window.addEventListener('resize', pinTitleSize)
 
 scroller.addEventListener(
   'scroll',

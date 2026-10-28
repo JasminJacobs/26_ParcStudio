@@ -122,6 +122,7 @@ button {
   top: var(--title-top);
   z-index: 10;
   width: 100%;
+  min-height: 0;
   background: var(--color-bg);
 }
 
@@ -137,19 +138,19 @@ button {
   padding: 0 18px 18px;
   box-sizing: content-box;
   transform-origin: top left;
-  scale: 1;
+  transform: scale(1);
   font-family: var(--font);
   font-size: var(--text-l);
   line-height: 104%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
   transition:
-    scale var(--duration) var(--ease),
+    transform var(--duration) var(--ease),
     letter-spacing var(--duration) var(--ease);
 }
 
 .article__title.small {
-  scale: var(--title-small-scale);
+  transform: scale(0.375);
   letter-spacing: 0px;
 }
 
