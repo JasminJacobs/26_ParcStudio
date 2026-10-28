@@ -2,7 +2,39 @@
   Draggable thumb in .slider-container — maps to horizontal scroll on the visible track
   (cards, or the iframe overlays when they are open).
 */
-export function createCarouselSlider(root, getTrack) {
+import { BIAS_ORDER } from './cards.js'
+
+// Article i of n sits at i / (n - 1) of the way along the slider
+function stepRatio(index, count) {
+  return count > 1 ? index / (count - 1) : 0
+}
+
+// The centre zone runs from halfway before the first centre article
+// to halfway after the last one, as [start, end] ratios
+function centreRange(articles) {
+  const count = articles.length
+  const clamp = (r) => Math.min(1, Math.max(0, r))
+  const centre = articles
+    .map((a, i) => (a.bias === 'centre' ? i : -1))
+    .filter((i) => i !== -1)
+  if (centre.length) {
+    return [
+      clamp(stepRatio(centre[0] - 0.5, count)),
+      clamp(stepRatio(centre[centre.length - 1] + 0.5, count)),
+    ]
+  }
+
+  // No centre articles: span the gap between the last left-leaning and first right-leaning one
+  const centreRank = BIAS_ORDER.indexOf('centre')
+  const firstRight = articles.findIndex(
+    (a) => BIAS_ORDER.indexOf(a.bias) > centreRank,
+  )
+  if (firstRight === -1) return [1, 1]
+  if (firstRight === 0) return [0, 0]
+  return [stepRatio(firstRight - 1, count), stepRatio(firstRight, count)]
+}
+
+export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   const container = root.querySelector('.slider-container')
   if (!container) return { refresh() {} }
 
@@ -10,16 +42,41 @@ export function createCarouselSlider(root, getTrack) {
     <div class="carousel-slider">
       <div class="carousel-slider__rail">
         <div class="carousel-slider__track-line" aria-hidden="true"></div>
+        <div class="carousel-slider__marks" aria-hidden="true"></div>
         <div class="carousel-slider__thumb" aria-label="Browse stories"></div>
       </div>
       <div class="carousel-label" id="carousel-label-left">Left</div>
+      <div class="carousel-label" id="carousel-label-centre">Centre</div>
       <div class="carousel-label" id="carousel-label-right">Right</div>
     </div>`
 
   const rail = container.querySelector('.carousel-slider__rail')
   const thumb = container.querySelector('.carousel-slider__thumb')
-  const leftLabel = container.querySelector('#carousel-label-left')
-  const rightLabel = container.querySelector('#carousel-label-right')
+  const marks = container.querySelector('.carousel-slider__marks')
+  const centreLabel = container.querySelector('#carousel-label-centre')
+
+  let marksKey = ''
+
+  function renderMarks() {
+    const articles = getArticles()
+    const key = articles.map((a) => `${a.id}:${a.bias}`).join(',')
+    if (key === marksKey) return
+    marksKey = key
+
+    const count = articles.length
+    marks.innerHTML = articles
+      .map(
+        (_, i) =>
+          `<span class="carousel-slider__tick" style="--r: ${stepRatio(i, count)}"></span>`,
+      )
+      .join('')
+
+    const [start, end] = centreRange(articles)
+    container.style.setProperty('--centre-start', start)
+    container.style.setProperty('--centre-end', end)
+    container.style.setProperty('--centre', (start + end) / 2)
+    centreLabel.hidden = count === 0
+  }
 
   let drag = null
   let frame = 0
@@ -132,6 +189,7 @@ export function createCarouselSlider(root, getTrack) {
 
   function refresh() {
     bindTrack()
+    renderMarks()
     syncFromTrack()
   }
 
