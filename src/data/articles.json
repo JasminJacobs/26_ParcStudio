@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "title": "\"Act II\": Yellow Vests Call for New Protests in France for October 24",
+    "title": "“Act II”: Yellow Vests Call for New Protests in France for October 24",
     "source": "teleSUR",
     "logo": "img/logos/telesur.png",
     "bias": "farleft",
@@ -137,7 +137,7 @@
   },
   {
     "id": 13,
-    "title": "Protests over schools and policing test the government's fragile majority",
+    "title": "Protests over schools and policing test the government’s fragile majority",
     "source": "Le Monde",
     "bias": "leanleft",
     "type": "Liberal",
@@ -170,7 +170,7 @@
   },
   {
     "id": 16,
-    "title": "Tear gas in Lyon and Nantes as France's school protests enter a third week",
+    "title": "Tear gas in Lyon and Nantes as France’s school protests enter a third week",
     "source": "France 24",
     "bias": "centre",
     "type": "Liberal",
