@@ -121,12 +121,12 @@ button {
   position: sticky;
   top: var(--title-top);
   z-index: 10;
-  min-height: 123px; /* Figma text box */
+  min-height: 100px; /* Figma text box */
   padding: 0 18px 18px;
   box-sizing: content-box;
   background: var(--color-bg);
   font-family: var(--font);
-  font-size: var(--text-l);
+  font-size: var(--text-m);
   line-height: 104%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
