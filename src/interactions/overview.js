@@ -33,7 +33,7 @@ function distance(a, b) {
 function fieldBox(layer) {
   const w = layer.clientWidth
   const h = layer.clientHeight
-  const top = 108
+  const top = 240
   const bottom = 28
   const side = 18
   return { x: side, y: top, w: w - side * 2, h: h - top - bottom }
@@ -278,6 +278,10 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function onTouchMove(event) {
+    if (progress > 0 && event.touches.length < 2) {
+      event.preventDefault()
+      return
+    }
     if (!pinch || event.touches.length < 2) return
     event.preventDefault()
     const dist = distance(touchPoint(event.touches, 0), touchPoint(event.touches, 1))
@@ -299,6 +303,10 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function onWheel(event) {
+    if (progress > 0 && !event.ctrlKey) {
+      event.preventDefault()
+      return
+    }
     if (!event.ctrlKey || onSlider(event)) return
     event.preventDefault()
     cancelAnimationFrame(raf)
@@ -317,7 +325,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   root.addEventListener('touchmove', onTouchMove, touchOpts)
   root.addEventListener('touchend', onTouchEnd, touchOpts)
   root.addEventListener('touchcancel', onTouchEnd, touchOpts)
-  root.addEventListener('wheel', onWheel, { passive: false })
+  root.addEventListener('wheel', onWheel, { passive: false, capture: true })
   root.addEventListener('gesturestart', killGesture)
   root.addEventListener('gesturechange', killGesture)
   root.addEventListener('gestureend', killGesture)

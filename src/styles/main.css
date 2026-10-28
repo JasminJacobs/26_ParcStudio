@@ -582,14 +582,23 @@ img {
 .map-cluster-label {
   position: absolute;
   transform: translate(-50%, -100%);
-  margin-top: -4px;
+  margin-top: 4px;
   font-size: var(--text-s);
   letter-spacing: 0.06em;
-  text-transform: uppercase;
+  text-transform: capitalize;
   color: var(--color-fg);
   opacity: 0.4;
   white-space: nowrap;
   pointer-events: none;
+}
+
+#app.is-overviewing .scroller,
+#app.is-overview .scroller,
+#app.is-overviewing .iframe-scroll,
+#app.is-overview .iframe-scroll {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 #app.is-overviewing .cards-track,
