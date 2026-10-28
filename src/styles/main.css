@@ -42,8 +42,6 @@ body {
   overflow: hidden;
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
-
-    padding: 12px;
 }
 
 /* Desktop preview: show the app inside an iPhone 16 Pro sized frame */
@@ -75,10 +73,12 @@ body {
   }
 }
 
-/* Each interaction renders into its own full-size layer */
+/* Leftover full-screen layer from the old views — pass events through so
+   the article (bias, summary) can scroll. */
 .view {
   position: absolute;
   inset: 0;
+  pointer-events: none;
   transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease);
 }
 .view[hidden] {
