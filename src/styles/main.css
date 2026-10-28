@@ -235,6 +235,12 @@ img {
 
 /* SLIDER */
 
+@property --bar-height {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 32px;
+}
+
 .slider-container {
   position: absolute;
   bottom: 12px;
@@ -260,6 +266,7 @@ img {
   --block-scale: 1.3; /* the block under the marker grows this much in height */
   --block-scale-near: 1.07; /* the block before and after it */
   --block-duration: 400ms; /* their grow / shrink, ease-in-out */
+  transition: --bar-height 300ms var(--ease), bottom 300ms var(--ease);
 }
 
 .slider-container.is-dragging {
@@ -340,6 +347,8 @@ img {
   background: black;
   border-radius: 2px;
   pointer-events: none;
+
+  transition: height 300ms var(--ease), margin 300ms var(--ease);
 }
 
 /* Under the marker: the tag of the current article (text set from JS) */
@@ -355,6 +364,9 @@ img {
   /* Old and new word sit on top of each other while they swap */
   display: grid;
   justify-items: center;
+
+  transition: opacity 300ms var(--ease);
+
 }
 
 .carousel-counter {
@@ -365,6 +377,8 @@ img {
   color: var(--color-fg);
   opacity: 0.5;
   z-index: 300;
+
+  transition: opacity 300ms var(--ease), display 300ms var(--ease) 300ms;
 }
 
 .carousel-label > span {
@@ -391,9 +405,9 @@ img {
 
 .iframes {
   --iframe-w: 95%;
-  height: 100%;
+  height: calc(100% - 124px - 48px);
   position: absolute;
-  top: -120px;
+  top: 124px;
   left: 0;
   right: 0;
   bottom: 120px; /* keeps the slider visible */
@@ -411,7 +425,10 @@ img {
   opacity: 1;
   visibility: visible;
   transform: none;
-  transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+  transition:
+    opacity 300ms var(--ease) 600ms,
+    transform 300ms var(--ease) 600ms,
+    visibility 0s linear 600ms;
 }
 
 .iframes-track {
@@ -629,4 +646,28 @@ img {
 #app.is-overview .slider-container,
 #app.is-overviewing .slider-container {
   transition: none;
+}
+
+/* iframe open beheviours */
+
+.carousel-label.iframeopen {
+  opacity: 0;
+}
+
+.carousel-counter.iframeopen {
+  opacity: 0;
+}
+
+.hint.iframeopen {
+  opacity: 0;
+}
+
+.carousel-slider__thumb.iframeopen {
+  height: 12px;
+  margin: -2px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
+}
+
+.slider-container.iframeopen {
+  --bar-height: 6px;
+  bottom: -36px;
 }

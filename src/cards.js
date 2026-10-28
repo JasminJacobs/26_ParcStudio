@@ -261,6 +261,9 @@ export function createCards(root, state, { onOpenChange } = {}) {
 
   let open = false
   let flight = null
+  const iframeOpenTargets = root.querySelectorAll(
+    '.meta, .hint, .carousel-counter, .carousel-label, .carousel-slider__thumb, .slider-container, .article__title',
+  )
 
   // The visible track leads; the hidden one follows at the same scroll ratio,
   // so card N and overlay N are always at the same carousel position.
@@ -294,6 +297,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
     cardsSection.classList.toggle('is-covered', open)
     cardTrack.classList.toggle('is-following', open)
     iframeTrack.classList.toggle('is-following', !open)
+    iframeOpenTargets.forEach((el) => el.classList.toggle('iframeopen', open))
     onOpenChange?.(open)
   }
 
