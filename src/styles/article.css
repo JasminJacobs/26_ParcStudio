@@ -127,7 +127,7 @@ button {
   background: var(--color-bg);
   font-family: var(--font);
   font-size: var(--text-l);
-  line-height: 106%;
+  line-height: 104%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
 }
@@ -253,7 +253,7 @@ button {
   padding-top: var(--space-2);
   font-family: var(--font-sans); /* Medway Book */
   font-size: 19px;
-  line-height: 21px;
+  line-height: 120%;
 }
 /* Hidden lists stay in the grid cell (just invisible), so the block is always
    as high as the longest list and the page below doesn't jump */

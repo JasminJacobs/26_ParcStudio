@@ -23,7 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Font files stay out of the repo (Medway is Figma only; web uses Helvetica Neue)
+# Licensed fonts (Medway) — local / Cloudflare preview only, never commit
+public/fonts/
 *.otf
 *.ttf
 *.woff
