@@ -106,7 +106,7 @@ img {
 .cards {
   /* Cards shrink with the gallery: the slider bar takes 128px at the bottom
      (104px + 24px), the card leaves 30px around it to scale; width = 85% of the height */
-  --card-h: min(400px, calc(var(--gallery-h, 593px) - 128px - 30px));
+  --card-h: 328px;
   --card-w: calc(var(--card-h) * 0.8);
   position: absolute;
   left: 0;
@@ -214,7 +214,7 @@ img {
 
 .hint {
   position: absolute;
-  bottom: 126px;
+  bottom: 98px;
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--text-s);
@@ -232,7 +232,7 @@ img {
 
 .slider-container {
   position: absolute;
-  bottom: 24px;
+  bottom: 12px;
   left: 12px;
   width: calc(100% - 24px);
   height: 104px;
@@ -243,7 +243,7 @@ img {
   /* Slider bar settings — change them here (the JS reads --bar-unit) */
   --bar-unit: 14.4px; /* width per article, block + gap */
   --bar-gap: 5.4px; /* space between two articles */
-  --bar-height: 40.5px;
+  --bar-height: 32px;
   --bar-drag-scale: 1.02; /* the whole bar grows a little while you drag it */
   --block-scale: 1.3; /* the block under the marker grows this much in height */
   --block-scale-near: 1.07; /* the block before and after it grow this much */
@@ -320,8 +320,8 @@ img {
   left: 50%;
   z-index: 1;
   width: 2px;
-  height: 65px;
-  margin: -28px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
+  height: 48px;
+  margin: -19px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
   background: black;
   border-radius: 2px;
   pointer-events: none;
@@ -342,7 +342,7 @@ img {
 /* Under the marker: the tag of the current article (text set from JS) */
 .carousel-label {
   position: absolute;
-  top: calc(50% + 37px); /* below the marker */
+  top: calc(50% + 32px); /* below the marker */
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;

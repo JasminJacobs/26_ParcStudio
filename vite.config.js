@@ -5,5 +5,6 @@ export default defineConfig({
   base: '/26_ParcStudio/',
   server: {
     host: true, // reachable from the iPhone on the same Wi-Fi
+    allowedHosts: true, // Cloudflare quick tunnels (*.trycloudflare.com)
   },
 })
