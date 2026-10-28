@@ -270,8 +270,11 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     animateTo(target)
   }
 
+  // The slider bar handles its own gestures
+  const onSlider = (event) => event.target.closest?.('.slider-container')
+
   function onTouchStart(event) {
-    if (event.touches.length < 2) return
+    if (event.touches.length < 2 || onSlider(event)) return
     event.preventDefault()
     cancelAnimationFrame(raf)
     clearTimeout(wheelTimer)
@@ -304,7 +307,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function onWheel(event) {
-    if (!event.ctrlKey) return
+    if (!event.ctrlKey || onSlider(event)) return
     event.preventDefault()
     cancelAnimationFrame(raf)
     ensureSession()
