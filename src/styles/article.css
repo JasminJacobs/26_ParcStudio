@@ -55,7 +55,7 @@ button {
 .article {
   display: flex;
   flex-direction: column;
-  gap: 41px; /* between meta, title, Bias Comparison and gallery */
+  gap: 22px; /* between meta, title, gallery and Bias Comparison */
   min-height: 100%;
   padding: 10px var(--space-3) 0;
   overflow-x: clip; /* clips the sliding summaries at the screen edge */
@@ -64,11 +64,16 @@ button {
   flex-shrink: 0;
 }
 
-/* Gallery (Figma Gallery-1, 22:1636) — fills exactly one screen,
-   full width (cancels the article's side padding) */
+/* Gallery (Figma Gallery-1, 22:1636) — fills the rest of the first screen
+   under the title, so cards and slider bar are visible without scrolling.
+   --gallery-h is measured in main.js (fitGallery). Full width (cancels the
+   article's side padding). */
 .gallery {
   position: relative;
-  height: calc(var(--frame-h) - 54px);
+  /* Own layer: cards, slider bar and popup keep their order inside the gallery,
+     but the whole gallery scrolls under the sticky title */
+  isolation: isolate;
+  height: var(--gallery-h, 593px);
   margin: 0 calc(-1 * var(--space-3));
   overflow: hidden;
 }
