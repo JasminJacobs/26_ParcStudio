@@ -71,7 +71,6 @@ body {
     flex-shrink: 0;
     width: var(--frame-w);
     height: var(--frame-h);
-    padding: 0;
     background: var(--color-bg);
     border: var(--bezel) solid #000;
     border-radius: calc(var(--screen-radius) + var(--bezel));
@@ -180,6 +179,7 @@ header .logo {
   font-weight: normal;
   font-size: var(--text-m);
   line-height: var(--leading-m);
+  opacity: var(--title-opacity, 1);
 }
 
 .cards-track {
@@ -233,6 +233,28 @@ header .logo {
   z-index: 30;
 }
 
+/* --centre-start / --centre-end (0–1) are set from JS; the bg colour fills the centre zone */
+.slider-container::before {
+  content: '';
+  position: absolute;
+  width: calc(100% + 96px);
+  height: 200px;
+  left: -48px;
+  top: -20px;
+  bottom: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.8) 0%,
+    var(--color-bg) calc(14px + var(--centre-start, 0.5) * (100% - 28px)),
+    var(--color-bg) calc(14px + var(--centre-end, 0.5) * (100% - 28px)),
+    rgba(0, 0, 255, 0.8) 100%
+  );
+  filter: blur(16px);
+  pointer-events: none;
+}
+
 .carousel-slider {
   width: 100%;
   height: 100%;
@@ -253,6 +275,23 @@ header .logo {
   background: black;
   pointer-events: none;
   z-index: 0;
+}
+
+/* --r is the 0–1 position along the slider; marks line up with the thumb's centre (4px wide) */
+.carousel-slider__marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.carousel-slider__tick {
+  position: absolute;
+  top: 50%;
+  left: calc(2px + var(--r) * (100% - 4px));
+  width: 1px;
+  height: 8px;
+  background: black;
+  transform: translate(-50%, -50%);
 }
 
 .carousel-slider__thumb {
@@ -299,6 +338,13 @@ header .logo {
 #carousel-label-right {
   right: 0;
   text-align: right;
+  transform: translateX(-50%);
+}
+
+/* Positioned against .slider-container, so offset by its 12px padding */
+#carousel-label-centre {
+  left: calc(14px + var(--centre, 0.5) * (100% - 28px));
+  text-align: center;
   transform: translateX(-50%);
 }
 
@@ -429,4 +475,111 @@ header .logo {
           filter: url(#btn-glass);
   overflow: hidden;
   isolation: isolate;
+}
+
+/* MAP / OVERVIEW */
+
+.cards-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 16;
+  pointer-events: none;
+}
+
+.cards-layer.is-active .card {
+  flex: none;
+  pointer-events: auto;
+  will-change: left, top, width, height;
+  user-select: none;
+}
+
+.card.is-placeholder {
+  visibility: hidden;
+  pointer-events: none;
+  background: none !important;
+  color: transparent !important;
+}
+
+.card.is-shrinking {
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+}
+
+.card.is-shrinking .card-title {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 36px;
+  pointer-events: none;
+}
+
+.card.is-label {
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.card.is-label .card-title {
+  visibility: hidden;
+}
+
+.card.is-label .card-source {
+  margin: 0;
+  opacity: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 148px;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  z-index: 14;
+  pointer-events: none;
+  opacity: var(--overview-progress, 0);
+}
+
+.map-cluster-blob {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgb(0 0 0 / 0.06) 0%, transparent 72%);
+}
+
+.map-cluster-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  margin-top: -4px;
+  font-size: var(--text-s);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg);
+  opacity: 0.4;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+#app.is-overviewing .cards-track,
+#app.is-overview .cards-track,
+#app.is-overviewing .iframes-track,
+#app.is-overview .iframes-track {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#app.is-overviewing .cards-layer .card,
+#app.is-overview .cards-layer .card {
+  touch-action: none;
+}
+
+#app.is-overview .headline,
+#app.is-overviewing .headline {
+  transition: none;
+}
+
+#app.is-overview .slider-container,
+#app.is-overviewing .slider-container {
+  transition: none;
 }

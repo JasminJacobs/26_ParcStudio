@@ -1,7 +1,7 @@
 import './styles/main.css'
 import articles from './data/articles.json'
 import { createSlider } from './interactions/slider.js'
-// import { createOverview } from './interactions/overview.js'
+import { createOverview } from './interactions/overview.js'
 import { createMic } from './interactions/mic.js'
 import { createCards } from './cards.js'
 import { createCarouselSlider } from './carousel-slider.js'
@@ -23,18 +23,32 @@ const state = {
 }
 
 const slider = createSlider(app, state)
-// const overview = createOverview(app, state)
 const mic = createMic()
 let carouselSlider = null
 const cards = createCards(app, state, {
   onOpenChange: () => carouselSlider?.refresh(),
 })
-carouselSlider = createCarouselSlider(app, () => cards.getTrack())
+carouselSlider = createCarouselSlider(
+  app,
+  () => cards.getTrack(),
+  () => cards.getArticles(),
+)
+const overview = createOverview(app, state, cards, {
+  onViewChange(view) {
+    state.view = view
+    if (view === 'slider') {
+      requestAnimationFrame(() => {
+        carouselSlider.refresh()
+        cards.updateCardScales?.()
+      })
+    }
+  },
+})
 
 function render() {
   slider.update(state)
-  // overview.update(state)
   cards.update(state)
+  overview.update(state)
   requestAnimationFrame(() => {
     carouselSlider.refresh()
     cards.updateCardScales?.()
@@ -43,8 +57,11 @@ function render() {
 
 // Switch between the gallery and the zoomed-out overview
 export function setView(view) {
-  state.view = view
-  render()
+  app.dispatchEvent(
+    new CustomEvent('parc:overview', {
+      detail: view === 'overview' ? 'open' : 'close',
+    }),
+  )
 }
 
 // Blowing into the mic toggles the "most read" filter

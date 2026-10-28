@@ -1,7 +1,7 @@
 import { visibleArticles } from './interactions/slider.js'
 import sourceColors from './data/source-colors.json'
 
-const BIAS_ORDER = [
+export const BIAS_ORDER = [
   'farleft',
   'left',
   'leanleft',
@@ -49,6 +49,7 @@ function cardMarkup(article) {
       class="card"
       data-id="${article.id}"
       data-bias="${article.bias}"
+      data-type="${article.type ?? ''}"
       data-source="${article.source}"
       style="background: ${background}; color: ${color}"
     >
@@ -91,6 +92,30 @@ function centerOffset(track, item) {
   return item.offsetLeft - (track.clientWidth - item.offsetWidth) / 2
 }
 
+function lerp(a, b, t) {
+  return a + (b - a) * t
+}
+
+function rectRelative(el, container) {
+  const a = el.getBoundingClientRect()
+  const b = container.getBoundingClientRect()
+  const scale = b.width / Math.max(container.offsetWidth, 1)
+  return {
+    x: (a.left - b.left) / scale,
+    y: (a.top - b.top) / scale,
+    w: a.width / scale,
+    h: a.height / scale,
+  }
+}
+
+function resetCardStyle(card) {
+  const background = card.style.background
+  const color = card.style.color
+  card.removeAttribute('style')
+  card.style.background = background
+  card.style.color = color
+}
+
 // Centre item at full size, neighbours down to 0.9
 function scaleItems(track) {
   const items = track.children
@@ -128,7 +153,15 @@ export function createCards(root, state, { onOpenChange } = {}) {
   const cardTrack = ensureTrack(cardsSection, 'cards-track')
   const iframeTrack = ensureTrack(iframesSection, 'iframes-track')
 
+  let layer = root.querySelector('.cards-layer')
+  if (!layer) {
+    layer = document.createElement('div')
+    layer.className = 'cards-layer'
+    root.append(layer)
+  }
+
   let open = false
+  let flight = null
 
   // The visible track leads; the hidden one follows at the same scroll ratio,
   // so card N and overlay N are always at the same carousel position.
@@ -185,9 +218,120 @@ export function createCards(root, state, { onOpenChange } = {}) {
     syncAndScale()
   })
 
+  let currentArticles = []
+
+  function beginFlight() {
+    if (flight) return flight.from
+
+    const cards = [...cardTrack.querySelectorAll('.card:not(.is-placeholder)')]
+    const measured = cards.map((card) => ({
+      card,
+      rect: rectRelative(card, layer),
+    }))
+
+    const from = new Map()
+    layer.classList.add('is-active')
+
+    for (const { card, rect } of measured) {
+      from.set(String(card.dataset.id), {
+        el: card,
+        type: card.dataset.type,
+        source: card.dataset.source,
+        ...rect,
+      })
+
+      const placeholder = document.createElement('article')
+      placeholder.className = 'card is-placeholder'
+      placeholder.dataset.id = card.dataset.id
+      placeholder.setAttribute('aria-hidden', 'true')
+      card.after(placeholder)
+
+      layer.append(card)
+      card.classList.add('is-shrinking')
+      card.style.position = 'absolute'
+      card.style.margin = '0'
+      card.style.transform = 'none'
+      card.style.zIndex = '1'
+      card.style.left = `${rect.x}px`
+      card.style.top = `${rect.y}px`
+      card.style.width = `${rect.w}px`
+      card.style.height = `${rect.h}px`
+    }
+
+    syncAndScale()
+    flight = { from }
+    return from
+  }
+
+  function applyFlight(from, to, t) {
+    for (const [id, start] of from) {
+      const end = to.get(id)
+      if (!end) continue
+      const card = start.el
+      const ease = t
+      const cx = lerp(start.x + start.w / 2, end.x + end.w / 2, ease)
+      const cy = lerp(start.y + start.h / 2, end.y + end.h / 2, ease)
+      const w = lerp(start.w, end.w, ease)
+      const h = lerp(start.h, end.h, ease)
+      card.style.left = `${cx - w / 2}px`
+      card.style.top = `${cy - h / 2}px`
+      card.style.width = `${w}px`
+      card.style.height = `${h}px`
+      card.style.padding = `${lerp(16, 6, ease)}px ${lerp(16, 10, ease)}px`
+      card.style.borderRadius = `${lerp(0, 18, ease)}px`
+      card.style.setProperty('--title-opacity', String(Math.max(0, 1 - ease * 1.7)))
+      card.classList.toggle('is-label', ease > 0.52)
+    }
+  }
+
+  function measureHomes() {
+    const homes = new Map()
+    if (!flight) return homes
+    for (const [id, item] of flight.from) {
+      const placeholder = cardTrack.querySelector(
+        `.card.is-placeholder[data-id="${id}"]`,
+      )
+      if (!placeholder) continue
+      homes.set(id, { el: item.el, ...rectRelative(placeholder, layer) })
+    }
+    return homes
+  }
+
+  function centerById(id) {
+    const item = [...cardTrack.children].find(
+      (el) => el.dataset.id === String(id),
+    )
+    if (!item) return
+    cardTrack.scrollLeft = centerOffset(cardTrack, item)
+    const overlay = [...iframeTrack.children].find(
+      (el) => el.dataset.id === String(id),
+    )
+    if (overlay) iframeTrack.scrollLeft = centerOffset(iframeTrack, overlay)
+    syncAndScale()
+  }
+
+  function endFlight() {
+    if (!flight) return
+    for (const [id, item] of flight.from) {
+      const placeholder = cardTrack.querySelector(
+        `.card.is-placeholder[data-id="${id}"]`,
+      )
+      const card = item.el
+      resetCardStyle(card)
+      card.classList.remove('is-shrinking', 'is-label')
+      if (placeholder) placeholder.replaceWith(card)
+      else cardTrack.append(card)
+    }
+    layer.classList.remove('is-active')
+    flight = null
+    syncAndScale()
+  }
+
   function update(nextState) {
+    if (flight) return
     const ratio = scrollRatio(leader())
     const articles = articlesByBias(visibleArticles(nextState))
+    currentArticles = articles
     cardTrack.innerHTML = articles.map(cardMarkup).join('')
     iframeTrack.innerHTML = articles.map(overlayMarkup).join('')
 
@@ -204,6 +348,15 @@ export function createCards(root, state, { onOpenChange } = {}) {
   return {
     update,
     getTrack: leader,
+    getArticles: () => currentArticles,
     updateCardScales: syncAndScale,
+    getLayer: () => layer,
+    isOpen: () => open,
+    setOpen,
+    beginFlight,
+    applyFlight,
+    measureHomes,
+    centerById,
+    endFlight,
   }
 }
