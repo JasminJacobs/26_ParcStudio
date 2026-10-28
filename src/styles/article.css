@@ -112,57 +112,28 @@ button {
 }
 
 /* Title (22:1533 / 22:1675) — text style "Headline Title"
-   Sticky: the container sticks --title-top below the header (main.js reads it too).
-   While stuck (.is-stuck) a line shows under it and the strip above it is filled,
-   so text scrolling underneath stays hidden.
-   .small scales the text from the top-left; the clip's height follows (main.js). */
-.article__title-container {
-  --title-top: 15px;
+   Sticky: scrolls with the article until it is --title-top below the header,
+   then stays there. While stuck (.is-stuck, set in main.js) a line shows
+   under it and the strip above it is filled, so text scrolling underneath
+   stays hidden. */
+.article__title {
+  --title-top: 15px; /* where it sticks (main.js reads it too) */
   position: sticky;
   top: var(--title-top);
   z-index: 10;
-  width: 100%;
-  min-height: 0;
-  background: var(--color-bg);
-}
-
-.article__title-clip {
-  overflow: hidden;
-  width: 100%;
-  transition: height var(--duration) var(--ease);
-}
-
-.article__title {
-  --title-small-scale: 0.375;
   min-height: 123px; /* Figma text box */
   padding: 0 18px 18px;
   box-sizing: content-box;
-  transform-origin: top left;
-  transform: scale(1);
+  background: var(--color-bg);
   font-family: var(--font);
   font-size: var(--text-l);
   line-height: 104%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
-  transition:
-    transform var(--duration) var(--ease),
-    letter-spacing var(--duration) var(--ease);
-}
-
-.article__title.small {
-  transform: scale(0.375);
-  letter-spacing: 0px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .article__title-clip,
-  .article__title {
-    transition: none;
-  }
 }
 
 /* 0.5px line under the title while it is stuck */
-.article__title-container::after {
+.article__title::after {
   content: '';
   position: absolute;
   inset: auto 0 0;
@@ -171,12 +142,12 @@ button {
   opacity: 0;
   transition: opacity 400ms ease-in-out; /* disappears */
 }
-.article__title-container.is-stuck::after {
+.article__title.is-stuck::after {
   opacity: 1;
   transition: opacity 200ms ease; /* appears */
 }
 /* fills the --title-top strip above the stuck title */
-.article__title-container.is-stuck::before {
+.article__title.is-stuck::before {
   content: '';
   position: absolute;
   inset: auto 0 100%;
