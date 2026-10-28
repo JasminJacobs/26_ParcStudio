@@ -68,6 +68,11 @@ function cardMarkup(article) {
             <label class="card-source">${article.source}</label><span class="card-type-separator"> | </span>
             <label class="card-bias">${BIAS_LABELS[article.bias] ?? article.bias}</label>
       </div>
+      <label class="card-source">${
+        article.logo
+          ? `<img class="card-logo" src="${import.meta.env.BASE_URL + article.logo}" alt="" width="32" height="32" />`
+          : ''
+      }${article.source}</label>
     </article>`
 }
 

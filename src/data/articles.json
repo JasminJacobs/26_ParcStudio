@@ -1,8 +1,9 @@
 [
   {
     "id": 1,
-    "title": "Across France, workers and students unite against austerity and police violence",
-    "source": "L'Humanité",
+    "title": "\"Act II\": Yellow Vests Call for New Protests in France for October 24",
+    "source": "teleSUR",
+    "logo": "img/logos/telesur.png",
     "bias": "farleft",
     "type": "Socialist",
     "date": "2026-10-17",
@@ -12,8 +13,9 @@
   },
   {
     "id": 2,
-    "title": "Unions lead nationwide day of action as school conditions and living costs fuel anger",
-    "source": "Libération",
+    "title": "At the End of the Procession. Distros in Paris, Police with Tear Gas and Hydrants",
+    "source": "HuffPost It",
+    "logo": "img/logos/huffpost-it.png",
     "bias": "left",
     "type": "Socialist",
     "date": "2026-10-16",
@@ -34,8 +36,9 @@
   },
   {
     "id": 4,
-    "title": "Teachers and parents march for smaller classes and better funding after months of tension",
-    "source": "Mediapart",
+    "title": "Turin, a Rider Is in the Midst of Clashes Between Police and Protesters",
+    "source": "La Stampa",
+    "logo": "img/logos/la-stampa.png",
     "bias": "leanleft",
     "type": "Liberal",
     "date": "2026-10-15",
@@ -94,9 +97,10 @@
     "bias": "farright",
     "type": "Conservative",
     "date": "2026-10-19",
-    "reads": 22100,
-    "image": "assets/articles/placeholder.jpg",
-    "url": "https://ground.news/article/hundreds-of-thousands-march-across-france-in-protests-over-schools-and-policing_85989f"
+    "updated": "2026-10-19T17:05",
+    "reads": 0,
+    "iframe": "img/articles/le-monde.jpg",
+    "url": "https://www.lemonde.fr/politique/article/2026/10/19/apres-la-mobilisation-du-17-octobre-les-syndicats-appellent-a-continuer-pacifiquement-le-mouvement_6797513_823448.html"
   },
   {
     "id": 10,
