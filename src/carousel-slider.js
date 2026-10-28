@@ -60,17 +60,6 @@ function scrollForPos(track, pos) {
   return x - track.clientWidth / 2
 }
 
-// Consecutive articles with the same tag become one coloured segment
-function segments(articles) {
-  const runs = []
-  for (const a of articles) {
-    const last = runs[runs.length - 1]
-    if (last && last.bias === a.bias) last.count++
-    else runs.push({ bias: a.bias, count: 1 })
-  }
-  return runs
-}
-
 // Centre zone on the bar, as [start, end] in article units (article i spans i … i+1)
 function centreZone(articles) {
   const centre = articles
@@ -107,6 +96,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   let barKey = ''
   let pos = 0
   let labelIndex = -1
+  let currentBlock = null
 
   // Swap the word under the marker. dir: +1 when moving to a later article
   // (the bar moves left), −1 when moving to an earlier one.
@@ -144,13 +134,12 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     if (key === barKey) return
     barKey = key
 
+    // One block per article, so the one under the marker can grow on its own
     bar.style.width = `${articles.length * UNIT}px`
-    bar.innerHTML = segments(articles)
-      .map(
-        (s) =>
-          `<span class="slider-bar__segment" data-bias="${s.bias}" style="flex-basis:${s.count * UNIT}px"></span>`,
-      )
+    bar.innerHTML = articles
+      .map((a) => `<span class="slider-bar__block" data-bias="${a.bias}"></span>`)
       .join('')
+    currentBlock = null
     zone = centreZone(articles)
     container.setAttribute('aria-valuemin', '1')
     container.setAttribute('aria-valuemax', String(articles.length))
@@ -163,6 +152,19 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
 
     const index = Math.round(pos)
     const article = articles[index]
+
+    // Mark the block under the marker (it grows while dragging, see main.css)
+    const block = bar.children[index] ?? null
+    if (block !== currentBlock) {
+      currentBlock?.classList.remove('is-current')
+      currentBlock?.previousElementSibling?.classList.remove('is-near')
+      currentBlock?.nextElementSibling?.classList.remove('is-near')
+      block?.classList.add('is-current')
+      // the closest block before and after grow a little too
+      block?.previousElementSibling?.classList.add('is-near')
+      block?.nextElementSibling?.classList.add('is-near')
+      currentBlock = block
+    }
 
     // The label under the marker names the tag of the article under it
     if (index !== labelIndex) {
