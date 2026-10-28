@@ -212,6 +212,22 @@ img {
   pointer-events: none;
 }
 
+.hint {
+  position: absolute;
+  bottom: 126px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--text-s);
+  color: var(--color-fg);
+  opacity: 0;
+
+  transition: opacity 600ms var(--ease);
+}
+
+.hint.is-visible {
+  opacity: 0.5;
+}
+
 /* SLIDER */
 
 .slider-container {

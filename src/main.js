@@ -1,6 +1,7 @@
 import './styles/main.css'
 import articles from './data/articles.json'
 import { createOverview } from './interactions/overview.js'
+import { createHint } from './interactions/hint.js'
 import { createMic } from './interactions/mic.js'
 import { createCards } from './cards.js'
 import { createCarouselSlider } from './carousel-slider.js'
@@ -84,6 +85,8 @@ scroller.addEventListener(
   },
   { passive: true },
 )
+
+createHint(app, scroller)
 
 // Shared state for all interactions
 const state = {
