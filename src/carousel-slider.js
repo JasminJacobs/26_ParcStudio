@@ -12,6 +12,8 @@ import { BIAS_ORDER } from './cards.js'
 
 // Width per article on the bar: set as --bar-unit on .slider-container in main.css
 let UNIT = 12
+// Gap between two blocks: --bar-gap in main.css
+let GAP = 0
 
 // Tag names shown under the marker
 const TAG_NAMES = {
@@ -79,6 +81,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   if (!container) return { refresh() {} }
 
   UNIT = parseFloat(getComputedStyle(container).getPropertyValue('--bar-unit')) || UNIT
+  GAP = parseFloat(getComputedStyle(container).getPropertyValue('--bar-gap')) || 0
   // The markup is in index.html (.slider-container)
 
   const rail = container.querySelector('.carousel-slider__rail')
@@ -148,7 +151,8 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
   // Move the bar so article `pos` sits under the centre marker
   function place(nextPos) {
     pos = nextPos
-    bar.style.transform = `translate3d(${-(pos + 0.5) * UNIT}px, 0, 0)`
+    // Block i starts at i × UNIT and is (UNIT − GAP) wide: put its middle on the marker
+    bar.style.transform = `translate3d(${-(pos * UNIT + (UNIT - GAP) / 2)}px, 0, 0)`
 
     const index = Math.round(pos)
     const article = articles[index]

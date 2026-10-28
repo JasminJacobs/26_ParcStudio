@@ -11,7 +11,7 @@
 
 :root {
   --font: var(--font-sans); /* Medway only if installed locally — never as a file */
-  --color-bg: #EEEFE8;
+  --color-bg: #e7e7e7;
   --color-fg: #000000;
   --text-s: 12px;
   --leading-s: 128%;
@@ -305,7 +305,7 @@ img {
   z-index: 1;
   width: 3px;
   height: 65px;
-  margin: -28px 0 0 -2px;
+  margin: -28px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
   background: black;
   border-radius: 2px;
   pointer-events: none;
