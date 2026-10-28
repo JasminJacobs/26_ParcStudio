@@ -94,6 +94,7 @@ carouselSlider = createCarouselSlider(
 const overview = createOverview(app, state, cards, {
   onViewChange(view) {
     state.view = view
+    slider.update(state) // .view.slider gets/loses [hidden] after the pinch
     if (view === 'slider') {
       requestAnimationFrame(() => {
         carouselSlider.refresh()
