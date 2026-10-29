@@ -99,7 +99,7 @@
     "date": "2026-10-21",
     "updated": "2026-10-26T11:13",
     "reads": 6890,
-    "iframe": "img/articles/le-temps.jpg",
+    "iframe": "img/articles/letemps.png",
     "url": "https://www.letemps.ch/monde/france/la-prison-ce-n-est-pas-pour-lui-a-paris-un-apres-midi-dans-la-masse-des-comparutions-immediates-a-la-suite-des-emeutes-du-17-octobre"
   },
   {
@@ -150,7 +150,8 @@
     "type": "Liberal",
     "date": "2026-10-24",
     "reads": 0,
-    "iframe": null,
+    "iframe": "img/articles/cnn.png",
+    "scrollbar": 1,
     "url": "https://www.cnn.com/2026/10/24/world/live-news/france-protests-paris-europe-intl"
   },
   {
