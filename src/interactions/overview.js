@@ -537,6 +537,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function onTouchStart(event) {
+    if (root.classList.contains('is-start')) return // start page: no zoom
     if (event.touches.length < 2 || onSlider(event)) return
     event.preventDefault()
     cancelAnimationFrame(raf)
@@ -599,6 +600,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   }
 
   function onWheel(event) {
+    if (root.classList.contains('is-start')) return // start page: no zoom
     if (progress > 0 && !event.ctrlKey) {
       event.preventDefault()
       return
