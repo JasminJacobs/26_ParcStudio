@@ -3,6 +3,7 @@ import articles from './data/articles.json'
 import { createOverview } from './interactions/overview.js'
 import { createHint } from './interactions/hint.js'
 import { createMic } from './interactions/mic.js'
+import { createShaker } from './interactions/shaker.js'
 import { createCards } from './cards.js'
 import { createCarouselSlider } from './carousel-slider.js'
 import { createSegmented, addSwipe } from './interactions/segmented.js'
@@ -174,6 +175,25 @@ export function setView(view) {
 mic.on('blow', () => {
   state.filter = state.filter === 'all' ? 'most-read' : 'all'
   render()
+})
+
+// Shake jumps the gallery to a different article. iOS needs a tap first
+// before it will share the accelerometer (same rule as the mic).
+const shaker = createShaker()
+app.addEventListener('click', () => shaker.start(), { once: true })
+
+shaker.on('shake', () => {
+  if (state.view !== 'slider' || app.classList.contains('is-flipping')) return
+  const count = cards.getArticles().length
+  if (count < 2) return
+  const current = carouselSlider.currentIndex()
+  let next = Math.floor(Math.random() * (count - 1))
+  if (next >= current) next += 1
+  const span = Math.abs(next - current)
+  carouselSlider.goTo(next, Math.min(680, 240 + span * 16))
+  if (scroller.scrollTop > 2) {
+    scroller.scrollTo({ top: 0, behavior: reduceMotion ? 'instant' : 'smooth' })
+  }
 })
 
 render()
