@@ -708,7 +708,8 @@ img {
 .map-axis-label {
   position: absolute;
   padding: 0 4px;
-  background: var(--color-bg); /* cuts the axis line under the word */
+  border-radius: 12px;
+  background: radial-gradient(var(--color-bg) 0%, var(--color-bg) 30%, transparent 80%, transparent 100%); /* cuts the axis line under the word */
   font-size: var(--text-s);
   line-height: 18px;
   color: rgb(0 0 0 / 0.4);
