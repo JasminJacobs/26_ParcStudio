@@ -641,3 +641,27 @@ img {
 #app.is-overviewing .slider-container {
   transition: none;
 }
+
+/* CTA */
+
+.cta-container {
+  position: relative;
+  width: 100%;
+  height: fit-content;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 100;
+}
+
+.cta {
+  width: fit-content;
+  height: fit-content;
+
+  padding: 12px;
+  margin: 12px;
+
+  border: 1px solid var(--color-fg);
+}
