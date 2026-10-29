@@ -101,10 +101,11 @@
           <section class="bias-section" aria-labelledby="bias-heading">
             <h2 class="bias-section__title" id="bias-heading">Bias Comparison</h2>
 
-            <div class="bias" role="group" aria-label="Bias Comparison">
-              <button class="bias__button bias__button--left" type="button" data-bias="left" aria-pressed="false">Left</button>
-              <button class="bias__button" type="button" data-bias="center" aria-pressed="true">Center</button>
-              <button class="bias__button bias__button--right" type="button" data-bias="right" aria-pressed="false">Right</button>
+            <div class="bias segmented" role="group" aria-label="Bias Comparison">
+              <span class="segmented__thumb" aria-hidden="true"></span>
+              <button class="segmented__button bias__button bias__button--left" type="button" data-bias="left" data-value="left" aria-pressed="false"><span class="segmented__label">Left</span></button>
+              <button class="segmented__button bias__button" type="button" data-bias="center" data-value="center" aria-pressed="true"><span class="segmented__label">Center</span></button>
+              <button class="segmented__button bias__button bias__button--right" type="button" data-bias="right" data-value="right" aria-pressed="false"><span class="segmented__label">Right</span></button>
             </div>
 
             <!-- Buttons above, summaries below: one list per side; the chosen one slides in
@@ -135,10 +136,14 @@
       </div>
 
       <!-- 3. ZOOM-OUT OVERVIEW — pinch the gallery: lies over the whole screen.
-              Back to front: .map draws the clusters by type, .cards-layer holds the
-              cards while they fly into the clusters. JS: overview.js -->
-      <section class="map" aria-label="Sources by type" aria-hidden="true"></section>
+              Back to front: .map draws the axes (or the type clusters), .cards-layer
+              holds the logos while they fly to their spot, .map-bar switches the
+              map style. Positions: data/source-positions.json. JS: overview.js -->
+      <section class="map" aria-label="Sources on a political map" aria-hidden="true"></section>
       <div class="cards-layer"></div>
+      <!-- Bar under the map: same box as Bias Comparison, one button per map style
+           (Smartmap, Reliability, Types). JS: overview.js -->
+      <div class="map-bar segmented" aria-hidden="true"></div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

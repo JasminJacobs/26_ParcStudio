@@ -193,70 +193,95 @@ button {
   line-height: 21px;
 }
 
-/* BiasComparison (22:1475): grey bar with the three buttons.
-   Sticks right under the stuck title while the summaries scroll
-   (--title-bottom is measured in main.js). */
-.bias {
-  position: sticky;
-  top: var(--title-bottom, 200px);
-  z-index: 9;
+/* Button bar with a sliding box (Figma: BiasComparison 22:1475).
+   Used by Bias Comparison and by the map styles in the overview.
+   Three parts, back to front — each can be edited on its own:
+     .segmented__button  the button and its grey face
+     .segmented__thumb   the white / red / blue box that slides to the
+                         active button (position set by segmented.js)
+     .segmented__label   the button's text, on top of the box */
+.segmented {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 0;
   height: 67px;
-  padding: 12px;
-  border-radius: 2px;
+  border-radius: 1px;
+  touch-action: pan-y; /* page still scrolls; sideways swipes go to the bar */
 }
 
-/* Two layers behind the buttons:
-   ::before  beige backdrop at the sides (over the section's 18px padding),
-             so the lists don't show beside the bar
-   ::after   the grey bar itself */
-.bias::before,
-.bias::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-}
-.bias::before {
-  z-index: -2;
-  inset: 0 -18px;
-  background: var(--color-bg);
-}
-.bias::after {
-  z-index: -1;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--color-grey);
-}
-
-.bias__button {
+.segmented__button {
   display: flex;
   flex: 1 0 0;
   align-items: center;
   justify-content: center;
   padding: 12px var(--space-2) 11px; /* 34px high */
-  border-radius: 2px;
+  border-radius: 1px;
   font-family: var(--font-sans); /* Medway Book */
   font-size: var(--text-s);
   line-height: 10.921px;
   letter-spacing: -0.105px; /* -0.7% */
+  color: var(--color-fg);
   white-space: nowrap;
-  transition:
-    background-color 200ms ease,
-    color 200ms ease;
+  user-select: none;
+  transition: color 200ms ease;
 }
 
-/* Active states (Figma component "Button") */
-.bias__button[aria-pressed='true'] {
-  background: #ffffff; /* Center */
+.segmented__thumb {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  /* size and spot of the active button, written by segmented.js */
+  top: var(--thumb-top, 0);
+  width: var(--thumb-width, 0);
+  height: var(--thumb-height, 0);
+  transform: translateX(var(--thumb-x, 0));
+  border-radius: 2px;
+  background-color: #ffffff; /* Center */
+  pointer-events: none;
+  transition:
+    transform 320ms var(--ease-bounce),
+    background-color 200ms ease;
 }
-.bias__button--left[aria-pressed='true'] {
-  background: var(--color-red); /* Button/Default */
-  color: #ffffff;
+
+.segmented__label {
+  position: relative;
+  z-index: 2;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .segmented__thumb,
+  .segmented__button {
+    transition: none;
+  }
+}
+
+/* Bias Comparison: sticks right under the stuck title while the summaries
+   scroll (--title-bottom is measured in main.js). ::before is a beige
+   backdrop at the sides (over the section's 18px padding), so the lists
+   don't show beside the bar. */
+.bias {
+  position: sticky;
+  top: var(--title-bottom, 200px);
+  z-index: 9;
+}
+.bias::before {
+  content: '';
+  position: absolute;
+  z-index: -3;
+  inset: 0 -18px;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+/* Active colours (Figma component "Button"): the box takes the colour */
+.bias .segmented__thumb[data-value='left'] {
+  background-color: var(--color-red); /* Button/Default */
+}
+.bias .segmented__thumb[data-value='right'] {
+  background-color: var(--color-blue); /* Button/Variant2 */
+}
+.bias__button--left[aria-pressed='true'],
 .bias__button--right[aria-pressed='true'] {
-  background: var(--color-blue); /* Button/Variant2 */
   color: #ffffff;
 }
 
