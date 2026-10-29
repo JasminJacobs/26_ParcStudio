@@ -594,11 +594,15 @@ export function createCards(root, state, { onOpenChange } = {}) {
     flipTo(next)
   }
 
-  cardTrack.addEventListener('click', (event) => {
+  function openCard(id) {
     if (open || animating || flight) return
+    flipTo(true, id)
+  }
+
+  cardTrack.addEventListener('click', (event) => {
     const card = event.target.closest('.card')
     if (!card || card.classList.contains('is-placeholder')) return
-    flipTo(true, card.dataset.id)
+    openCard(card.dataset.id)
   })
 
   root.querySelector('.iframe-close')?.addEventListener('click', () => {
@@ -847,6 +851,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
     updateCardScales: syncAndScale,
     getLayer: () => layer,
     isOpen: () => open,
+    open: openCard,
     setOpen,
     beginFlight,
     applyFlight,
