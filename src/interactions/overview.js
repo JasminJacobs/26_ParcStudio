@@ -327,7 +327,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     ).join('')
   let mode = DEFAULT_MODE
   let modeRaf = 0
-  createSegmented(bar, { onChange: (m) => setMode(m) })
+  const mapSwitch = createSegmented(bar, { onChange: (m) => setMode(m) })
 
   // Same top as the opened iframe: meta hidden, title scaled to 0.6, X shown
   // (rules for .mapopen next to .iframeopen in the CSS). No slider bar.
@@ -683,6 +683,33 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     modeRaf = requestAnimationFrame(tick)
   }
 
+
+  // Swipe over the map, like the Bias Comparison content: finger from the
+  // right towards the centre → next style to the right (Smartmap → Types),
+  // from the left → to the left (Smartmap → Reliability). One finger only,
+  // so pinching still zooms; the button bar has its own swipe.
+  const pointers = new Set()
+  let swipeStart = null
+  root.addEventListener('pointerdown', (event) => {
+    pointers.add(event.pointerId)
+    swipeStart =
+      progress >= 0.999 && pointers.size === 1 && !event.target.closest('.map-bar, .iframe-close')
+        ? { x: event.clientX, y: event.clientY }
+        : null
+  })
+  root.addEventListener('pointerup', (event) => {
+    pointers.delete(event.pointerId)
+    if (!swipeStart || progress < 0.999) return
+    const dx = event.clientX - swipeStart.x
+    const dy = event.clientY - swipeStart.y
+    swipeStart = null
+    if (Math.abs(dx) < 24 || Math.abs(dx) < Math.abs(dy)) return
+    mapSwitch.step(dx < 0 ? 1 : -1)
+  })
+  root.addEventListener('pointercancel', (event) => {
+    pointers.delete(event.pointerId)
+    swipeStart = null
+  })
 
   // X in the overview: back to the cards (runs before cards.js's own X)
   closeButton?.addEventListener(

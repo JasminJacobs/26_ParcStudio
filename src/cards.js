@@ -745,6 +745,8 @@ export function createCards(root, state, { onOpenChange } = {}) {
     )
     if (!item) return
     cardTrack.scrollLeft = centerOffset(cardTrack, item)
+    // During a flight, land on this card too (endFlight re-centres on it)
+    if (flight) flight.centeredId = String(id)
     syncAndScale()
   }
 
