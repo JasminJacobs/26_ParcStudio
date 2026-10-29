@@ -240,7 +240,7 @@
     "type": "Liberal",
     "date": "2026-10-24",
     "reads": 28400,
-    "iframe": null,
+    "iframe": "img/articles/reuters.png",
     "url": "https://www.reuters.com/world/europe/france-mounts-huge-security-operation-protesters-prepare-march-2026-10-24/"
   },
   {
@@ -255,18 +255,6 @@
     "reads": 0,
     "iframe": "img/articles/bloomberg.jpg",
     "url": "https://www.bloomberg.com/news/articles/2026-10-22/paris-luxury-boutiques-battered-by-riots-brace-for-more-unrest"
-  },
-  {
-    "id": 21,
-    "title": "France sees another weekend of mass protests, with nearly 1,000 detained",
-    "source": "KRDO",
-    "logo": "img/logos/krdo.png",
-    "bias": "centre",
-    "type": "Liberal",
-    "date": "2026-10-25",
-    "reads": 0,
-    "iframe": null,
-    "url": null
   },
   {
     "id": 22,

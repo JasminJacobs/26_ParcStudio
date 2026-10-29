@@ -386,7 +386,8 @@ export function createCards(root, state, { onOpenChange } = {}) {
     bar.classList.toggle('is-empty', max <= 1)
     if (max <= 1) return
     const track = bar.clientHeight
-    const h = Math.max(24, (track * shot.clientHeight) / shot.scrollHeight)
+    const THUMB_SCALE = 0.25 // thumb length: a quarter of the visible share
+    const h = Math.max(8, (THUMB_SCALE * track * shot.clientHeight) / shot.scrollHeight)
     bar.style.setProperty('--thumb-h', `${h}px`)
     bar.style.setProperty('--thumb-y', `${((track - h) * shot.scrollTop) / max}px`)
   }
