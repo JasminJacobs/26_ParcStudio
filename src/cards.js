@@ -117,7 +117,7 @@ function cardMarkup(article) {
       <div class="iframe-scroll">
         <img data-src="${src}" alt="" draggable="false" decoding="async" />
       </div>
-      <div class="iframe-scrollbar" aria-hidden="true"><div class="iframe-scrollbar__thumb"></div></div>
+      <div class="iframe-scrollbar" aria-hidden="true"${article.scrollbar ? ` data-scale="${article.scrollbar}"` : ''}><div class="iframe-scrollbar__thumb"></div></div>
       <div class="card-face">
         <div class="card-tags">
           <img class="card-logo" src="${logo}" alt=""/>
@@ -414,7 +414,9 @@ export function createCards(root, state, { onOpenChange } = {}) {
     bar.classList.toggle('is-empty', max <= 1)
     if (max <= 1) return
     const track = bar.clientHeight
-    const THUMB_SCALE = 0.25 // thumb length: a quarter of the visible share
+    // Thumb length: a quarter of the visible share, or the article's own
+    // "scrollbar" value from articles.json (1 = full share)
+    const THUMB_SCALE = Number(bar.dataset.scale) || 0.25
     const h = Math.max(8, (THUMB_SCALE * track * shot.clientHeight) / shot.scrollHeight)
     bar.style.setProperty('--thumb-h', `${h}px`)
     bar.style.setProperty('--thumb-y', `${((track - h) * shot.scrollTop) / max}px`)
