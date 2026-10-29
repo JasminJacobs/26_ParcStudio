@@ -31,7 +31,7 @@ const TAG_NAMES = {
 //   roll:  the words roll up or down, like a split-flap display
 //   fade:  the old word fades out while the new one fades in
 const LABEL_TRANSITION = 'slide'
-const LABEL_DURATION = 220 // ms
+const LABEL_DURATION = 140 // ms
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
 
@@ -224,7 +224,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
       onDone?.()
       return
     }
-    const duration = 280
+    const duration = 160
     const t0 = performance.now()
     function tick(now) {
       const u = Math.min(1, (now - t0) / duration)

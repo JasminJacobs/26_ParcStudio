@@ -118,6 +118,7 @@ img {
   height: calc(100% - 128px); /* everything above the slider bar */
   z-index: 1;
   pointer-events: none;
+  margin-top: 3px;
 }
 
 .card {
@@ -353,7 +354,7 @@ img {
 
 .hint {
   position: absolute;
-  bottom: 12px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--text-s);
@@ -378,33 +379,38 @@ img {
 
 .slider-container {
   position: absolute;
-  bottom: 12px;
+  bottom: 20px;
   left: 12px;
   width: calc(100% - 24px);
   height: 104px;
   padding: 12px;
   border-radius: 36px;
   z-index: 30;
-  /* the whole slider is the grab area; it handles its own drag
-     (no page scroll, no pinch) */
-  cursor: grab;
-  touch-action: none;
+  /* Only the strip as high as the black marker is the grab area
+     (.carousel-slider__rail::before); the rest lets touches through */
+  pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
+
+  /* Black marker: its height and how far it reaches above the middle line.
+     The grab area uses the same two values. */
+  --marker-height: 52px;
+  --marker-offset: -22px;
+  --grab-scale: 1.15; /* grab area height = marker × this */
 
   /* Slider bar settings — change them here (the JS reads unit and gap) */
   --bar-unit: 14.4px; /* width per article, block + gap */
   --bar-gap: 5.4px; /* space between two blocks */
-  --bar-height: 32px;
-  --bar-drag-scale: 1.02; /* the whole bar grows a little while dragging… */
-  --bar-drag-duration: 600ms; /* …over this time */
+  --bar-height: 36px;
+  --bar-drag-scale: 1.05; /* the whole bar grows a little while dragging… */
+  --bar-drag-duration: 180ms; /* …over this time */
   --block-scale: 1.3; /* the block under the marker grows this much in height */
-  --block-scale-near: 1.07; /* the block before and after it */
-  --block-duration: 400ms; /* their grow / shrink, ease-in-out */
-  transition: --bar-height 300ms var(--ease) 300ms, bottom 300ms var(--ease) 300ms;
+  --block-scale-near: 1.1; /* the block before and after it */
+  --block-duration: 140ms; /* their grow / shrink, ease-in-out */
+  transition: --bar-height 150ms var(--ease) 100ms, bottom 150ms var(--ease) 100ms;
 }
 
-.slider-container.is-dragging {
+.slider-container.is-dragging .carousel-slider__rail::before {
   cursor: grabbing;
 }
 
@@ -417,6 +423,22 @@ img {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* Grab area: full width, exactly where the black marker is.
+   The slider handles its own drag (no page scroll, no pinch). */
+.carousel-slider__rail::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 45%;
+  /* 15% taller than the marker, grown evenly above and below */
+  height: calc(var(--marker-height) * var(--grab-scale));
+  margin-top: calc(var(--marker-offset) - var(--marker-height) * (var(--grab-scale) - 1) / 2);
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
 }
 
 /* The bar: one block per article in its tag colour. Its left edge starts at
@@ -477,13 +499,13 @@ img {
   left: 50%;
   z-index: 1;
   width: 2px;
-  height: 48px;
-  margin: -19px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
+  height: var(--marker-height);
+  margin: var(--marker-offset) 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
   background: black;
   border-radius: 2px;
   pointer-events: none;
 
-  transition: height 300ms var(--ease) 300ms, margin 300ms var(--ease) 300ms;
+  transition: height 150ms var(--ease) 100ms, margin 150ms var(--ease) 100ms;
 }
 
 /* Under the marker: the tag of the current article (text set from JS) */
@@ -500,7 +522,7 @@ img {
   display: grid;
   justify-items: center;
 
-  transition: opacity 300ms var(--ease) 300ms;
+  transition: opacity 150ms var(--ease) 100ms;
 }
 
 .carousel-counter {
@@ -790,15 +812,15 @@ img {
 }
 
 .carousel-slider__thumb.iframeopen {
-  height: 12px;
-  margin: -2px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
-  transition: height 300ms var(--ease), margin 300ms var(--ease);
+  transition: height 150ms var(--ease), margin 150ms var(--ease);
 }
 
 .slider-container.iframeopen {
   --bar-height: 6px;
+  --marker-height: 12px; /* smaller marker, and grab area, on the iframes */
+  --marker-offset: -2px;
   bottom: -36px;
-  transition: --bar-height 300ms var(--ease), bottom 300ms var(--ease);
+  transition: --bar-height 150ms var(--ease), bottom 150ms var(--ease);
 }
 
 .cta.iframeopen {
