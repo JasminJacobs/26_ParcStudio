@@ -117,6 +117,7 @@ function cardMarkup(article) {
       <div class="iframe-scroll">
         <img data-src="${src}" alt="" draggable="false" decoding="async" />
       </div>
+      <div class="iframe-scrollbar" aria-hidden="true"><div class="iframe-scrollbar__thumb"></div></div>
       <div class="card-face">
         <div class="card-tags">
           <img class="card-logo" src="${logo}" alt=""/>
@@ -343,10 +344,76 @@ export function createCards(root, state, { onOpenChange } = {}) {
   }
 
   cardTrack.addEventListener('scroll', requestSync, { passive: true })
+
+  // Swipe through the open iframes with the mouse (touch and trackpad
+  // scroll the strip natively): drag sideways → next / previous article
+  let drag = null
+  let dragged = false
+  cardTrack.addEventListener('pointerdown', (event) => {
+    dragged = false
+    drag = open && event.pointerType === 'mouse' ? { x: event.clientX, y: event.clientY } : null
+  })
+  cardTrack.addEventListener('pointerup', (event) => {
+    if (!drag || !open) return
+    const dx = event.clientX - drag.x
+    const dy = event.clientY - drag.y
+    drag = null
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return
+    dragged = true
+    const items = [...cardTrack.children].filter((el) => !el.classList.contains('is-placeholder'))
+    const current = items.findIndex((el) => el.classList.contains('is-center'))
+    const next = items[Math.min(items.length - 1, Math.max(0, current + (dx < 0 ? 1 : -1)))]
+    if (next) cardTrack.scrollTo({ left: centerOffset(cardTrack, next), behavior: 'smooth' })
+  })
+  // a drag isn't a click
+  cardTrack.addEventListener(
+    'click',
+    (event) => {
+      if (!dragged) return
+      dragged = false
+      event.stopPropagation()
+      event.preventDefault()
+    },
+    true,
+  )
+
+  // Grey scrollbar on the right of the iframe (the native one is hidden):
+  // thumb height = visible share of the screenshot, position = scroll
+  function updateScrollbar(shot) {
+    const bar = shot.parentElement?.querySelector('.iframe-scrollbar')
+    if (!bar) return
+    const max = shot.scrollHeight - shot.clientHeight
+    bar.classList.toggle('is-empty', max <= 1)
+    if (max <= 1) return
+    const track = bar.clientHeight
+    const h = Math.max(24, (track * shot.clientHeight) / shot.scrollHeight)
+    bar.style.setProperty('--thumb-h', `${h}px`)
+    bar.style.setProperty('--thumb-y', `${((track - h) * shot.scrollTop) / max}px`)
+  }
+  function updateScrollbars() {
+    cardTrack.querySelectorAll('.iframe-scroll').forEach(updateScrollbar)
+  }
+  // scroll and load don't bubble, so listen in the capture phase
+  cardTrack.addEventListener(
+    'scroll',
+    (event) => {
+      if (event.target.classList?.contains('iframe-scroll')) updateScrollbar(event.target)
+    },
+    { capture: true, passive: true },
+  )
+  cardTrack.addEventListener(
+    'load',
+    (event) => {
+      const shot = event.target.closest?.('.iframe-scroll')
+      if (shot) updateScrollbar(shot)
+    },
+    true,
+  )
   new ResizeObserver(() => requestSync()).observe(cardTrack)
 
   function chrome() {
     iframeOpenTargets.forEach((el) => el.classList.toggle('iframeopen', open))
+    requestAnimationFrame(updateScrollbars)
     onOpenChange?.(open)
   }
 
@@ -854,6 +921,10 @@ export function createCards(root, state, { onOpenChange } = {}) {
     getLayer: () => layer,
     isOpen: () => open,
     open: openCard,
+    // Close the open card (same as the X): back to the gallery, same card centred
+    close: () => {
+      if (open && !flight) flipTo(false)
+    },
     setOpen,
     beginFlight,
     applyFlight,

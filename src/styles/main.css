@@ -126,7 +126,7 @@ img {
   height: var(--card-h);
   position: relative;
   scroll-snap-align: center;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always; /* one card per swipe */
   transform: scale(0.7656); /* side card; JS scales the centre one to 1 (cards.js) */
   transform-origin: center center;
   will-change: transform;
@@ -235,7 +235,10 @@ img {
   z-index: 0;
   height: auto;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  /* vertical scroll stays in the screenshot; sideways swipes pass on to the
+     strip of iframes (swipe through the carousel) */
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: auto;
   background: #fff;
   opacity: var(--shot-opacity, 0);
   pointer-events: none;
@@ -245,12 +248,38 @@ img {
 
 .card.is-expanded .iframe-scroll {
   pointer-events: auto;
-  touch-action: pan-y;
+  touch-action: pan-x pan-y;
   transition: opacity 200ms ease-in-out 80ms;
 }
 
 .iframe-scroll::-webkit-scrollbar {
   display: none;
+}
+
+/* Grey scrollbar on the right of the iframe (drawn by cards.js; the
+   native scrollbar is hidden). Shows with the screenshot. */
+.iframe-scrollbar {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: 3px;
+  z-index: 2; /* above the card face */
+  width: 3px;
+  opacity: var(--shot-opacity, 0);
+  pointer-events: none;
+  transition: opacity 200ms var(--ease);
+}
+
+.iframe-scrollbar.is-empty {
+  display: none;
+}
+
+.iframe-scrollbar__thumb {
+  width: 100%;
+  height: var(--thumb-h, 0);
+  border-radius: 2px;
+  background-color: #c0c0c0;
+  transform: translateY(var(--thumb-y, 0));
 }
 
 .iframe-scroll img {
@@ -324,7 +353,8 @@ img {
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: auto;
-  scroll-snap-type: x proximity;
+  /* cards and open iframes always land centred, never between two */
+  scroll-snap-type: x mandatory;
   scroll-padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
   padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
   scrollbar-width: none;

@@ -373,6 +373,8 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   let wheelTimer = 0
   let inbound = false
   let zoomIn = 0
+  let zoomOut = 0 // trackpad: how far a zoom-out on an open card has gone
+  let closedByZoom = false // rest of that gesture must not open the map
 
   function renderMap(layout) {
     map.dataset.mode = mode
@@ -560,6 +562,16 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     const a = touchPoint(event.touches, 0)
     const b = touchPoint(event.touches, 1)
 
+    // Pinching in on an open card (iframe) closes it: back to the gallery,
+    // same card centred. Only a pinch on the gallery opens the map.
+    if (delta > 0 && progress === 0 && !session && cards.isOpen()) {
+      if (delta >= ZOOM_OPEN) {
+        pinch = null
+        cards.close()
+      }
+      return
+    }
+
     // Spreading on the gallery opens the card. Don't start the map flight for that.
     if (delta < 0 && progress === 0 && !session) {
       if (!cards.isOpen() && -delta >= ZOOM_OPEN) {
@@ -605,6 +617,21 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
           zoomIn = 0
         }, 140)
         if (zoomIn >= ZOOM_OPEN) openCardAt(event.clientX, event.clientY)
+      }
+      return
+    }
+    // Trackpad pinch-in (deltaY > 0) on an open card closes it. The rest of
+    // that gesture is ignored, so it doesn't run on into the map.
+    if (delta > 0 && progress === 0 && !session && (cards.isOpen() || closedByZoom)) {
+      zoomOut += delta
+      clearTimeout(wheelTimer)
+      wheelTimer = setTimeout(() => {
+        zoomOut = 0
+        closedByZoom = false
+      }, 140)
+      if (cards.isOpen() && zoomOut >= ZOOM_OPEN) {
+        closedByZoom = true
+        cards.close()
       }
       return
     }
