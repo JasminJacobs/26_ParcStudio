@@ -136,7 +136,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     articles = getArticles()
     if (counter) {
       const n = articles.length
-      counter.textContent = n === 1 ? '1 article' : `${n} articles`
+      counter.textContent = n === 1 ? '1 article' : `${n} sources`
     }
     const key = articles.map((a) => `${a.id}:${a.bias}`).join(',')
     if (key === barKey) return
