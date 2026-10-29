@@ -379,9 +379,10 @@ img {
 }
 
 .carousel-counter {
-  position: absolute;
-  bottom: 12px;
-  left: 18px;
+  position: relative;
+  top: 6px;
+  left: 0;
+  text-align: center;
   font-size: var(--text-s);
   color: var(--color-fg);
   opacity: 0.5;

@@ -238,7 +238,7 @@ button {
   padding: 12px var(--space-2) 11px; /* 34px high */
   border-radius: 2px;
   font-family: var(--font-sans); /* Medway Book */
-  font-size: 15px;
+  font-size: var(--text-s);
   line-height: 10.921px;
   letter-spacing: -0.105px; /* -0.7% */
   white-space: nowrap;
