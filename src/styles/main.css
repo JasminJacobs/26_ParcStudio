@@ -389,6 +389,7 @@ img {
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--text-s);
+  letter-spacing: +0.02em;
   color: var(--color-fg);
   opacity: 0;
 
@@ -562,6 +563,7 @@ img {
   left: 0;
   text-align: center;
   font-size: var(--text-s);
+  letter-spacing: +0.02em;
   color: var(--color-fg);
   opacity: 0.5;
   z-index: 300;
@@ -905,6 +907,7 @@ img {
   height: fit-content;
 
   font-size: var(--text-s);
+  letter-spacing: +0.03em;
 
   padding: 6px;
   /* The stroke itself is drawn by ::before, in the same gradient as the text. */
@@ -976,8 +979,8 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: fit-content;
-  width: 80%;
+  height: 100vh;
+  width: 100%;
   z-index: 500;
   border-radius: 2px;
   display: flex;
@@ -1000,10 +1003,15 @@ img {
 
 .subscribe__panel {
   position: relative;
+  height: 100%;
   width: 100%;
   padding: 24px;
   text-align: center;
   overflow: visible;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .subscribe__close {
@@ -1018,17 +1026,28 @@ img {
 }
 
 .subscribe__message {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 100%;
   font-size: 18px;
   line-height: var(--leading-m);
-  letter-spacing: var(--letter-spacing-l);
 }
 
 .subscribe__lead {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
   --cta-shine-every: 6s;
   --cta-shine-width: 33%;
   --cta-shine-pos: 100%;
 
-  font-size: var(--text-l);
+  font-size: 72px;
+  letter-spacing: -0.035em;
   overflow: visible;
 
   /* display: inline-block; */
@@ -1046,6 +1065,13 @@ img {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: cta-shine var(--cta-shine-every) linear infinite;
+}
+
+#subscribe-close {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -313,7 +313,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
   }
 
   cta?.addEventListener('click', openSubscribe)
-  subscribe?.querySelector('.subscribe__close')?.addEventListener('click', closeSubscribe)
+  subscribe?.querySelector('#subscribe-close')?.addEventListener('click', closeSubscribe)
 
   // Screenshots stay unloaded until the popup is open, and only the one
   // in the centre plus its two neighbours. Decoding all of them at once
