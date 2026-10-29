@@ -130,7 +130,7 @@ function overlayMarkup(article) {
   return `
     <section class="iframe-overlay" data-id="${article.id}">
       <div class="iframe-scroll">
-        <img src="${src}" alt="${article.source}" draggable="false" />
+        <img data-src="${src}" alt="${article.source}" draggable="false" decoding="async" />
       </div>
       <button class="iframe-close" type="button" aria-label="Close">${CLOSE_ICON}</button>
     </section>`
@@ -283,6 +283,37 @@ export function createCards(root, state, { onOpenChange } = {}) {
     cta.style.setProperty('--cta-shine', `var(--tag-${bias})`)
   }
 
+  // Screenshots stay unloaded until the popup is open, and only the one
+  // in the centre plus its two neighbours. Decoding all of them at once
+  // is what makes iOS Safari kill the tab ("A problem repeatedly occurred").
+  function setShotSources() {
+    const items = iframeTrack.children
+    let active = 0
+    if (open && items.length) {
+      const bounds = iframeTrack.getBoundingClientRect()
+      const center = bounds.left + bounds.width / 2
+      let best = Infinity
+      for (let i = 0; i < items.length; i++) {
+        const rect = items[i].getBoundingClientRect()
+        const dist = Math.abs(rect.left + rect.width / 2 - center)
+        if (dist < best) {
+          best = dist
+          active = i
+        }
+      }
+    }
+    for (let i = 0; i < items.length; i++) {
+      const img = items[i].querySelector('img')
+      if (!img) continue
+      const near = open && Math.abs(i - active) <= 1
+      if (near) {
+        if (img.getAttribute('src') !== img.dataset.src) img.setAttribute('src', img.dataset.src)
+      } else if (img.hasAttribute('src')) {
+        img.removeAttribute('src')
+      }
+    }
+  }
+
   function syncAndScale() {
     frame = 0
     const lead = leader()
@@ -291,6 +322,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
     scaleItems(cardTrack, CARD_SIDE_SCALE)
     scaleItems(iframeTrack, IFRAME_SIDE_SCALE)
     syncCtaShine()
+    setShotSources()
   }
 
   function requestSync(event) {
@@ -310,6 +342,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
     cardTrack.classList.toggle('is-following', open)
     iframeTrack.classList.toggle('is-following', !open)
     iframeOpenTargets.forEach((el) => el.classList.toggle('iframeopen', open))
+    setShotSources()
     onOpenChange?.(open)
   }
 

@@ -203,7 +203,6 @@ img {
   scroll-padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
   padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 .cards-track::-webkit-scrollbar {
@@ -453,7 +452,6 @@ img {
   overflow-y: hidden;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 .iframes-track::-webkit-scrollbar {
@@ -467,7 +465,6 @@ img {
   scroll-snap-align: center;
   transform: scale(0.9);
   transform-origin: center center;
-  will-change: transform;
 
   border-radius: 30px;
   overflow: hidden;
@@ -490,6 +487,10 @@ img {
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.iframe-scroll img:not([src]) {
+  display: none;
 }
 
 .iframe-close {

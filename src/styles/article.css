@@ -143,8 +143,13 @@ button {
   line-height: 104%;
   font-weight: normal;
   letter-spacing: -0.35px; /* -1% */
-  transform-origin: 50% 0; /* left padding, top of the box */
+}
 
+/* Scale the words, not the sticky box. A transform on the sticky
+   element itself is what makes iOS Safari kill the tab on open. */
+.article__title-text {
+  display: block;
+  transform-origin: 50% 0;
   transition: transform 600ms var(--ease);
 }
 
@@ -292,6 +297,6 @@ button {
   transition: opacity 300ms var(--ease);
 }
 
-.article__title.iframeopen {
+.article__title.iframeopen .article__title-text {
   transform: translateY(-49px) scale(0.6);
 }
