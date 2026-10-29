@@ -103,6 +103,7 @@ button {
   display: flex;
   align-items: center;
   gap: 12.267px;
+  opacity: 0;
 }
 .meta__icons img[src*='link'] {
   width: 19.167px;

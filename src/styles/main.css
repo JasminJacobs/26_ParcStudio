@@ -690,31 +690,45 @@ img {
 /* CTA */
 
 .cta-container {
-  position: relative;
-  width: 100%;
+  position: absolute;
+  top: 54px;
+  right: 0;
+  width: fit-content;
   height: fit-content;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  z-index: 100;
+  padding: 18px;
+
+  z-index: 9;
+}
+
+/* Animated so the text and the border share one ray position. */
+@property --cta-shine-pos {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 100%;
 }
 
 .cta {
   /* Stance colour of the article in the centre. cards.js sets this
      from the matching --tag-* token in tokens.css. */
   --cta-shine: var(--tag-centre);
-  --cta-shine-every: 4s; /* time from one pass to the next */
+  --cta-shine-every: 3s; /* time from one pass to the next */
   --cta-shine-width: 33%; /* thickness of the ray, as a share of the gradient */
+  --cta-shine-pos: 100%;
 
+  position: relative;
   width: fit-content;
   height: fit-content;
 
-  padding: 12px;
-  margin: 12px 0 24px 0;
+  font-size: var(--text-s);
 
-  /* border: 1px solid var(--color-fg); */
+  padding: 6px;
+  /* The stroke itself is drawn by ::before, in the same gradient as the text. */
+  border: 1px solid transparent;
 
   color: transparent;
   background-image: linear-gradient(
@@ -725,27 +739,51 @@ img {
   );
   background-size: 300% 100%;
   background-repeat: no-repeat;
-  background-position: 100% 0;
+  background-position: var(--cta-shine-pos) 0;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: cta-shine var(--cta-shine-every) linear infinite;
 }
 
-/* The gradient is three times the text width, with the colour at its middle.
-   100% parks that colour off the left edge, 0% parks it off the right,
+/* Same gradient as the text, masked down to the 1px border so the ray
+   crosses the stroke and the letters together. */
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background-image: linear-gradient(
+    90deg,
+    var(--color-fg) calc(50% - var(--cta-shine-width)),
+    var(--cta-shine) 50%,
+    var(--color-fg) calc(50% + var(--cta-shine-width))
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: var(--cta-shine-pos) 0;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* --cta-shine-pos: 100% parks the colour off the left edge, 0% off the right,
    so 100% → 0% is a left-to-right pass. The jump back at the loop
-   happens while the colour is off the letters, so the text stays black. */
+   happens while the colour is off the element, so text and border stay black. */
 @keyframes cta-shine {
   0%,
   8% {
-    background-position: 100% 0;
+    --cta-shine-pos: 100%;
   }
-  30% {
-    background-position: 0% 0;
-  }
+  30%,
   100% {
-    background-position: 0% 0;
+    --cta-shine-pos: 0%;
   }
 }
 
@@ -755,5 +793,10 @@ img {
     background: none;
     color: var(--color-fg);
     -webkit-text-fill-color: currentColor;
+    border-color: var(--color-fg);
+  }
+
+  .cta::before {
+    content: none;
   }
 }
