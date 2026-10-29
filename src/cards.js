@@ -271,6 +271,17 @@ export function createCards(root, state, { onOpenChange } = {}) {
   const follower = () => (open ? cardTrack : iframeTrack)
 
   let frame = 0
+  const cta = root.querySelector('.cta')
+  let shineBias = ''
+
+  // Paint the CTA ray with the centre article's stance colour (--tag-* in tokens.css).
+  function syncCtaShine() {
+    if (!cta) return
+    const bias = cardTrack.querySelector('.card.is-center')?.dataset.bias
+    if (!bias || bias === shineBias || !BIAS_ORDER.includes(bias)) return
+    shineBias = bias
+    cta.style.setProperty('--cta-shine', `var(--tag-${bias})`)
+  }
 
   function syncAndScale() {
     frame = 0
@@ -279,6 +290,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
     follow.scrollLeft = scrollRatio(lead) * maxScroll(follow)
     scaleItems(cardTrack, CARD_SIDE_SCALE)
     scaleItems(iframeTrack, IFRAME_SIDE_SCALE)
+    syncCtaShine()
   }
 
   function requestSync(event) {

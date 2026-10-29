@@ -702,11 +702,58 @@ img {
 }
 
 .cta {
+  /* Stance colour of the article in the centre. cards.js sets this
+     from the matching --tag-* token in tokens.css. */
+  --cta-shine: var(--tag-centre);
+  --cta-shine-every: 4s; /* time from one pass to the next */
+  --cta-shine-width: 33%; /* thickness of the ray, as a share of the gradient */
+
   width: fit-content;
   height: fit-content;
 
   padding: 12px;
-  margin: 12px;
+  margin: 12px 0 24px 0;
 
-  border: 1px solid var(--color-fg);
+  /* border: 1px solid var(--color-fg); */
+
+  color: transparent;
+  background-image: linear-gradient(
+    90deg, /* 90deg = horizontal. The ray itself travels in cta-shine. */
+    var(--color-fg) calc(50% - var(--cta-shine-width)),
+    var(--cta-shine) 50%,
+    var(--color-fg) calc(50% + var(--cta-shine-width))
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: cta-shine var(--cta-shine-every) linear infinite;
+}
+
+/* The gradient is three times the text width, with the colour at its middle.
+   100% parks that colour off the left edge, 0% parks it off the right,
+   so 100% → 0% is a left-to-right pass. The jump back at the loop
+   happens while the colour is off the letters, so the text stays black. */
+@keyframes cta-shine {
+  0%,
+  8% {
+    background-position: 100% 0;
+  }
+  30% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    animation: none;
+    background: none;
+    color: var(--color-fg);
+    -webkit-text-fill-color: currentColor;
+  }
 }
