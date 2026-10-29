@@ -779,9 +779,23 @@ export function createCards(root, state, { onOpenChange } = {}) {
         const textOpacity = inbound ? 0 : Math.max(0, 1 - ease * TEXT_FADE)
         card.style.setProperty('--title-opacity', String(textOpacity))
       }
+      // Place the logo in the layer, on a straight line from where it sits on
+      // the card to the centre of the circle. Doing it inside the card sends
+      // it up out of the shrinking box, then back down.
       const logo = lerp(start.logoSize, LOGO_END, ease)
-      const left = lerp(start.logoLeft, (w - logo) / 2, ease)
-      const top = lerp(h - start.logoBottom - logo, (h - logo) / 2, ease)
+      const startTop = start.h - start.logoBottom - start.logoSize
+      const logoCx = lerp(
+        start.x + start.logoLeft + start.logoSize / 2,
+        end.x + end.w / 2,
+        ease,
+      )
+      const logoCy = lerp(
+        start.y + startTop + start.logoSize / 2,
+        end.y + end.h / 2,
+        ease,
+      )
+      const left = logoCx - logo / 2 - (cx - w / 2)
+      const top = logoCy - logo / 2 - (cy - h / 2)
       card.style.setProperty('--logo-left', `${left}px`)
       card.style.setProperty('--logo-top', `${top}px`)
       const logoEl = card.querySelector('.card-logo')
