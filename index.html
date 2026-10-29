@@ -54,18 +54,19 @@
           <!-- 2b. TITLE — sticky: scrolls up with the page, then stays 15px below the header
                    (--title-top in article.css). A thin line shows under it while it sticks. -->
           <h1 class="article__title">
-            Hundreds of thousands march across France in protests over schools and policing
+            <span class="article__title-text">Hundreds of thousands march across France in protests over schools and policing</span>
+            <div class="carousel-counter"></div>
           </h1>
 
-                      <!-- Popup: clicking a card opens the article screenshot on top.
-                 One screenshot per article, swipe sideways. JS: cards.js -->
-                 <section class="iframes" aria-label="Articles">
-                  <div class="iframes-track"></div>
-                </section>
+
+          <div class="iframe-close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Close</title><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
 
           <!-- 2c. GALLERY — fills the first screen under the title (Figma: Gallery-1).
-                   From top to bottom: cards, slider bar; the popup opens over the cards,
-                   the slider bar stays visible below it. -->
+                   From top to bottom: cards, slider bar. Clicking a card grows it to the
+                   article screenshot (the image lives inside the card). The slider bar
+                   stays visible below it. -->
           <section class="gallery" aria-label="Gallery">
 
             <!-- Cards: one card per article, swipe sideways. JS: cards.js -->
@@ -74,7 +75,6 @@
             </section>
 
             <div class="hint">Zoom-out to take a step back</div>
-            <div class="carousel-counter"></div>
 
             <!-- Slider bar at the bottom: one block per article in its tag colour, the black
                  marker in the middle, the tag name under it. JS: carousel-slider.js -->
@@ -91,6 +91,10 @@
             <!-- Fades the slider bar out at the left and right edge -->
             <div class="slider-cover"></div>
           </section>
+
+          <div class="cta-container">
+            <div class="cta">Subscribe</div>
+          </div>
 
           <!-- 2d. BIAS COMPARISON — line on top, heading, three buttons (sticky under the title),
                    then the summary of the chosen side (Figma 48:756) -->

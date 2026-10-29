@@ -43,6 +43,8 @@ const CLUSTER_ANCHORS = {
 
 const CHIP = 40
 const PINCH_RANGE = 0.42
+// Same commitment as settling into the map: a modest zoom-in opens the card.
+const ZOOM_OPEN = 0.42
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
@@ -317,7 +319,6 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
 
   const headline = root.querySelector('.headline')
   const slider = root.querySelector('.slider-container')
-  const iframes = root.querySelector('.iframes')
 
   let progress = state.view === 'overview' ? 1 : 0
   let session = null
@@ -325,6 +326,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   let raf = 0
   let wheelTimer = 0
   let inbound = false
+  let zoomIn = 0
 
   function renderMap(layout) {
     map.dataset.mode = mode
@@ -377,7 +379,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     map.innerHTML = ''
   }
 
-  function applyChrome(t, wasOpen) {
+  function applyChrome(t) {
     root.style.setProperty('--overview-progress', String(t))
     root.classList.toggle('is-overviewing', t > 0 && t < 1)
     root.classList.toggle('is-overview', t >= 0.999)
@@ -393,30 +395,6 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
       slider.style.opacity = t ? String(1 - t) : ''
       slider.style.pointerEvents = t > 0.15 ? 'none' : ''
     }
-
-    if (!iframes) return
-    if (wasOpen) {
-      iframes.style.opacity = String(1 - t)
-      iframes.style.transform = `scale(${1 - t * 0.08})`
-      iframes.style.pointerEvents = 'none'
-      iframes.style.visibility = t >= 0.999 ? 'hidden' : 'visible'
-      iframes.style.transition = 'none'
-    } else if (t === 0) {
-      iframes.style.opacity = ''
-      iframes.style.transform = ''
-      iframes.style.pointerEvents = ''
-      iframes.style.visibility = ''
-      iframes.style.transition = ''
-    }
-  }
-
-  function clearIframeInline() {
-    if (!iframes) return
-    iframes.style.opacity = ''
-    iframes.style.transform = ''
-    iframes.style.pointerEvents = ''
-    iframes.style.visibility = ''
-    iframes.style.transition = ''
   }
 
   function ensureSession() {
@@ -437,7 +415,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     progress = next
     const current = ensureSession()
     cards.applyFlight(current.from, current.to, progress, inbound)
-    applyChrome(progress, current.wasOpen)
+    applyChrome(progress)
     if (entering) {
       root.dispatchEvent(new CustomEvent('parc:overview-enter'))
     }
@@ -450,8 +428,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
       if (session?.wasOpen) cards.setOpen(true)
       cards.endFlight()
       session = null
-      applyChrome(0, false)
-      clearIframeInline()
+      applyChrome(0)
       map.innerHTML = ''
       onViewChange?.('slider')
       return
@@ -460,8 +437,8 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     if (session?.wasOpen) {
       cards.setOpen(false)
       session.wasOpen = false
+      cards.retargetToHomes(cards.measureHomes(), { closed: true })
     }
-    clearIframeInline()
     onViewChange?.('overview')
   }
 
@@ -495,13 +472,24 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
   // The slider bar handles its own gestures
   const onSlider = (event) => event.target.closest?.('.slider-container')
 
+  // The card under the gesture, or the centred one when the pinch lands between cards.
+  function openCardAt(x, y) {
+    const hit = document.elementFromPoint(x, y)?.closest?.('.card')
+    const card =
+      hit && !hit.classList.contains('is-placeholder')
+        ? hit
+        : root.querySelector('.cards-track .card.is-center:not(.is-placeholder)')
+    if (!card) return
+    zoomIn = 0
+    cards.open(card.dataset.id)
+  }
+
   function onTouchStart(event) {
     if (event.touches.length < 2 || onSlider(event)) return
     event.preventDefault()
     cancelAnimationFrame(raf)
     cancelAnimationFrame(modeRaf)
     clearTimeout(wheelTimer)
-    ensureSession()
     pinch = {
       startDist: distance(touchPoint(event.touches, 0), touchPoint(event.touches, 1)),
       startProgress: progress,
@@ -517,7 +505,22 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     event.preventDefault()
     const dist = distance(touchPoint(event.touches, 0), touchPoint(event.touches, 1))
     const scale = dist / Math.max(pinch.startDist, 1)
-    setProgress(pinch.startProgress + (1 - scale) / PINCH_RANGE)
+    // Positive when the fingers come together (towards the map).
+    const delta = (1 - scale) / PINCH_RANGE
+    const a = touchPoint(event.touches, 0)
+    const b = touchPoint(event.touches, 1)
+
+    // Spreading on the gallery opens the card. Don't start the map flight for that.
+    if (delta < 0 && progress === 0 && !session) {
+      if (!cards.isOpen() && -delta >= ZOOM_OPEN) {
+        pinch = null
+        openCardAt((a.x + b.x) / 2, (a.y + b.y) / 2)
+      }
+      return
+    }
+
+    ensureSession()
+    setProgress(pinch.startProgress + delta)
   }
 
   function onTouchEnd(event) {
@@ -541,8 +544,23 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     if (!event.ctrlKey || onSlider(event)) return
     event.preventDefault()
     cancelAnimationFrame(raf)
+    const delta = event.deltaY * 0.0035
+    // Trackpad pinch-out (deltaY < 0) on the gallery opens the card.
+    // Further zoom-in, including the rest of the gesture that opened it, stays here.
+    if (delta < 0 && progress === 0 && !session) {
+      if (!cards.isOpen()) {
+        zoomIn += -delta
+        clearTimeout(wheelTimer)
+        wheelTimer = setTimeout(() => {
+          zoomIn = 0
+        }, 140)
+        if (zoomIn >= ZOOM_OPEN) openCardAt(event.clientX, event.clientY)
+      }
+      return
+    }
+    zoomIn = 0
     ensureSession()
-    setProgress(progress + event.deltaY * 0.0035)
+    setProgress(progress + delta)
     clearTimeout(wheelTimer)
     wheelTimer = setTimeout(settle, 140)
   }
@@ -566,7 +584,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     const card = event.target.closest('.card')
     if (!card) return
     cards.centerById(card.dataset.id)
-    if (session) session.from = cards.measureHomes()
+    cards.retargetToHomes(cards.measureHomes())
     animateTo(0)
   })
 

@@ -155,7 +155,7 @@ img {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: calc(1.3 * var(--u));
+  gap: 8px;
   width: 100%;
   min-height: calc(14.4 * var(--u));
   padding-left: calc(0.5 * var(--u));
@@ -169,11 +169,27 @@ img {
   height: calc(10.7 * var(--u));
   border-radius: 50%;
   object-fit: contain;
-  box-shadow: 0 5px 5px rgb(0 0 0 / 0.25);
+  opacity: var(--logo-opacity, 1);
+  transition: opacity 200ms var(--ease);
+}
+
+.card-face {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  pointer-events: none;
 }
 
 .card-tags-text {
   opacity: var(--title-opacity, 1);
+  font-size: 14px;
+  transition: opacity 240ms var(--ease) 160ms;
 }
 
 .card-title {
@@ -182,11 +198,120 @@ img {
   font-size: var(--text-m);
   line-height: var(--leading-m);
   opacity: var(--title-opacity, 1);
+  transition: opacity 240ms var(--ease) 160ms;
+}
+
+/* The grow jumps the card to its wide layout immediately, which would reflow
+   the headline. Pinning it keeps the line breaks it had on the small card. */
+.card.is-title-pinned .card-face {
+  position: static;
+}
+
+/* Open article: logo, source and headline fade out while the screenshot
+   fades in. They return as the card shrinks back. */
+.card.is-expanded {
+  --title-opacity: 0;
+  --logo-opacity: 0;
+  --shot-opacity: 1;
+}
+
+.card.is-expanded .card-title,
+.card.is-expanded .card-tags-text,
+.card.is-expanded .card-logo {
+  transition-duration: 640ms;
+  transition-delay: 0s;
 }
 
 .card.is-text-in .card-title,
 .card.is-text-in .card-tags-text {
   transition: opacity 280ms ease;
+}
+
+/* The screenshot lives in the card. Opening grows the card; the image fades in
+   over the colour. Closed, it stays out of the way of swipes. */
+.iframe-scroll {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  height: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+  opacity: var(--shot-opacity, 0);
+  pointer-events: none;
+  scrollbar-width: none;
+  transition: opacity 200ms var(--ease);
+}
+
+.card.is-expanded .iframe-scroll {
+  pointer-events: auto;
+  touch-action: pan-y;
+  transition: opacity 200ms ease-in-out 80ms;
+}
+
+.iframe-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.iframe-scroll img {
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.iframe-scroll img:not([src]) {
+  display: none;
+}
+
+/* Grown card: same frame the popup used to occupy, so the slider stays put. */
+.cards.is-expanded {
+  --iframe-w: 95%;
+  top: 124px;
+  height: calc(100% - 124px - 48px);
+  z-index: 400;
+}
+
+.cards.is-expanded .cards-track {
+  align-items: stretch;
+  gap: 12px;
+  padding-inline: calc((100% - var(--iframe-w)) / 2);
+  scroll-padding-inline: calc((100% - var(--iframe-w)) / 2);
+  touch-action: pan-x;
+}
+
+.cards.is-expanded .card {
+  flex-basis: var(--iframe-w);
+  width: var(--iframe-w);
+  height: 100%;
+  margin-left: 0;
+  padding: 0;
+  border-radius: 2px;
+  transform: none;
+}
+
+.cards.is-expanded .card + .card {
+  margin-left: 0;
+}
+
+/* The card has to paint above the gallery while it flies. Leave the scroller
+   and the article as scroll containers: the sticky title sticks to them, and
+   turning their overflow off is what makes the title jump mid-animation. */
+#app.is-flipping .gallery {
+  overflow: visible;
+}
+
+#app.is-flipping .gallery {
+  z-index: 30;
+}
+
+#app.is-flipping .cards-track {
+  pointer-events: none;
+  scroll-snap-type: none;
+}
+
+.cards.is-flying {
+  visibility: hidden;
 }
 
 .cards-track {
@@ -203,7 +328,6 @@ img {
   scroll-padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
   padding-inline: max(0px, calc((100% - var(--card-w)) / 2));
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 .cards-track::-webkit-scrollbar {
@@ -380,9 +504,10 @@ img {
 }
 
 .carousel-counter {
-  position: absolute;
-  bottom: 12px;
-  left: 18px;
+  position: relative;
+  top: 6px;
+  left: 0;
+  text-align: center;
   font-size: var(--text-s);
   color: var(--color-fg);
   opacity: 0.5;
@@ -411,134 +536,22 @@ img {
   z-index: 200;
 }
 
-/* iFRAME OVERLAY */
-
-.iframes {
-  --iframe-w: 95%;
-  height: calc(100% - 124px - 48px);
-  position: absolute;
-  top: 124px;
-  left: 0;
-  right: 0;
-  bottom: 120px; /* keeps the slider visible */
-  z-index: 400;
-
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(24px);
-  transition: opacity 300ms var(--ease), transform 300ms var(--ease),
-    visibility 0s linear 300ms;
-}
-
-.iframes.is-open {
-  margin-top: 0;
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition:
-    opacity 300ms var(--ease) 600ms,
-    transform 300ms var(--ease) 600ms,
-    visibility 0s linear 600ms;
-}
-
-.iframes-track {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
-  height: 100%;
-  /* centre the 315px popup in the screen */
-  padding-inline: calc((100% - var(--iframe-w)) / 2);
-  scroll-padding-inline: calc((100% - var(--iframe-w)) / 2);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.iframes-track::-webkit-scrollbar {
-  display: none;
-}
-
-.iframe-overlay {
-  position: relative;
-  flex: 0 0 var(--iframe-w); /* 1:1 with the 315px-wide article screenshots */
-  height: 100%;
-  scroll-snap-align: center;
-  transform: scale(0.9);
-  transform-origin: center center;
-  will-change: transform;
-
-  border-radius: 30px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.iframe-scroll {
-  height: 100%;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-}
-
-.iframe-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.iframe-scroll img {
-  width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
 .iframe-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  top: 68px;
+  right: 0;
+
   cursor: pointer;
   width: 48px;
   height: 48px;
   padding: 0;
-  background: rgba(128, 128, 128, 0.5);
-  border-radius: 9999px;
   outline: none;
   border: none;
-}
 
-.iframe-close::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  border-radius: 9999px;
-  -webkit-box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
-          box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
-  background-color: rgb(255 255 255 / 10%);
-}
+  z-index: 450;
 
-.iframe-close::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  border-radius: 9999px;
-  -webkit-backdrop-filter: blur(0px);
-          backdrop-filter: blur(0px);
-  -webkit-filter: url(#btn-glass);
-          filter: url(#btn-glass);
-  overflow: hidden;
-  isolation: isolate;
+  opacity: 0;
+  transition: opacity 300ms var(--ease);
 }
 
 /* MAP / OVERVIEW */
@@ -577,9 +590,16 @@ img {
   transform: none;
 }
 
+.card.is-shrinking .card-face {
+  position: static; /* logo positions against the card, not the face */
+}
+
 .card.is-shrinking .card-title,
-.card.is-shrinking .card-tags-text {
+.card.is-shrinking .card-tags-text,
+.card.is-shrinking .card-logo,
+.card.is-shrinking .iframe-scroll {
   pointer-events: none;
+  transition: none;
 }
 
 /* .card.is-shrinking .card-title {
@@ -764,6 +784,11 @@ img {
   transition: opacity 300ms var(--ease);
 }
 
+.iframe-close.iframeopen {
+  opacity: 1;
+  transition: opacity 300ms var(--ease);
+}
+
 .carousel-slider__thumb.iframeopen {
   height: 12px;
   margin: -2px 0 0 -1.5px; /* half the width, so its middle sits exactly at 50% */
@@ -774,4 +799,122 @@ img {
   --bar-height: 6px;
   bottom: -36px;
   transition: --bar-height 300ms var(--ease), bottom 300ms var(--ease);
+}
+
+.cta.iframeopen {
+  opacity: 0;
+}
+/* CTA */
+
+.cta-container {
+  position: absolute;
+  top: 0px;
+  right: 0;
+  width: fit-content;
+  height: fit-content;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px;
+
+  z-index: 9;
+}
+
+/* Animated so the text and the border share one ray position. */
+@property --cta-shine-pos {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 100%;
+}
+
+.cta {
+  /* Stance colour of the article in the centre. cards.js sets this
+     from the matching --tag-* token in tokens.css. */
+  --cta-shine: var(--tag-centre);
+  --cta-shine-every: 6s; /* time from one pass to the next */
+  --cta-shine-width: 33%; /* thickness of the ray, as a share of the gradient */
+  --cta-shine-pos: 100%;
+
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+
+  font-size: var(--text-s);
+
+  padding: 6px;
+  /* The stroke itself is drawn by ::before, in the same gradient as the text. */
+  border: 1px solid transparent;
+
+  color: transparent;
+  background-image: linear-gradient(
+    90deg, /* 90deg = horizontal. The ray itself travels in cta-shine. */
+    var(--color-fg) calc(50% - var(--cta-shine-width)),
+    var(--cta-shine) 50%,
+    var(--color-fg) calc(50% + var(--cta-shine-width))
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: var(--cta-shine-pos) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: cta-shine var(--cta-shine-every) linear infinite;
+  transition: opacity 300ms var(--ease);
+}
+
+/* Same gradient as the text, masked down to the 1px border so the ray
+   crosses the stroke and the letters together. */
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background-image: linear-gradient(
+    90deg,
+    var(--color-fg) calc(50% - var(--cta-shine-width)),
+    var(--cta-shine) 50%,
+    var(--color-fg) calc(50% + var(--cta-shine-width))
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: var(--cta-shine-pos) 0;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* --cta-shine-pos: 100% parks the colour off the left edge, 0% off the right,
+   so 100% → 0% is a left-to-right pass. The jump back at the loop
+   happens while the colour is off the element, so text and border stay black. */
+@keyframes cta-shine {
+  0%,
+  8% {
+    --cta-shine-pos: 100%;
+  }
+  30%,
+  100% {
+    --cta-shine-pos: 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    animation: none;
+    background: none;
+    color: var(--color-fg);
+    -webkit-text-fill-color: currentColor;
+    border-color: var(--color-fg);
+  }
+
+  .cta::before {
+    content: none;
+  }
 }
