@@ -17,6 +17,20 @@ if (matchMedia('(min-width: 600px)').matches) {
   app.style.zoom = px('--device-h') / (px('--screen-h-real') + 2 * px('--bezel'))
 }
 
+/* ---------- Start page: a click (or Enter) anywhere opens the article ---------- */
+const start = app.querySelector('.start')
+function leaveStart() {
+  app.classList.remove('is-start')
+  start?.blur()
+}
+start?.addEventListener('click', leaveStart)
+start?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    leaveStart()
+  }
+})
+
 const scroller = app.querySelector('.scroller')
 const title = app.querySelector('.article__title')
 const gallery = app.querySelector('.gallery')

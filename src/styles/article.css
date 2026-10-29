@@ -40,6 +40,33 @@ button {
   height: 41px;
 }
 
+/* Start page: lies over the article page, under the header, and scrolls.
+   Click anywhere → fades out (main.js removes .is-start). */
+.start {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  background: var(--color-bg);
+  cursor: pointer;
+  transition:
+    opacity 400ms var(--ease),
+    visibility 0s linear 400ms;
+}
+.start::-webkit-scrollbar {
+  display: none;
+}
+#app:not(.is-start) .start {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Everything below the header scrolls in one column */
 .scroller {
   height: calc(100% - 54px);

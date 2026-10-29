@@ -8,7 +8,7 @@
     <title>ParcStudio — Ground News</title>
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="is-start">
       <!-- ============================================================
            Read from top to bottom = the screen from top to bottom.
              1. Header
@@ -26,6 +26,142 @@
           <img src="/assets/icons/logo.svg" width="71" height="41" alt="Ground News" />
         </a>
       </header>
+
+      <!-- 0. START PAGE — entry screen under the header (Figma: "Riots News Coverage
+               and Media Bias | Ground News"). Styles: start.css.
+               A click anywhere opens the article page. JS: main.js -->
+      <div class="start" role="button" tabindex="0" aria-label="Open the article">
+        <!-- Topic page (Figma 75:781). Images: public/assets/start/ -->
+        <div class="topic">
+          <!-- Intro, dark block -->
+          <section class="topic-intro">
+            <img class="topic-intro__image" src="/assets/start/france.png" width="80" height="80" alt="" />
+            <h1 class="topic-intro__title">News about France</h1>
+            <p class="topic-intro__text">
+              Stay current with all the latest and breaking news about <em>France</em>, compare headlines and
+              perspectives between news sources on stories happening today. In total, <em>169,617</em> stories
+              have been published about France which Ground News has aggregated in the past 3 months.
+            </p>
+            <span class="topic-intro__follow">Follow <img src="/assets/start/follow.svg" width="12" height="16" alt="" /></span>
+          </section>
+
+          <!-- Covered most by -->
+          <section class="topic-sources">
+            <h2 class="topic-h2">Covered Most By</h2>
+            <ul class="topic-sources__list">
+              <li class="topic-source">
+                <img class="topic-source__logo" src="/assets/start/france24.png" width="48" height="48" alt="" />
+                <span class="topic-source__name">France24</span>
+                <span class="topic-tag topic-tag--center">Center</span>
+              </li>
+              <li class="topic-source">
+                <img class="topic-source__logo" src="/img/logos/le-monde.png" width="48" height="48" alt="" />
+                <span class="topic-source__name">Le Monde</span>
+                <span class="topic-tag topic-tag--leanleft">Lean Left</span>
+              </li>
+              <li class="topic-source">
+                <img class="topic-source__logo" src="/assets/start/le-figaro.png" width="48" height="48" alt="" />
+                <span class="topic-source__name">Le Figaro</span>
+                <span class="topic-tag topic-tag--leanright">Lean Right</span>
+              </li>
+            </ul>
+            <span class="topic-button">Suggest a source</span>
+          </section>
+
+          <section class="topic-local">
+            <div class="topic-local__bar">
+              <span>Local News Publishers</span>
+              <img src="/assets/start/expand.svg" width="12" height="12" alt="" />
+            </div>
+            <div class="topic-local__box">
+              <h3 class="topic-local__title">Suggest a source</h3>
+              <p>Looking for a source we don't already have? Suggest one <u>here</u>.</p>
+            </div>
+          </section>
+
+          <!-- Top news: picture left, text right -->
+          <section class="topic-top">
+            <h2 class="topic-h2">Top France News</h2>
+            <article class="topic-story">
+              <img class="topic-story__image" src="/assets/start/top-1.png" alt="" />
+              <div class="topic-story__body">
+                <p class="topic-meta">High School Students · France</p>
+                <h3 class="topic-story__title">France promises to replace its university admissions after riots and thousands of arrests</h3>
+                <p class="topic-coverage"><span class="topic-coverage__bar"><i class="l" style="width:17%"></i><i class="c" style="width:20%"></i><i class="r" style="width:63%"></i></span>63% Right coverage: 24 sources</p>
+                <span class="topic-link">See the Story</span>
+              </div>
+            </article>
+            <article class="topic-story">
+              <img class="topic-story__image" src="/assets/start/top-2.png" alt="" />
+              <div class="topic-story__body">
+                <p class="topic-meta">High School Students · France</p>
+                <h3 class="topic-story__title">Hundreds of thousands march across France in protests over schools and policing</h3>
+                <p class="topic-coverage"><span class="topic-coverage__bar"><i class="l" style="width:30%"></i><i class="c" style="width:34%"></i><i class="r" style="width:36%"></i></span>36% Right coverage: 31 sources</p>
+                <span class="topic-link">See the Story</span>
+              </div>
+            </article>
+            <article class="topic-story">
+              <img class="topic-story__image" src="/assets/start/top-3.png" alt="" />
+              <div class="topic-story__body">
+                <p class="topic-meta">High School Students · France</p>
+                <h3 class="topic-story__title">France to mobilise 70,000 security forces for Saturday</h3>
+                <p class="topic-coverage"><span class="topic-coverage__bar"><i class="l" style="width:25%"></i><i class="c" style="width:41%"></i><i class="r" style="width:34%"></i></span>39% Center coverage: 821 sources</p>
+                <span class="topic-link">See the Story</span>
+              </div>
+            </article>
+          </section>
+
+          <!-- Blindspots -->
+          <section class="topic-blind">
+            <h2 class="topic-h2">Blindspots</h2>
+            <article class="topic-blind__item">
+              <div class="topic-blind__image">
+                <img src="/assets/start/blindspot-1.png" alt="" />
+                <span class="topic-blind__info"><img src="/assets/start/info.svg" width="16" height="16" alt="" /></span>
+              </div>
+              <div class="topic-blind__row">
+                <span class="topic-blind__label"><img src="/assets/start/blindspot.svg" width="25" height="30" alt="" />Blindspot: <b>Only 8% Right</b></span>
+                <span>29 sources</span>
+              </div>
+              <h3 class="topic-blind__title">The Law Enforcement Forces Accused of Protecting the Ultra-Right on the Margins of the Manifes, Nuñez Contests</h3>
+            </article>
+            <article class="topic-blind__item">
+              <div class="topic-blind__row">
+                <span class="topic-blind__label"><img src="/assets/start/blindspot.svg" width="25" height="30" alt="" />Blindspot: <b>0% Right</b></span>
+                <span>14 sources</span>
+              </div>
+              <h3 class="topic-blind__title">Pastis Production Hit as France Sends Troops After Violent Marseille Clashes</h3>
+              <div class="topic-split">
+                <p><span>Left</span><span>57%</span></p><span class="topic-split__bar"><i class="l" style="width:57%"></i></span>
+                <p><span>Center</span><span>43%</span></p><span class="topic-split__bar"><i class="c" style="width:43%"></i></span>
+                <p><span>Right</span><span>0%</span></p><span class="topic-split__bar"><i class="r" style="width:0%"></i></span>
+              </div>
+            </article>
+          </section>
+
+          <!-- More stories: text only -->
+          <section class="topic-more">
+            <article class="topic-more__item">
+              <h3 class="topic-story__title">Attacks on Business? Associations Demand Police Presence</h3>
+              <p class="topic-coverage"><span class="topic-coverage__bar"><i class="c" style="width:75%"></i><i class="r" style="width:25%"></i></span>75% Center coverage: 4 sources</p>
+              <p class="topic-meta">Riots · Germany</p>
+              <span class="topic-link">See the Story</span>
+            </article>
+            <article class="topic-more__item">
+              <h3 class="topic-story__title">Madrid Protests Surge over Deadly Train Crash</h3>
+              <p class="topic-coverage"><span class="topic-coverage__bar"><i class="l" style="width:14%"></i><i class="c" style="width:15%"></i><i class="r" style="width:71%"></i></span>71% Right coverage: 14 sources</p>
+              <p class="topic-meta">Riots · Madrid</p>
+              <span class="topic-link">See the Story</span>
+            </article>
+            <article class="topic-more__item">
+              <h3 class="topic-story__title">Police Arrest Suspected Sharp Weapon Carrier During Yogyakarta Demonstration</h3>
+              <p class="topic-coverage"><span class="topic-coverage__bar"><i class="r" style="width:100%"></i></span>100% Right coverage: 2 sources</p>
+              <p class="topic-meta">Riots · Jakarta</p>
+              <span class="topic-link">See the Story</span>
+            </article>
+          </section>
+        </div>
+      </div>
 
       <!-- 2. ARTICLE PAGE — everything below the header scrolls in one column:
               2a meta → 2b title → 2c gallery → 2d Bias Comparison -->
