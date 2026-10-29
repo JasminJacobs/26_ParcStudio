@@ -688,11 +688,15 @@ img {
   bottom: -36px;
   transition: --bar-height 300ms var(--ease), bottom 300ms var(--ease);
 }
+
+.cta.iframeopen {
+  opacity: 0;
+}
 /* CTA */
 
 .cta-container {
   position: absolute;
-  top: 54px;
+  top: 0px;
   right: 0;
   width: fit-content;
   height: fit-content;
@@ -701,7 +705,7 @@ img {
   align-items: center;
   justify-content: center;
 
-  padding: 18px;
+  padding: 12px;
 
   z-index: 9;
 }
@@ -745,6 +749,7 @@ img {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: cta-shine var(--cta-shine-every) linear infinite;
+  transition: opacity 300ms var(--ease);
 }
 
 /* Same gradient as the text, masked down to the 1px border so the ray
