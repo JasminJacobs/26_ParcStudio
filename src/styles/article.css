@@ -183,14 +183,16 @@ button {
   gap: var(--space-3); /* 16px */
   padding: 18px;
   border-top: 0.5px solid var(--color-fg);
+  margin-top: 40px;
 }
 
 /* Heading — text style "scrolling text" (Medway Book 19/21) */
 .bias-section__title {
   font-family: var(--font-sans);
   font-weight: normal;
-  font-size: 19px;
+  font-size: var(--text-m);
   line-height: 21px;
+  margin-bottom: 12px;
 }
 
 /* Button bar with a sliding box (Figma: BiasComparison 22:1475).
