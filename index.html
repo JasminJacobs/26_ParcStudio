@@ -57,6 +57,12 @@
             Hundreds of thousands march across France in protests over schools and policing
           </h1>
 
+                      <!-- Popup: clicking a card opens the article screenshot on top.
+                 One screenshot per article, swipe sideways. JS: cards.js -->
+                 <section class="iframes" aria-label="Articles">
+                  <div class="iframes-track"></div>
+                </section>
+
           <!-- 2c. GALLERY — fills the first screen under the title (Figma: Gallery-1).
                    From top to bottom: cards, slider bar; the popup opens over the cards,
                    the slider bar stays visible below it. -->
@@ -81,12 +87,6 @@
                 <div class="carousel-label" aria-hidden="true"></div>
               </div>
             </div>
-
-            <!-- Popup: clicking a card opens the article screenshot on top.
-                 One screenshot per article, swipe sideways. JS: cards.js -->
-            <section class="iframes" aria-label="Articles">
-              <div class="iframes-track"></div>
-            </section>
 
             <!-- Fades the slider bar out at the left and right edge -->
             <div class="slider-cover"></div>
