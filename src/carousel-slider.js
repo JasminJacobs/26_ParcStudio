@@ -214,7 +214,7 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     settleRaf = 0
   }
 
-  function settleTo(target, onDone) {
+  function settleTo(target, onDone, duration = 160) {
     stopSettle()
     const start = pos
     const dest = clamp(target, 0, Math.max(0, articles.length - 1))
@@ -224,7 +224,6 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
       onDone?.()
       return
     }
-    const duration = 160
     const t0 = performance.now()
     function tick(now) {
       const u = Math.min(1, (now - t0) / duration)
@@ -375,5 +374,21 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     syncFromTrack()
   }
 
-  return { refresh }
+  // Glide to one article. Used by the shake gesture; drags keep the short snap.
+  function goTo(index, duration = 420) {
+    const track = getTrack()
+    if (!track || !track.clientWidth || !articles.length || drag) return
+    const dest = clamp(Math.round(index), 0, articles.length - 1)
+    track.classList.add('is-scrubbing')
+    const finish = () => track.classList.remove('is-scrubbing')
+    if (reduceMotion.matches || duration <= 0) {
+      stopSettle()
+      scrollTo(dest)
+      finish()
+      return
+    }
+    settleTo(dest, finish, duration)
+  }
+
+  return { refresh, goTo, currentIndex: () => Math.round(pos) }
 }
