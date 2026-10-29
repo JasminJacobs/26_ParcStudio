@@ -412,7 +412,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
   function fadeCards(cards, opening, snaps) {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
     const textDur = reduce ? 1 : opening ? 250 : 250
-    const textDelay = reduce ? 0 : opening ? 200 : 280
+    const textDelay = reduce ? 0 : opening ? 0 : 280
     const shotDur = reduce ? 1 : opening ? 320 : 280
     const shotDelay = reduce ? 0 : opening ? 200 : 0
     cards.forEach((card, i) => {
