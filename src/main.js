@@ -5,6 +5,7 @@ import { createHint } from './interactions/hint.js'
 import { createMic } from './interactions/mic.js'
 import { createCards } from './cards.js'
 import { createCarouselSlider } from './carousel-slider.js'
+import { createSegmented, addSwipe } from './interactions/segmented.js'
 
 const app = document.querySelector('#app')
 
@@ -112,9 +113,12 @@ function showBias(bias) {
     .finished.then(() => (from.hidden = activeBias !== from.dataset.bias))
 }
 
-biasButtons.forEach((button) =>
-  button.addEventListener('click', () => showBias(button.dataset.bias)),
-)
+// Click or swipe on the bar: the box slides, the summary follows
+const biasSwitch = createSegmented(biasBar, { onChange: showBias })
+
+// Swipe the summaries like pages: finger to the left brings the next side
+// in from the right (Center → Right), and the box above moves along
+addSwipe(summaryBlock, (dir) => biasSwitch.step(-dir))
 
 /* ---------- Hint ---------- */
 createHint(app, scroller)
