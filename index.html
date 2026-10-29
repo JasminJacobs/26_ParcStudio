@@ -93,7 +93,7 @@
           </section>
 
           <div class="cta-container">
-            <div class="cta">Subscribe</div>
+            <button class="cta" type="button">Subscribe</button>
           </div>
 
           <!-- 2d. BIAS COMPARISON — line on top, heading, three buttons (sticky under the title),
@@ -144,6 +144,17 @@
       <!-- Bar under the map: same box as Bias Comparison, one button per map style
            (Smartmap, Reliability, Types). JS: overview.js -->
       <div class="map-bar segmented" aria-hidden="true"></div>
+
+      <!-- Subscribe confirmation. JS: cards.js shows it and hides the CTA. -->
+      <div class="subscribe" hidden>
+        <div class="subscribe__panel" role="dialog" aria-labelledby="subscribe-message">
+          <button class="subscribe__close" type="button" aria-label="Close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </button>
+          <span class="subscribe__lead">Congratulations!</span>
+          <p class="subscribe__message" id="subscribe-message">You’ve subscribed <br>to Ground News</p>
+        </div>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

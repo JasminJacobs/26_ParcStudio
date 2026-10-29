@@ -276,6 +276,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
 
   let frame = 0
   const cta = root.querySelector('.cta')
+  const subscribe = root.querySelector('.subscribe')
   let shineBias = ''
 
   // Paint the CTA ray with the centre article's stance colour (--tag-* in tokens.css).
@@ -286,6 +287,33 @@ export function createCards(root, state, { onOpenChange } = {}) {
     shineBias = bias
     cta.style.setProperty('--cta-shine', `var(--tag-${bias})`)
   }
+
+  // Subscribe: the word uses the button's shine, then the button stays gone.
+  function openSubscribe() {
+    if (!subscribe || !subscribe.hidden) return
+    const shine = cta.style.getPropertyValue('--cta-shine') || 'var(--tag-centre)'
+    subscribe.style.setProperty('--cta-shine', shine)
+    cta.parentElement?.classList.add('is-subscribed')
+    subscribe.hidden = false
+    subscribe.classList.remove('is-open')
+    void subscribe.offsetWidth // commit opacity 0 so the fade-in can run
+    subscribe.classList.add('is-open')
+  }
+
+  function closeSubscribe() {
+    if (!subscribe || subscribe.hidden || !subscribe.classList.contains('is-open')) return
+    subscribe.classList.remove('is-open')
+    const finish = (event) => {
+      if (event && (event.target !== subscribe || event.propertyName !== 'opacity')) return
+      subscribe.hidden = true
+      subscribe.removeEventListener('transitionend', finish)
+    }
+    subscribe.addEventListener('transitionend', finish)
+    setTimeout(finish, 400)
+  }
+
+  cta?.addEventListener('click', openSubscribe)
+  subscribe?.querySelector('.subscribe__close')?.addEventListener('click', closeSubscribe)
 
   // Screenshots stay unloaded until the popup is open, and only the one
   // in the centre plus its two neighbours. Decoding all of them at once
