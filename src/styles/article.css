@@ -177,7 +177,7 @@ button {
 .article__title-text {
   display: block;
   transform-origin: 50% 0;
-  transition: transform 600ms var(--ease);
+  transition: transform 300ms var(--ease);
 }
 
 /* 0.5px line under the title while it is stuck */
@@ -355,4 +355,5 @@ button {
 .article__title.iframeopen .article__title-text,
 .article__title.mapopen .article__title-text {
   transform: scale(0.6);
+  transition: transform 600ms var(--ease);
 }

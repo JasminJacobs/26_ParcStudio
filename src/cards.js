@@ -276,6 +276,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
 
   let frame = 0
   const cta = root.querySelector('.cta')
+  const subscribe = root.querySelector('.subscribe')
   let shineBias = ''
 
   // Paint the CTA ray with the centre article's stance colour (--tag-* in tokens.css).
@@ -286,6 +287,33 @@ export function createCards(root, state, { onOpenChange } = {}) {
     shineBias = bias
     cta.style.setProperty('--cta-shine', `var(--tag-${bias})`)
   }
+
+  // Subscribe: the word uses the button's shine, then the button stays gone.
+  function openSubscribe() {
+    if (!subscribe || !subscribe.hidden) return
+    const shine = cta.style.getPropertyValue('--cta-shine') || 'var(--tag-centre)'
+    subscribe.style.setProperty('--cta-shine', shine)
+    cta.parentElement?.classList.add('is-subscribed')
+    subscribe.hidden = false
+    subscribe.classList.remove('is-open')
+    void subscribe.offsetWidth // commit opacity 0 so the fade-in can run
+    subscribe.classList.add('is-open')
+  }
+
+  function closeSubscribe() {
+    if (!subscribe || subscribe.hidden || !subscribe.classList.contains('is-open')) return
+    subscribe.classList.remove('is-open')
+    const finish = (event) => {
+      if (event && (event.target !== subscribe || event.propertyName !== 'opacity')) return
+      subscribe.hidden = true
+      subscribe.removeEventListener('transitionend', finish)
+    }
+    subscribe.addEventListener('transitionend', finish)
+    setTimeout(finish, 400)
+  }
+
+  cta?.addEventListener('click', openSubscribe)
+  subscribe?.querySelector('.subscribe__close')?.addEventListener('click', closeSubscribe)
 
   // Screenshots stay unloaded until the popup is open, and only the one
   // in the centre plus its two neighbours. Decoding all of them at once
@@ -782,9 +810,23 @@ export function createCards(root, state, { onOpenChange } = {}) {
         const textOpacity = inbound ? 0 : Math.max(0, 1 - ease * TEXT_FADE)
         card.style.setProperty('--title-opacity', String(textOpacity))
       }
+      // Place the logo in the layer, on a straight line from where it sits on
+      // the card to the centre of the circle. Doing it inside the card sends
+      // it up out of the shrinking box, then back down.
       const logo = lerp(start.logoSize, LOGO_END, ease)
-      const left = lerp(start.logoLeft, (w - logo) / 2, ease)
-      const top = lerp(h - start.logoBottom - logo, (h - logo) / 2, ease)
+      const startTop = start.h - start.logoBottom - start.logoSize
+      const logoCx = lerp(
+        start.x + start.logoLeft + start.logoSize / 2,
+        end.x + end.w / 2,
+        ease,
+      )
+      const logoCy = lerp(
+        start.y + startTop + start.logoSize / 2,
+        end.y + end.h / 2,
+        ease,
+      )
+      const left = logoCx - logo / 2 - (cx - w / 2)
+      const top = logoCy - logo / 2 - (cy - h / 2)
       card.style.setProperty('--logo-left', `${left}px`)
       card.style.setProperty('--logo-top', `${top}px`)
       const logoEl = card.querySelector('.card-logo')
