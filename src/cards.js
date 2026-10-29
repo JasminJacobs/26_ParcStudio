@@ -289,6 +289,14 @@ export function createCards(root, state, { onOpenChange } = {}) {
   // Screenshots stay unloaded until the popup is open, and only the one
   // in the centre plus its two neighbours. Decoding all of them at once
   // is what makes iOS Safari kill the tab ("A problem repeatedly occurred").
+  // An image with no src is display:none, so a shot that is fading out has
+  // to keep its src or the picture pops away instead of fading.
+  function shotHeld(img) {
+    if (animating) return true
+    const shot = img.closest('.iframe-scroll')
+    return !!shot && shot.getAnimations().some((anim) => anim.playState !== 'finished')
+  }
+
   function setShotSources() {
     const items = [...cardTrack.children].filter(
       (el) => !el.classList.contains('is-placeholder'),
@@ -313,7 +321,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
       const near = open && Math.abs(i - active) <= 1
       if (near) {
         if (img.getAttribute('src') !== img.dataset.src) img.setAttribute('src', img.dataset.src)
-      } else if (img.hasAttribute('src')) {
+      } else if (img.hasAttribute('src') && !shotHeld(img)) {
         img.removeAttribute('src')
       }
     }
@@ -381,10 +389,15 @@ export function createCards(root, state, { onOpenChange } = {}) {
     const anim = el.animate([{ opacity: Number(from) }, { opacity: to }], {
       duration,
       delay,
-      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      easing: 'ease-in-out',
       fill: 'both',
     })
-    anim.finished.then(() => anim.cancel()).catch(() => {})
+    anim.finished
+      .then(() => {
+        anim.cancel()
+        if (el.classList.contains('iframe-scroll') && !open) setShotSources()
+      })
+      .catch(() => {})
   }
 
   function fadeSnap(cards) {
@@ -398,10 +411,10 @@ export function createCards(root, state, { onOpenChange } = {}) {
 
   function fadeCards(cards, opening, snaps) {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const textDur = reduce ? 1 : opening ? 170 : 260
-    const textDelay = reduce ? 0 : opening ? 0 : 280
-    const shotDur = reduce ? 1 : opening ? 380 : 280
-    const shotDelay = reduce ? 0 : opening ? 50 : 200
+    const textDur = reduce ? 1 : opening ? 250 : 250
+    const textDelay = reduce ? 0 : opening ? 200 : 280
+    const shotDur = reduce ? 1 : opening ? 320 : 280
+    const shotDelay = reduce ? 0 : opening ? 200 : 0
     cards.forEach((card, i) => {
       const snap = snaps[i]
       fadePiece(card.querySelector('.card-title'), snap.title, opening ? 0 : 1, textDur, textDelay)
@@ -418,13 +431,62 @@ export function createCards(root, state, { onOpenChange } = {}) {
     root.classList.remove('is-flipping')
     cardTrack.classList.remove('is-scrubbing')
     cardTrack.scrollLeft = pinnedScroll
-    clearFades(cardTrack)
+    // The crossfade runs longer than the size change. Leave it; each fade
+    // cancels itself when it finishes and the CSS variables take over.
     for (const card of cardTrack.querySelectorAll('.card')) {
       card.style.transition = 'none'
       card.style.transform = ''
       card.style.transformOrigin = ''
+      unpinTitle(card)
     }
     syncAndScale()
+  }
+
+  // Where the headline sits in the card, in layout px, before the grow.
+  function captureTitle(card) {
+    const title = card.querySelector('.card-title')
+    if (!title) return null
+    const zoom = cssZoom(root)
+    const scale = readScale(card) || 1
+    const cardRect = card.getBoundingClientRect()
+    const titleRect = title.getBoundingClientRect()
+    return {
+      title,
+      left: (titleRect.left - cardRect.left) / zoom / scale,
+      top: (titleRect.top - cardRect.top) / zoom / scale,
+      width: title.offsetWidth,
+      height: title.offsetHeight,
+    }
+  }
+
+  // Draw the headline at its old size and line breaks, scaled so the card's
+  // own transform cancels it. It then grows with the card instead of reflowing.
+  function pinTitle(card, lock, rest, sx, sy) {
+    if (!lock) return
+    const cx = 1 / Math.max(rest * sx, 0.001)
+    const cy = 1 / Math.max(rest * sy, 0.001)
+    card.classList.add('is-title-pinned')
+    const { title } = lock
+    title.style.position = 'absolute'
+    title.style.left = `${lock.left * cx}px`
+    title.style.top = `${lock.top * cy}px`
+    title.style.width = `${lock.width}px`
+    title.style.height = `${lock.height}px`
+    title.style.transformOrigin = '0 0'
+    title.style.transform = `scale(${cx}, ${cy})`
+  }
+
+  function unpinTitle(card) {
+    card.classList.remove('is-title-pinned')
+    const title = card.querySelector('.card-title')
+    if (!title) return
+    title.style.position = ''
+    title.style.left = ''
+    title.style.top = ''
+    title.style.width = ''
+    title.style.height = ''
+    title.style.transformOrigin = ''
+    title.style.transform = ''
   }
 
   // Grow or shrink every card together. The layout jumps to the destination
@@ -444,6 +506,8 @@ export function createCards(root, state, { onOpenChange } = {}) {
       cards.find((el) => el.classList.contains('is-center')) ||
       cards[0]
     const id = active.dataset.id
+    cards.forEach(unpinTitle)
+    const titleLocks = next ? cards.map(captureTitle) : []
     const first = presetFirst || cards.map((el) => el.getBoundingClientRect())
     const fades = fadeSnap(cards)
 
@@ -480,6 +544,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
       card.style.transition = 'none'
       // Same function list at both ends, or the browser snaps instead of moving.
       card.style.transform = `translate(${dx}px, ${dy}px) scale(${rest * sx}, ${rest * sy})`
+      if (next) pinTitle(card, titleLocks[i], rest, sx, sy)
     })
 
     if (frame) cancelAnimationFrame(frame)

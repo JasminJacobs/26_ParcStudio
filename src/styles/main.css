@@ -201,8 +201,14 @@ img {
   transition: opacity 240ms var(--ease) 160ms;
 }
 
-/* Open article: logo, source and headline leave immediately; they return
-   as the card shrinks back. */
+/* The grow jumps the card to its wide layout immediately, which would reflow
+   the headline. Pinning it keeps the line breaks it had on the small card. */
+.card.is-title-pinned .card-face {
+  position: static;
+}
+
+/* Open article: logo, source and headline fade out while the screenshot
+   fades in. They return as the card shrinks back. */
 .card.is-expanded {
   --title-opacity: 0;
   --logo-opacity: 0;
@@ -212,7 +218,7 @@ img {
 .card.is-expanded .card-title,
 .card.is-expanded .card-tags-text,
 .card.is-expanded .card-logo {
-  transition-duration: 160ms;
+  transition-duration: 640ms;
   transition-delay: 0s;
 }
 
@@ -240,7 +246,7 @@ img {
 .card.is-expanded .iframe-scroll {
   pointer-events: auto;
   touch-action: pan-y;
-  transition: opacity 340ms var(--ease) 80ms;
+  transition: opacity 200ms ease-in-out 80ms;
 }
 
 .iframe-scroll::-webkit-scrollbar {
@@ -288,10 +294,9 @@ img {
   margin-left: 0;
 }
 
-/* While the card flies between the two sizes it has to paint outside the
-   gallery, over the title, without the page clipping it. */
-#app.is-flipping .scroller,
-#app.is-flipping .article,
+/* The card has to paint above the gallery while it flies. Leave the scroller
+   and the article as scroll containers: the sticky title sticks to them, and
+   turning their overflow off is what makes the title jump mid-animation. */
 #app.is-flipping .gallery {
   overflow: visible;
 }
