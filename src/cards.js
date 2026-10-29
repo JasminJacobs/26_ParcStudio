@@ -82,8 +82,6 @@ function logoSrc(article) {
   return file ? publicUrl(`img/logos/${file}`) : ''
 }
 
-const CLOSE_ICON = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><title>Close</title><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>`
-
 function articlesByBias(articles) {
   const rank = (bias) => {
     const index = BIAS_ORDER.indexOf(bias)
@@ -132,7 +130,6 @@ function overlayMarkup(article) {
       <div class="iframe-scroll">
         <img data-src="${src}" alt="${article.source}" draggable="false" decoding="async" />
       </div>
-      <button class="iframe-close" type="button" aria-label="Close">${CLOSE_ICON}</button>
     </section>`
 }
 
@@ -262,7 +259,7 @@ export function createCards(root, state, { onOpenChange } = {}) {
   let open = false
   let flight = null
   const iframeOpenTargets = root.querySelectorAll(
-    '.meta, .hint, .carousel-counter, .carousel-label, .carousel-slider__thumb, .slider-container, .article__title',
+    '.meta, .hint, .carousel-counter, .carousel-label, .carousel-slider__thumb, .slider-container, .article__title, .iframe-close',
   )
 
   // The visible track leads; the hidden one follows at the same scroll ratio,
@@ -360,8 +357,8 @@ export function createCards(root, state, { onOpenChange } = {}) {
     syncAndScale()
   })
 
-  iframeTrack.addEventListener('click', (event) => {
-    if (!event.target.closest('.iframe-close')) return
+  root.querySelector('.iframe-close')?.addEventListener('click', () => {
+    if (!open) return
     setOpen(false)
     syncAndScale()
   })

@@ -76,7 +76,7 @@ button {
 
 /* Meta (22:1517) */
 .meta {
-  display: flex;
+  display: none;
   align-items: flex-end;
   justify-content: space-between;
   padding: 18px;
@@ -298,5 +298,5 @@ button {
 }
 
 .article__title.iframeopen .article__title-text {
-  transform: translateY(-49px) scale(0.6);
+  transform: scale(0.6);
 }
