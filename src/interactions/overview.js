@@ -128,7 +128,6 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
 
   const headline = root.querySelector('.headline')
   const slider = root.querySelector('.slider-container')
-  const iframes = root.querySelector('.iframes')
 
   let progress = state.view === 'overview' ? 1 : 0
   let session = null
@@ -155,7 +154,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
       .join('')
   }
 
-  function applyChrome(t, wasOpen) {
+  function applyChrome(t) {
     root.style.setProperty('--overview-progress', String(t))
     root.classList.toggle('is-overviewing', t > 0 && t < 1)
     root.classList.toggle('is-overview', t >= 0.999)
@@ -169,30 +168,6 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
       slider.style.opacity = t ? String(1 - t) : ''
       slider.style.pointerEvents = t > 0.15 ? 'none' : ''
     }
-
-    if (!iframes) return
-    if (wasOpen) {
-      iframes.style.opacity = String(1 - t)
-      iframes.style.transform = `scale(${1 - t * 0.08})`
-      iframes.style.pointerEvents = 'none'
-      iframes.style.visibility = t >= 0.999 ? 'hidden' : 'visible'
-      iframes.style.transition = 'none'
-    } else if (t === 0) {
-      iframes.style.opacity = ''
-      iframes.style.transform = ''
-      iframes.style.pointerEvents = ''
-      iframes.style.visibility = ''
-      iframes.style.transition = ''
-    }
-  }
-
-  function clearIframeInline() {
-    if (!iframes) return
-    iframes.style.opacity = ''
-    iframes.style.transform = ''
-    iframes.style.pointerEvents = ''
-    iframes.style.visibility = ''
-    iframes.style.transition = ''
   }
 
   function ensureSession() {
@@ -213,7 +188,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     progress = next
     const current = ensureSession()
     cards.applyFlight(current.from, current.to, progress, inbound)
-    applyChrome(progress, current.wasOpen)
+    applyChrome(progress)
     if (entering) {
       root.dispatchEvent(new CustomEvent('parc:overview-enter'))
     }
@@ -226,8 +201,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
       if (session?.wasOpen) cards.setOpen(true)
       cards.endFlight()
       session = null
-      applyChrome(0, false)
-      clearIframeInline()
+      applyChrome(0)
       map.innerHTML = ''
       onViewChange?.('slider')
       return
@@ -236,8 +210,8 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     if (session?.wasOpen) {
       cards.setOpen(false)
       session.wasOpen = false
+      cards.retargetToHomes(cards.measureHomes(), { closed: true })
     }
-    clearIframeInline()
     onViewChange?.('overview')
   }
 
@@ -340,7 +314,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     const card = event.target.closest('.card')
     if (!card) return
     cards.centerById(card.dataset.id)
-    if (session) session.from = cards.measureHomes()
+    cards.retargetToHomes(cards.measureHomes())
     animateTo(0)
   })
 

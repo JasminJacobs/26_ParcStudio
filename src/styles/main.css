@@ -169,11 +169,27 @@ img {
   height: calc(10.7 * var(--u));
   border-radius: 50%;
   object-fit: contain;
+  opacity: var(--logo-opacity, 1);
+  transition: opacity 200ms var(--ease);
+}
+
+.card-face {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  pointer-events: none;
 }
 
 .card-tags-text {
   opacity: var(--title-opacity, 1);
   font-size: 14px;
+  transition: opacity 240ms var(--ease) 160ms;
 }
 
 .card-title {
@@ -182,11 +198,115 @@ img {
   font-size: var(--text-m);
   line-height: var(--leading-m);
   opacity: var(--title-opacity, 1);
+  transition: opacity 240ms var(--ease) 160ms;
+}
+
+/* Open article: logo, source and headline leave immediately; they return
+   as the card shrinks back. */
+.card.is-expanded {
+  --title-opacity: 0;
+  --logo-opacity: 0;
+  --shot-opacity: 1;
+}
+
+.card.is-expanded .card-title,
+.card.is-expanded .card-tags-text,
+.card.is-expanded .card-logo {
+  transition-duration: 160ms;
+  transition-delay: 0s;
 }
 
 .card.is-text-in .card-title,
 .card.is-text-in .card-tags-text {
   transition: opacity 280ms ease;
+}
+
+/* The screenshot lives in the card. Opening grows the card; the image fades in
+   over the colour. Closed, it stays out of the way of swipes. */
+.iframe-scroll {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  height: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+  opacity: var(--shot-opacity, 0);
+  pointer-events: none;
+  scrollbar-width: none;
+  transition: opacity 200ms var(--ease);
+}
+
+.card.is-expanded .iframe-scroll {
+  pointer-events: auto;
+  touch-action: pan-y;
+  transition: opacity 340ms var(--ease) 80ms;
+}
+
+.iframe-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.iframe-scroll img {
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.iframe-scroll img:not([src]) {
+  display: none;
+}
+
+/* Grown card: same frame the popup used to occupy, so the slider stays put. */
+.cards.is-expanded {
+  --iframe-w: 95%;
+  top: 124px;
+  height: calc(100% - 124px - 48px);
+  z-index: 400;
+}
+
+.cards.is-expanded .cards-track {
+  align-items: stretch;
+  gap: 12px;
+  padding-inline: calc((100% - var(--iframe-w)) / 2);
+  scroll-padding-inline: calc((100% - var(--iframe-w)) / 2);
+  touch-action: pan-x;
+}
+
+.cards.is-expanded .card {
+  flex-basis: var(--iframe-w);
+  width: var(--iframe-w);
+  height: 100%;
+  margin-left: 0;
+  padding: 0;
+  border-radius: 2px;
+  transform: none;
+}
+
+.cards.is-expanded .card + .card {
+  margin-left: 0;
+}
+
+/* While the card flies between the two sizes it has to paint outside the
+   gallery, over the title, without the page clipping it. */
+#app.is-flipping .scroller,
+#app.is-flipping .article,
+#app.is-flipping .gallery {
+  overflow: visible;
+}
+
+#app.is-flipping .gallery {
+  z-index: 30;
+}
+
+#app.is-flipping .cards-track {
+  pointer-events: none;
+  scroll-snap-type: none;
+}
+
+.cards.is-flying {
+  visibility: hidden;
 }
 
 .cards-track {
@@ -411,89 +531,6 @@ img {
   z-index: 200;
 }
 
-/* iFRAME OVERLAY */
-
-.iframes {
-  --iframe-w: 95%;
-  height: calc(100% - 124px - 48px);
-  position: absolute;
-  top: 124px;
-  left: 0;
-  right: 0;
-  bottom: 120px; /* keeps the slider visible */
-  z-index: 400;
-
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(24px);
-  transition: opacity 300ms var(--ease), transform 300ms var(--ease),
-    visibility 0s linear 300ms;
-}
-
-.iframes.is-open {
-  margin-top: 0;
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition:
-    opacity 300ms var(--ease) 600ms,
-    transform 300ms var(--ease) 600ms,
-    visibility 0s linear 600ms;
-}
-
-.iframes-track {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
-  height: 100%;
-  /* centre the 315px popup in the screen */
-  padding-inline: calc((100% - var(--iframe-w)) / 2);
-  scroll-padding-inline: calc((100% - var(--iframe-w)) / 2);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-
-.iframes-track::-webkit-scrollbar {
-  display: none;
-}
-
-.iframe-overlay {
-  position: relative;
-  flex: 0 0 var(--iframe-w); /* 1:1 with the 315px-wide article screenshots */
-  height: 100%;
-  scroll-snap-align: center;
-  transform: scale(0.9);
-  transform-origin: center center;
-
-  border-radius: 2px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.iframe-scroll {
-  height: 100%;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-}
-
-.iframe-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.iframe-scroll img {
-  width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.iframe-scroll img:not([src]) {
-  display: none;
-}
-
 .iframe-close {
   position: absolute;
   top: 68px;
@@ -506,7 +543,7 @@ img {
   outline: none;
   border: none;
 
-  z-index: 100;
+  z-index: 450;
 
   opacity: 0;
   transition: opacity 300ms var(--ease);
@@ -548,9 +585,16 @@ img {
   transform: none;
 }
 
+.card.is-shrinking .card-face {
+  position: static; /* logo positions against the card, not the face */
+}
+
 .card.is-shrinking .card-title,
-.card.is-shrinking .card-tags-text {
+.card.is-shrinking .card-tags-text,
+.card.is-shrinking .card-logo,
+.card.is-shrinking .iframe-scroll {
   pointer-events: none;
+  transition: none;
 }
 
 /* .card.is-shrinking .card-title {
