@@ -769,22 +769,26 @@ img {
 
 /* iframe open beheviours */
 
-.carousel-label.iframeopen {
+.carousel-label.iframeopen,
+.carousel-label.mapopen {
   opacity: 0;
   transition: opacity 300ms var(--ease);
 }
 
-.carousel-counter.iframeopen {
+.carousel-counter.iframeopen,
+.carousel-counter.mapopen {
   opacity: 0;
   transition: opacity 300ms var(--ease);
 }
 
-.hint.iframeopen {
+.hint.iframeopen,
+.hint.mapopen {
   opacity: 0;
   transition: opacity 300ms var(--ease);
 }
 
-.iframe-close.iframeopen {
+.iframe-close.iframeopen,
+.iframe-close.mapopen {
   opacity: 1;
   transition: opacity 300ms var(--ease);
 }

@@ -317,11 +317,13 @@ button {
 
 /* iframe open beheviours */
 
-.meta.iframeopen {
+.meta.iframeopen,
+.meta.mapopen {
   opacity: 0;
   transition: opacity 300ms var(--ease);
 }
 
-.article__title.iframeopen .article__title-text {
+.article__title.iframeopen .article__title-text,
+.article__title.mapopen .article__title-text {
   transform: scale(0.6);
 }
