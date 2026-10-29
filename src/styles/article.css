@@ -121,7 +121,7 @@ button {
   position: sticky;
   top: var(--title-top);
   z-index: 10;
-  min-height: 100px; /* Figma text box */
+  /* min-height: 100px; */
   padding: 0 18px 18px;
   box-sizing: content-box;
   background: var(--color-bg);
