@@ -434,7 +434,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
     map.setAttribute('aria-hidden', t > 0.2 ? 'false' : 'true')
     bar.setAttribute('aria-hidden', t > 0.2 ? 'false' : 'true')
     bar.style.pointerEvents = t >= 0.999 ? 'auto' : 'none'
-    mapOpenTargets.forEach((el) => el.classList.toggle('mapopen', t > 0))
+    mapOpenTargets.forEach((el) => el.classList.toggle('mapopen', t > 0.5))
 
     if (headline) {
       headline.style.opacity = t ? String(1 - t) : ''
