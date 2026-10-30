@@ -142,8 +142,10 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     if (key === barKey) return
     barKey = key
 
-    // One block per article, so the one under the marker can grow on its own
-    bar.style.width = `${articles.length * UNIT}px`
+    // One block per article. The gap sits between blocks, not after the last,
+    // so the strip ends on the last colour instead of hanging past the marker.
+    const count = articles.length
+    bar.style.width = `${Math.max(0, count * UNIT - GAP)}px`
     bar.innerHTML = articles
       .map((a) => `<span class="slider-bar__block" data-bias="${a.bias}"></span>`)
       .join('')
@@ -153,11 +155,24 @@ export function createCarouselSlider(root, getTrack, getArticles = () => []) {
     container.setAttribute('aria-valuemax', String(articles.length))
   }
 
+  // How far to shift the bar so article `p` sits under the centre marker.
+  // Block i starts at i × UNIT. Its middle stays on the marker, until the last
+  // article: that one finishes with its right edge on the marker, so no block
+  // remains past the line.
+  function markerShift(p) {
+    const blockW = UNIT - GAP
+    const last = Math.max(0, articles.length - 1)
+    const center = p * UNIT + blockW / 2
+    if (last === 0 || p <= last - 1) return center
+    const from = (last - 1) * UNIT + blockW / 2
+    const to = last * UNIT + blockW
+    return from + (to - from) * (p - (last - 1))
+  }
+
   // Move the bar so article `pos` sits under the centre marker
   function place(nextPos) {
     pos = nextPos
-    // Block i starts at i × UNIT and is (UNIT − GAP) wide: put its middle on the marker
-    bar.style.transform = `translate3d(${-(pos * UNIT + (UNIT - GAP) / 2)}px, 0, 0)`
+    bar.style.transform = `translate3d(${-markerShift(pos)}px, 0, 0)`
 
     const index = Math.round(pos)
     const article = articles[index]

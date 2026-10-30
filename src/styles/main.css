@@ -482,6 +482,7 @@ img {
   height: var(--bar-height);
   margin-top: calc(var(--bar-height) / -2);
   display: flex;
+  gap: var(--bar-gap);
   will-change: transform;
   pointer-events: none;
   /* Scales around its left edge, which sits at the marker,
@@ -496,12 +497,11 @@ img {
   scale: var(--bar-drag-scale);
 }
 
-/* One block per article: --bar-unit wide incl. the gap on its right */
+/* One block per article. The gap is on the bar, so the last block has none after it. */
 .slider-bar__block {
   flex: none;
   width: calc(var(--bar-unit) - var(--bar-gap));
   height: 100%;
-  margin-right: var(--bar-gap);
   scale: 1 1;
   transition: scale var(--block-duration) ease-in-out;
 }
@@ -857,7 +857,7 @@ img {
   --bar-height: 6px;
   --marker-height: 12px; /* smaller marker, and grab area, on the iframes */
   --marker-offset: -2px;
-  bottom: -36px;
+  bottom: -4px;
   transition: --bar-height 150ms var(--ease), bottom 150ms var(--ease);
 }
 
