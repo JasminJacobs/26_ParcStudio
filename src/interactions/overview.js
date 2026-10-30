@@ -23,7 +23,7 @@ const PLOTS = {
     y: (p) => p.social,
     labels: { left: 'Left', right: 'Right', top: 'Liberal', bottom: 'Conservative' },
   },
-  // Ad Fontes style: bias along the baseline, reliability as height
+  // Ad Fontes style: bias along the baseline, reliability up the vertical axis
   reliability: {
     shape: 'scale',
     x: (p) => p.econ,
@@ -189,21 +189,24 @@ function layoutPlot(from, layer, mode) {
       return [midX + dx * spanX, midY + dy * spanY]
     }
   } else {
-    // Scale: levels from "Reliable" (top) to "Unreliable", baseline at the bottom
+    // Scale: reliability is the vertical axis (Reliable at the top),
+    // bias runs along the baseline.
     const top = field.y + 20
+    const toptext = top - 12
     const base = field.y + field.h - 22
     area = { x: field.x, y: top, w: field.w, h: base - top }
     const levels = [0, 0.25, 0.5, 0.75, 1].map((f) => top + f * (base - top))
+    const biasLabelY = base + 20
     axes = {
       shape: 'scale',
       field,
       levels,
+      axis: { x: midX, top, height: base - top },
       labels: [
-        { text: labels.top, x: field.x, y: field.y + 8, side: 'start' },
-        { text: labels.bottom, x: field.x + field.w, y: field.y + 8, side: 'end' },
-        { text: labels.left, x: field.x, y: base + 12, side: 'start' },
-        { text: labels.centre, x: midX, y: base + 12, side: 'middle' },
-        { text: labels.right, x: field.x + field.w, y: base + 12, side: 'end' },
+        { text: labels.top, x: midX, y: toptext, side: 'middle' },
+        { text: labels.bottom, x: midX, y: biasLabelY, side: 'middle' },
+        { text: labels.left, x: field.x, y: biasLabelY, side: 'start' },
+        { text: labels.right, x: field.x + field.w, y: biasLabelY, side: 'end' },
       ],
     }
     const spanX = field.w / 2 - CHIP / 2
@@ -395,7 +398,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
       return
     }
     if (axes?.shape === 'scale') {
-      const { field, levels } = axes
+      const { field, levels, axis } = axes
       map.innerHTML = `
         <div class="map-axes">
           ${levels
@@ -404,6 +407,7 @@ export function createOverview(root, state, cards, { onViewChange } = {}) {
                 `<div class="map-level${i === levels.length - 1 ? ' map-level--base' : ''}" style="left:${field.x}px;top:${y}px;width:${field.w}px"></div>`,
             )
             .join('')}
+          <div class="map-axis map-axis--y" style="left:${axis.x}px;top:${axis.top}px;height:${axis.height}px"></div>
           ${axes.labels.map(label).join('')}
         </div>`
       return
