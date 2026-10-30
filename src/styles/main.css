@@ -857,7 +857,7 @@ img {
   --bar-height: 6px;
   --marker-height: 12px; /* smaller marker, and grab area, on the iframes */
   --marker-offset: -2px;
-  bottom: -4px;
+  bottom: -24px;
   transition: --bar-height 150ms var(--ease), bottom 150ms var(--ease);
 }
 
