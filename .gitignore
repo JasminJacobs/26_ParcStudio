@@ -23,9 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
-# Licensed fonts (Medway) — local / Cloudflare preview only, never commit
-public/fonts/
+# Licensed font masters stay local. The published cut is the woff2.
+public/fonts/*
+!public/fonts/Medway-Regular.woff2
 *.otf
 *.ttf
 *.woff
 *.woff2
+!public/fonts/Medway-Regular.woff2

@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: 'Medway';
-  src: url('/26_ParcStudio/fonts/Medway-Regular.otf') format('opentype');
+  src: url('/26_ParcStudio/fonts/Medway-Regular.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -45,8 +45,7 @@
   --tag-farright: #0000ff;
 
   /* Type */
-  /* Medway Regular is served from public/fonts/ (gitignored) for local
-     and Cloudflare preview. GitHub has no file, so this falls back. */
+  /* Medway Regular (woff2) is in public/fonts/ and deployed with the site. */
   --font-sans: 'Medway', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-medium: 'Medway-Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* the Medium cut */
   --weight-book: 450;
